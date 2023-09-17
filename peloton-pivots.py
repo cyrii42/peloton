@@ -2,9 +2,7 @@ import sqlite3
 import pandas as pd
 from config import eastern_time, mariadb_conn
 
-sql_conn = mariadb_conn
-
-df = pd.read_sql("SELECT * from peloton", sql_conn, parse_dates=['start_time_iso', 'start_time_local'])
+df = pd.read_sql("SELECT * from peloton", mariadb_conn, parse_dates=['start_time_iso', 'start_time_local'])
 
 df['annual_periods'] = [x.to_period(freq='Y') for x in df['start_time_iso'].tolist()]
 df['monthly_periods'] = [x.to_period(freq='M') for x in df['start_time_iso'].tolist()]

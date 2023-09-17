@@ -5,17 +5,14 @@
 
 import pandas as pd
 from config import mariadb_conn
-from get_workout_info import get_workout_dict, get_new_workouts_num
+from PylotonDataset import PylotonDataset
 
 # Create Pandas DataFrame from existing table
 with mariadb_conn as conn:
     db_dataframe = pd.read_sql("SELECT * from peloton", conn, index_col='start_time_iso', parse_dates=['start_time_iso', 'start_time_local'])
 
-# Calculate number of new workouts not yet in DB
-new_workouts = get_new_workouts_num(db_dataframe)
-
-# Retrieve new workouts (if any) from Peloton and create Pandas DataFrame from dict of lists
-new_entries = get_workout_dict(new_workouts)
+# Instantiate new PylotonDataset object and retrieve new workouts (if any)
+new_entries = PylotonDataset().get_new_entries(db_dataframe)
 
 # If there are new entries:
 #   (i)    append DataFrame to MariaDB table

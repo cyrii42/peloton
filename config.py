@@ -27,5 +27,3 @@ mariadb_conn = db.create_engine(
 username = os.getenv("PELOTON_USERNAME")
 password = os.getenv("PELOTON_PASSWORD")
 py_conn = pylotoncycle.PylotonCycle(username, password)
-
-print(username)
