@@ -15,7 +15,7 @@ import pandas as pd
 
 class PylotonDataset:
     
-    def get_new_entries(self, df_input: pd.DataFrame) -> pd.DataFrame:
+    def __init__(self, df_input: pd.DataFrame):
         
         # Calculate number of new workouts not yet in DB
         total_workouts = py_conn.GetMe()["total_workouts"]
@@ -50,7 +50,7 @@ class PylotonDataset:
         }
 
         if new_workouts == 0:
-            df_output = pd.DataFrame(peloton_dict)
+            self.new_entries = pd.DataFrame(peloton_dict)
         
         else:
             workouts = py_conn.GetRecentWorkouts(new_workouts)
@@ -185,6 +185,4 @@ class PylotonDataset:
                 else:
                     peloton_dict['difficulty'].append(ride.get('difficulty_estimate', 0))
                     
-            df_output = pd.DataFrame(peloton_dict)
-            
-        return df_output
+            self.new_entries = pd.DataFrame(peloton_dict)
