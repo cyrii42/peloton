@@ -17,7 +17,7 @@ influx_token_coned = os.getenv("INFLUX_TOKEN_CONED") # Con Edison token
 
 # MariaDB setup
 mariadb_server = "10.0.0.200"
-mariadb_database = "homeassistant"
+mariadb_database = "zmv"
 mariadb_user = os.getenv("MARIADB_USERNAME_PYTHON")
 mariadb_pass = os.getenv("MARIADB_PASSWORD_PYTHON")
 mariadb_conn = db.create_engine(
