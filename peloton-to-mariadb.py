@@ -1,10 +1,15 @@
 import pandas as pd
-from config import mariadb_conn
+from config import mariadb_engine
 import zmv_pyloton
 
 # Create Pandas DataFrame from existing table
-with mariadb_conn as conn:
-    mariadb_df = pd.read_sql("SELECT * from peloton", conn, index_col='start_time_iso', parse_dates=['start_time_iso', 'start_time_local'])
+with mariadb_engine.connect() as conn:
+    mariadb_df = pd.read_sql(
+        "SELECT * from peloton",
+        conn,
+        index_col='start_time_iso',
+        parse_dates=['start_time_iso', 'start_time_local']
+        )
 
 # Use MariaDB data to calculate number of new Peloton workouts 
 new_workouts_num = zmv_pyloton.calculate_new_workouts_num(mariadb_df)
@@ -15,7 +20,7 @@ if new_workouts_num > 0:
     new_entries = zmv_pyloton.get_new_workouts(new_workouts_num)
     
     # (2) append DataFrame to MariaDB table
-    with mariadb_conn as conn:
+    with mariadb_engine.connect() as conn:
         new_entries.to_sql("peloton", conn, if_exists="append", index=False)
         
     # (3) create new, concatenated "all_entries" DataFrame
@@ -32,10 +37,6 @@ if new_workouts_num > 0:
     # (5) write Excel file
     with pd.ExcelWriter('/mnt/home-ds920/peloton_workouts.xlsx', mode='a', if_sheet_exists='replace') as writer:
         all_entries.to_excel(writer, sheet_name='peloton_workouts', index=False, float_format='%.2f')
-
-
-# OPTIONAL FOR TESTING: Print the final DataFrame
-if new_workouts_num > 0:
-    print(new_entries)
-else:
-    print(mariadb_df)
+        
+    # (6) print the new DataFrame to console
+        print(all_entries)

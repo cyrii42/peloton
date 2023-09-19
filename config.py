@@ -20,8 +20,8 @@ mariadb_server = "10.0.0.200"
 mariadb_database = "zmv"
 mariadb_user = os.getenv("MARIADB_USERNAME_PYTHON")
 mariadb_pass = os.getenv("MARIADB_PASSWORD_PYTHON")
-mariadb_conn = db.create_engine(
-    f'mysql+pymysql://{mariadb_user}:{mariadb_pass}@{mariadb_server}/{mariadb_database}?charset=utf8mb4').connect()
+mariadb_engine = db.create_engine(
+    f"mysql+pymysql://{mariadb_user}:{mariadb_pass}@{mariadb_server}/{mariadb_database}?charset=utf8mb4")
 
 # PylotonCycle setup
 username = os.getenv("PELOTON_USERNAME")
