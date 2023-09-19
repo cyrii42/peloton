@@ -10,8 +10,12 @@
 # GetFollowersById(self, userid=None)
 
 from datetime import datetime
-from config import py_conn, eastern_time
 import pandas as pd
+from pylotoncycle import pylotoncycle
+from config import peloton_username, peloton_password, eastern_time
+
+# Create PylotonCycle connection object
+py_conn = pylotoncycle.PylotonCycle(peloton_username, peloton_password)
 
 # Calculate number of new workouts not yet in DB
 def calculate_new_workouts_num(df_input: pd.DataFrame) -> int:

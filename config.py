@@ -1,6 +1,5 @@
 from zoneinfo import ZoneInfo
 import sqlalchemy as db
-from pylotoncycle import pylotoncycle
 from dotenv import load_dotenv
 import os
 
@@ -24,6 +23,5 @@ mariadb_engine = db.create_engine(
     f"mysql+pymysql://{mariadb_user}:{mariadb_pass}@{mariadb_server}/{mariadb_database}?charset=utf8mb4")
 
 # PylotonCycle setup
-username = os.getenv("PELOTON_USERNAME")
-password = os.getenv("PELOTON_PASSWORD")
-py_conn = pylotoncycle.PylotonCycle(username, password)
+peloton_username = os.getenv("PELOTON_USERNAME")
+peloton_password = os.getenv("PELOTON_PASSWORD")
