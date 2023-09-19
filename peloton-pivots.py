@@ -1,8 +1,7 @@
-import sqlite3
 import pandas as pd
-from config import eastern_time, mariadb_engine
+from config import mariadb_engine
 
-with mariadb_engine as conn:
+with mariadb_engine.connect() as conn:
     df = pd.read_sql("SELECT * from peloton", conn, parse_dates=['start_time_iso', 'start_time_local'])
 
 df['annual_periods'] = [x.to_period(freq='Y') for x in df['start_time_iso'].tolist()]
@@ -17,29 +16,52 @@ df['duration_min'] = [int(round((x / 60),0)) for x in duration_list]
 df['unique_days'] = [x.date() for x in df['start_time_local'].tolist()]
 
 month_table = pd.pivot_table(df, 
-    values=['title', 'unique_days','duration_min','calories','distance','difficulty', 'output_per_min'], 
-    index=['annual_periods', 'monthly_periods', 'month_name'], 
-    aggfunc= {'title': 'count', 'unique_days': pd.Series.nunique, 'duration_min': 'sum', 'calories': 'mean', 'distance': 'sum', 'difficulty': 'mean', 'output_per_min': 'mean'}
+    values=[
+        'title', 
+        'unique_days',
+        'duration_min',
+        'calories',
+        'distance',
+        'difficulty',
+        'output_per_min'
+        ], 
+    index=[
+        'annual_periods', 
+        'monthly_periods', 
+        'month_name'
+        ], 
+    aggfunc= {
+        'title': 'count', 
+        'unique_days': pd.Series.nunique, 
+        'duration_min': 'sum', 
+        'calories': 'mean', 
+        'distance': 'sum', 
+        'difficulty': 'mean', 
+        'output_per_min': 'mean'
+        }
     )
 
 year_table = pd.pivot_table(df, 
-    values=['title', 'unique_days','duration_min','calories','distance','difficulty', 'output_per_min'], 
+    values=[
+        'title', 
+        'unique_days',
+        'duration_min',
+        'calories',
+        'distance',
+        'difficulty',
+        'output_per_min'
+        ], 
     index=['annual_periods'],
-    aggfunc= {'title': 'count', 'unique_days': pd.Series.nunique, 'duration_min': 'sum', 'calories': 'mean', 'distance': 'sum', 'difficulty': 'mean', 'output_per_min': 'mean'}
+    aggfunc= {
+        'title': 'count', 
+        'unique_days': pd.Series.nunique, 
+        'duration_min': 'sum', 
+        'calories': 'mean', 
+        'distance': 'sum', 
+        'difficulty': 'mean', 
+        'output_per_min': 'mean'
+        }
     )
-
-# month_table = pd.pivot_table(df, 
-#     values=['title','duration_min','calories','distance','difficulty', 'output_per_min'], 
-#     index=['annual_periods', 'monthly_periods', 'month_name'], 
-#     aggfunc= {'title': 'count', 'duration_min': 'sum', 'calories': 'mean', 'distance': 'sum', 'difficulty': 'mean', 'output_per_min': 'mean'}
-#     )
-
-# year_table = pd.pivot_table(df, 
-#     values=['title','duration_min','calories','distance','difficulty', 'output_per_min'], 
-#     index=['annual_periods'],
-#     aggfunc= {'title': 'count', 'duration_min': 'sum', 'calories': 'mean', 'distance': 'sum', 'difficulty': 'mean', 'output_per_min': 'mean'}
-#     )
-
 
 ##### Aug 31, 2023: added "to_string()" at the end so that full table prints #####
 print(year_table[['title', 'unique_days', 'duration_min', 'distance', 'calories', 'difficulty', 'output_per_min']].round(2).to_string())  
