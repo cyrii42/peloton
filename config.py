@@ -1,12 +1,23 @@
 from zoneinfo import ZoneInfo
+from datetime import datetime
 import sqlalchemy as db
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
-# Time zone setup
+# Time zone setup & UTC offset functions
 eastern_time = ZoneInfo("America/New_York")
+
+def utc_offset_int(ts: datetime=datetime.now()) -> int:
+    return int((ts.utcoffset().seconds / 60 / 60) - 24)
+
+def utc_offset_str(ts: datetime=datetime.now()) -> str:
+    utc_offset_int = int((ts.utcoffset().seconds / 60 / 60) - 24)
+    if utc_offset_int >= 0:
+        return f"0{utc_offset_int}:00"
+    else:
+        return f"-0{abs(utc_offset_int)}:00"
 
 # InfluxDB setup
 influx_url = "http://mac-mini.box:8086"
