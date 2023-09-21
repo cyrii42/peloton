@@ -1,6 +1,6 @@
 import pandas as pd
 from config import mariadb_engine
-import zmv_pyloton
+import pyloton_zmv
 
 # Create Pandas DataFrame from existing table
 with mariadb_engine.connect() as conn:
@@ -12,12 +12,12 @@ with mariadb_engine.connect() as conn:
         )
 
 # Use MariaDB data to calculate number of new Peloton workouts 
-new_workouts_num = zmv_pyloton.calculate_new_workouts_num(mariadb_df)
+new_workouts_num = pyloton_zmv.calculate_new_workouts_num(mariadb_df)
 
 # If there are new entries:
 if new_workouts_num > 0:
     # (1) retrieve new workout data
-    new_entries = zmv_pyloton.get_new_workouts(new_workouts_num)
+    new_entries = pyloton_zmv.get_new_workouts(new_workouts_num)
     
     # (2) append DataFrame to MariaDB table
     with mariadb_engine.connect() as conn:
