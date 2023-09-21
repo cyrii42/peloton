@@ -1,4 +1,4 @@
-from config import py_conn
+from src.config.config import py_conn
 
 # Get the total number of workouts from Peloton
 total_workouts = py_conn.GetMe()["total_workouts"]

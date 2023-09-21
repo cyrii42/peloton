@@ -1,6 +1,6 @@
 from datetime import datetime
 from pylotoncycle import pylotoncycle
-from config import peloton_username, peloton_password, eastern_time
+from src.config.config import peloton_username, peloton_password, eastern_time
 import pandas as pd
 import csv
 import json

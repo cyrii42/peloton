@@ -1,6 +1,6 @@
 import pandas as pd
-from config import mariadb_engine
-import pyloton_zmv
+from src.config.config import mariadb_engine
+import utils.pyloton_zmv as pyloton_zmv
 
 # Create Pandas DataFrame from existing table
 with mariadb_engine.connect() as conn:
