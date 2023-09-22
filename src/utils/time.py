@@ -1,7 +1,7 @@
 from zoneinfo import ZoneInfo
 from datetime import datetime
 
-# Time zone setup & UTC offset functions
+# Time zone setup
 eastern_time = ZoneInfo("America/New_York")
 
 class NaiveDatetimeError(Exception):
@@ -10,6 +10,7 @@ class NaiveDatetimeError(Exception):
         self.message = message
         super().__init__(self.message)
 
+# UTC offset functions
 def utc_offset_int(dt: datetime=datetime.now()) -> int:
     if dt.utcoffset() != None:
         return int((dt.utcoffset().seconds / 60 / 60) - 24)
