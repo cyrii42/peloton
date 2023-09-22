@@ -12,7 +12,7 @@
 from datetime import datetime
 import pandas as pd
 from pylotoncycle import pylotoncycle
-from config.config import peloton_username, peloton_password
+from src.config.config import peloton_username, peloton_password
 from utils.time import eastern_time
 
 # Create PylotonCycle connection object
