@@ -1,5 +1,5 @@
 import pandas as pd
-from utils.config import mariadb_engine
+from config.config import mariadb_engine
 
 with mariadb_engine.connect() as conn:
     df = pd.read_sql("SELECT * from peloton", conn, parse_dates=['start_time_iso', 'start_time_local'])
