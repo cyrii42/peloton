@@ -4,7 +4,7 @@ from zoneinfo import ZoneInfo
 import sqlite3
 import pandas as pd
 import sqlalchemy as db
-from config import eastern_time, mariadb_user, mariadb_pass, mariadb_server
+from src.config.config import eastern_time, mariadb_user, mariadb_pass, mariadb_server
 
 # Create SQLite database
 # sql_conn = sqlite3.connect(f"{str(datetime.now().strftime('%Y-%m-%d_%H-%M'))}_peleton_data_test.db")
