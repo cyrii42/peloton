@@ -10,13 +10,17 @@ import pandas as pd
 import sqlite3
 import plotly.express as px
 import dash_bootstrap_components as dbc
-# import dash_mantine_components as dmc
 from config.config import mariadb_engine
 from utils.time import eastern_time
 
-# Create Pandas DataFrame from existing table (removed index_col='start_time_iso')
-with mariadb_engine as conn:
-    df = pd.read_sql("SELECT * from peloton", conn, parse_dates=['start_time_iso', 'start_time_local'])
+# Create Pandas DataFrame from existing table
+with mariadb_engine.connect() as conn:
+    df = pd.read_sql(
+        "SELECT * from peloton",
+        conn,
+        #index_col='start_time_iso',
+        parse_dates=['start_time_iso', 'start_time_local']
+        )
 
 # Add additional metrics
 df['min'] = [round((x / 60),0) for x in df['duration'].tolist()]
