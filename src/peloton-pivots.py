@@ -15,7 +15,7 @@ df['output_per_min'] = [(x[0] / (x[1] / 60)) for x in zip(output_list, duration_
 df['duration_min'] = [int(round((x / 60),0)) for x in duration_list]
 df['unique_days'] = [x.date() for x in df['start_time_local'].tolist()]
 
-month_table = pd.pivot_table(df, 
+month_table = df.pivot_table( 
     values=[
         'title', 
         'unique_days',
@@ -41,7 +41,7 @@ month_table = pd.pivot_table(df,
         }
     )
 
-year_table = pd.pivot_table(df, 
+year_table = df.pivot_table(
     values=[
         'title', 
         'unique_days',
