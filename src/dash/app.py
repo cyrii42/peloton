@@ -13,6 +13,10 @@ import dash_bootstrap_components as dbc
 from config.config import mariadb_engine
 from utils.time import eastern_time
 from config import ids
+from utils.peloton_pivots import get_pivot_table_year, get_pivot_table_month
+
+df_pivot = get_pivot_table_month()
+df_pivot = df_pivot.drop(columns=['annual_periods', 'monthly_periods']).round(2)
 
 
 # Create Pandas DataFrame from existing table
@@ -100,9 +104,9 @@ app.layout = dbc.Container([
     dbc.Row([
         dbc.Col([
             dash_table.DataTable(
-                data=df[table_column_list].sort_values(by='start_time_local', ascending=False).to_dict('records'),
+                data=df_pivot.to_dict('records'),
                 page_size=20, 
-                sort_action='native',
+                # sort_action='native',
                 # filter_action='native',
                 style_table={
                     'overflowX': 'auto'
@@ -120,12 +124,33 @@ app.layout = dbc.Container([
                     'backgroundColor': 'rgb(50, 50, 50)',
                     'color': 'white'
                     },
-                style_cell_conditional=[
-                    {
-                        'if': {'column_id': ['instructor', 'start_time_local', 'title']},
-                        'textAlign': 'left'
-                    }
-                ]
+            )
+        ]),
+    ]),
+
+    dbc.Row([
+        dbc.Col([
+            dash_table.DataTable(
+                data=df[table_column_list].sort_values(by='start_time_local', ascending=False).to_dict('records'),
+                page_size=20, 
+                # sort_action='native',
+                # filter_action='native',
+                style_table={
+                    'overflowX': 'auto'
+                    }, 
+                style_header={
+                    'fontSize': 16,
+                    'font-family':'system-ui',
+                    'backgroundColor': 'rgb(80, 80, 80)',
+                    'color': 'white',
+                    'textAlign': 'center'
+                    },
+                style_data={
+                    'fontSize': 16,
+                    'font-family':'system-ui',
+                    'backgroundColor': 'rgb(50, 50, 50)',
+                    'color': 'white'
+                    },
             )
         ]),
     ]),
