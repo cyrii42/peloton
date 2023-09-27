@@ -12,11 +12,45 @@
 from datetime import datetime
 import pandas as pd
 from pylotoncycle import pylotoncycle
-from config.config import peloton_username, peloton_password
+from config.config import peloton_username, peloton_password, mariadb_engine
 from utils.time import eastern_time
 
 # Create PylotonCycle connection object
 py_conn = pylotoncycle.PylotonCycle(peloton_username, peloton_password)
+
+
+# Read existing MariaDB table and output DataFrame
+def ingest_sql_data() -> pd.DataFrame:
+    with mariadb_engine.connect() as conn:
+        mariadb_df = pd.read_sql(
+            "SELECT * from peloton",
+            conn,
+            index_col='start_time_iso',
+            parse_dates=['start_time_iso', 'start_time_local']
+            )
+    return mariadb_df
+
+
+# Write new workout data to MariaDB
+def export_to_sql(input_df: pd.DataFrame):
+     with mariadb_engine.connect() as conn:
+        input_df.to_sql("peloton", conn, if_exists="append", index=False)
+
+
+# Calculate new metrics for Excel sheet and output DataFrame
+def calculate_excel_metrics(input_df: pd.DataFrame) -> pd.DataFrame:
+    all_entries = input_df
+    
+    duration_list = all_entries['duration'].tolist()
+    length_list = all_entries['length'].tolist()
+    output_list = all_entries['output'].tolist()
+    
+    all_entries['duration_min'] = [(x / 60) for x in duration_list]
+    all_entries['length_min'] = [(x / 60) for x in length_list]
+    all_entries['output_per_min'] = [(x[0] / (x[1] / 60)) for x in zip(output_list, duration_list)]
+    
+    return all_entries
+
 
 # Calculate number of new workouts not yet in DB
 def calculate_new_workouts_num(df_input: pd.DataFrame) -> int:
@@ -29,6 +63,7 @@ def calculate_new_workouts_num(df_input: pd.DataFrame) -> int:
     print("New Workouts to Write: " + str(new_workouts))
     
     return new_workouts
+
 
 # Retrieve new workouts (if any) from Peloton and create Pandas DataFrame from dict of lists
 def get_new_workouts(new_workouts_num: int) -> pd.DataFrame:
