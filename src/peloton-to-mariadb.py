@@ -32,6 +32,7 @@ def main():
     year_table = get_pivot_table_year()
     month_table = get_pivot_table_month()
 
+    print()
     print(year_table.round(2))
     print()
     print(month_table.drop(columns=["annual_periods", "monthly_periods"]).round(2))
