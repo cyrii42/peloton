@@ -98,3 +98,7 @@ mariadb_engine_zmv = db.create_engine(
 # Tautulli setup
 tautulli_url = os.getenv("TAUTULLI_URL")
 tautulli_api_key = os.getenv("TAUTULLI_API_KEY")
+
+# PylotonCycle setup
+peloton_username = os.getenv("PELOTON_USERNAME")
+peloton_password = os.getenv("PELOTON_PASSWORD")
