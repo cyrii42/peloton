@@ -12,7 +12,8 @@
 from datetime import datetime
 import pandas as pd
 from pylotoncycle import pylotoncycle
-from config.config import peloton_username, peloton_password, mariadb_engine
+from config.config import peloton_username, peloton_password
+from config.config import mariadb_engine_zmv as mariadb_engine
 from utils.time import eastern_time
 
 # Create PylotonCycle connection object
