@@ -27,7 +27,6 @@ numpy==1.25.2
 openpyxl==3.1.2
 packaging==23.1
 pandas==2.1.0
--e git+https://github.com/cyrii42/peloton.git@9815c7f778fd3967ece65d8fd0cc8c52d6931a56#egg=peloton
 Pillow==10.0.1
 plotly==5.17.0
 pylotoncycle==0.6.0
