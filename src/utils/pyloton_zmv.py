@@ -12,13 +12,12 @@
 from datetime import datetime
 import pandas as pd
 from pylotoncycle import pylotoncycle
-from config.config import peloton_username, peloton_password
-from config.config import mariadb_engine_zmv as mariadb_engine
-from utils.time import eastern_time
+from config.config import PELOTON_USERNAME, PELOTON_PASSWORD
+from config.config import MARIADB_ENGINE_ZMV as mariadb_engine
+from utils.time import EASTERN_TIME
 
 # Create PylotonCycle connection object
-py_conn = pylotoncycle.PylotonCycle(peloton_username, peloton_password)
-
+py_conn = pylotoncycle.PylotonCycle(PELOTON_USERNAME, PELOTON_PASSWORD)
 
 # Read existing MariaDB table and output DataFrame
 def ingest_sql_data() -> pd.DataFrame:
@@ -107,7 +106,7 @@ def get_new_workouts(new_workouts_num: int) -> pd.DataFrame:
 
             # Start Time ISO & Start Time Local
             start_timestamp = w["start_time"]
-            start_time_iso = datetime.fromtimestamp(start_timestamp, tz=eastern_time).isoformat(sep='T')
+            start_time_iso = datetime.fromtimestamp(start_timestamp, tz=EASTERN_TIME).isoformat(sep='T')
             peloton_dict['start_time_iso'].append(start_time_iso)
             start_time_local = datetime.fromtimestamp(start_timestamp, tz=None)
             peloton_dict['start_time_local'].append(start_time_local)

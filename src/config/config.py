@@ -9,7 +9,7 @@ import sqlalchemy as db
 load_dotenv()
 
 # Time zone setup & UTC offset functions
-eastern_time = ZoneInfo("America/New_York")
+EASTERN_TIME = ZoneInfo("America/New_York")
 
 
 def check_hostname() -> str:
@@ -79,26 +79,28 @@ def check_dir(subdir: str) -> bool:
         
 
 # InfluxDB setup
-influx_url = "http://mac-mini.box:8086"
-influx_org = "ZMV"
-influx_token_hass = os.getenv("INFLUX_TOKEN_HASS") # Home Assistant read-only
-influx_token_coned = os.getenv("INFLUX_TOKEN_CONED") # Con Edison token
+INFLUX_URL = "http://mac-mini.box:8086"
+INFLUX_ORG = "ZMV"
+INFLUX_TOKEN_HASS = os.getenv("INFLUX_TOKEN_HASS") # Home Assistant read-only
+INFLUX_TOKEN_CONED = os.getenv("INFLUX_TOKEN_CONED") # Con Edison token
+INFLUX_BUCKET_CONED = "conedison"
+INFLUX_BUCKET_HASS = "homeassistant"
 
 # Home Assistant MariaDB setup
-mariadb_server = os.getenv("MARIADB_HASS_IP")
-mariadb_database_hass = "homeassistant"
-mariadb_database_zmv = "zmv"
-mariadb_user = os.getenv("MARIADB_USERNAME_PYTHON")
-mariadb_pass = os.getenv("MARIADB_PASSWORD_PYTHON")
-mariadb_engine_hass = db.create_engine(
-    f'mysql+pymysql://{mariadb_user}:{mariadb_pass}@{mariadb_server}/{mariadb_database_hass}?charset=utf8mb4')
-mariadb_engine_zmv = db.create_engine(
-    f'mysql+pymysql://{mariadb_user}:{mariadb_pass}@{mariadb_server}/{mariadb_database_zmv}?charset=utf8mb4')
+MARIADB_SERVER = os.getenv("MARIADB_HASS_IP")
+MARIADB_DATABASE_HASS = "homeassistant"
+MARIADB_DATABASE_ZMV = "zmv"
+MARIADB_USER = os.getenv("MARIADB_USERNAME_PYTHON")
+MARIADB_PASS = os.getenv("MARIADB_PASSWORD_PYTHON")
+MARIADB_ENGINE_HASS = db.create_engine(
+    f'mysql+pymysql://{MARIADB_USER}:{MARIADB_PASS}@{MARIADB_SERVER}/{MARIADB_DATABASE_HASS}?charset=utf8mb4')
+MARIADB_ENGINE_ZMV = db.create_engine(
+    f'mysql+pymysql://{MARIADB_USER}:{MARIADB_PASS}@{MARIADB_SERVER}/{MARIADB_DATABASE_ZMV}?charset=utf8mb4')
 
 # Tautulli setup
-tautulli_url = os.getenv("TAUTULLI_URL")
-tautulli_api_key = os.getenv("TAUTULLI_API_KEY")
+TAUTULLI_URL = os.getenv("TAUTULLI_URL")
+TAUTULLI_API_KEY = os.getenv("TAUTULLI_API_KEY")
 
 # PylotonCycle setup
-peloton_username = os.getenv("PELOTON_USERNAME")
-peloton_password = os.getenv("PELOTON_PASSWORD")
+PELOTON_USERNAME = os.getenv("PELOTON_USERNAME")
+PELOTON_PASSWORD = os.getenv("PELOTON_PASSWORD")

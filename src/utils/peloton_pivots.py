@@ -1,5 +1,5 @@
 import pandas as pd
-from config.config import mariadb_engine_zmv as mariadb_engine
+from config.config import MARIADB_ENGINE_ZMV as mariadb_engine
 
 def get_pt_data() -> pd.DataFrame():
     with mariadb_engine.connect() as conn:

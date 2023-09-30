@@ -2,7 +2,7 @@ from zoneinfo import ZoneInfo
 from datetime import datetime
 
 # Time zone setup
-eastern_time = ZoneInfo("America/New_York")
+EASTERN_TIME = ZoneInfo("America/New_York")
 
 class NaiveDatetimeError(Exception):
     def __init__(self, dt, message="Input datetime object is not timezone-aware"):
