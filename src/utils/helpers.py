@@ -42,14 +42,14 @@ class NaiveDatetimeError(Exception):
         super().__init__(self.message)
 
 
-def utc_offset_int(dt: datetime=datetime.now()) -> int:
+def utc_offset_int(dt: datetime = datetime.now()) -> int:
     if dt.utcoffset() != None:
         return int((dt.utcoffset().seconds / 60 / 60) - 24)
     else: 
         raise NaiveDatetimeError(dt)
 
 
-def utc_offset_str(dt: datetime=datetime.now()) -> str:
+def utc_offset_str(dt: datetime = datetime.now()) -> str:
     if dt.utcoffset() != None:
         utc_offset_int = int((dt.utcoffset().seconds / 60 / 60) - 24)
         if utc_offset_int >= 0:
