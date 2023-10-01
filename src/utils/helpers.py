@@ -18,6 +18,7 @@ def create_mariadb_engine(database: str) -> db.Engine:
     )
     return db.create_engine(mariadb_url)
 
+
 def get_peloton_data_from_sql(engine: db.Engine) -> pd.DataFrame:
     with engine.connect() as conn:
         df = pd.read_sql(
