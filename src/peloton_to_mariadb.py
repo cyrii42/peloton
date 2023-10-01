@@ -3,40 +3,8 @@ import pandas as pd
 import sqlalchemy as db
 from pylotoncycle import pylotoncycle
 from utils.constants import EASTERN_TIME, PELOTON_USERNAME, PELOTON_PASSWORD
-from utils.helpers import create_mariadb_engine
-from utils.peloton_pivots import get_sql_data_for_pivots, get_pivot_table_year, get_pivot_table_month
-
-# Read existing MariaDB table and output DataFrame
-def ingest_sql_data(engine: db.Engine) -> pd.DataFrame:
-    with engine.connect() as conn:
-        df = pd.read_sql(
-            "SELECT * from peloton",
-            conn,
-            index_col='start_time_iso',
-            parse_dates=['start_time_iso', 'start_time_local']
-            )
-    return df
-
-
-# Write new workout data to MariaDB
-def export_to_sql(input_df: pd.DataFrame, engine: db.Engine):
-     with engine.connect() as conn:
-        input_df.to_sql("peloton", conn, if_exists="append", index=False)
-
-
-# Calculate new metrics for Excel sheet and output DataFrame
-def calculate_excel_metrics(input_df: pd.DataFrame) -> pd.DataFrame:
-    all_entries = input_df
-    
-    duration_list = all_entries['duration'].tolist()
-    length_list = all_entries['length'].tolist()
-    output_list = all_entries['output'].tolist()
-    
-    all_entries['duration_min'] = [(x / 60) for x in duration_list]
-    all_entries['length_min'] = [(x / 60) for x in length_list]
-    all_entries['output_per_min'] = [(x[0] / (x[1] / 60)) for x in zip(output_list, duration_list)]
-    
-    return all_entries
+import utils.helpers as helpers
+import utils.peloton_pivots as pivots
 
 
 # Calculate number of new workouts not yet in DB
@@ -215,14 +183,28 @@ def get_new_workouts(py_conn: pylotoncycle.PylotonCycle, new_workouts_num: int) 
         return pd.DataFrame(peloton_dict)
 
 
+# Calculate new metrics for Excel sheet and output DataFrame
+def calculate_excel_metrics(input_df: pd.DataFrame) -> pd.DataFrame:
+    all_entries = input_df
+    
+    duration_list = all_entries['duration'].tolist()
+    length_list = all_entries['length'].tolist()
+    output_list = all_entries['output'].tolist()
+    
+    all_entries['duration_min'] = [(x / 60) for x in duration_list]
+    all_entries['length_min'] = [(x / 60) for x in length_list]
+    all_entries['output_per_min'] = [(x[0] / (x[1] / 60)) for x in zip(output_list, duration_list)]
+    
+    return all_entries
+
 
 def main():
     EXCEL_FILENAME = "/mnt/home-ds920/peloton_workouts.xlsx"
     
-    mariadb_engine = create_mariadb_engine(database="zmv")
+    mariadb_engine = helpers.create_mariadb_engine(database="zmv")
     py_conn = pylotoncycle.PylotonCycle(PELOTON_USERNAME, PELOTON_PASSWORD)
 
-    mariadb_df = ingest_sql_data(mariadb_engine)
+    mariadb_df = helpers.get_peloton_data_from_sql(mariadb_engine)
 
     # If there are new workouts: retrieve the data, write to MariaDB, 
     #   re-pull from MariaDB, calculate new metrics, and write to Excel
@@ -230,9 +212,9 @@ def main():
     if new_workouts_num > 0:
         new_entries = get_new_workouts(py_conn, new_workouts_num)
         
-        export_to_sql(new_entries, mariadb_engine)
+        helpers.export_peloton_data_to_sql(new_entries, mariadb_engine)
             
-        all_entries = ingest_sql_data(mariadb_engine)
+        all_entries = helpers.get_peloton_data_from_sql(mariadb_engine)
 
         excel_df = calculate_excel_metrics(all_entries)
 
@@ -242,9 +224,9 @@ def main():
         print("New workout data:")
         print(all_entries)
             
-    pivot_df = get_sql_data_for_pivots(mariadb_engine)
-    year_table = get_pivot_table_year(pivot_df)
-    month_table = get_pivot_table_month(pivot_df)
+    pivot_df = pivots.get_sql_data_for_pivots(mariadb_engine)
+    year_table = pivots.get_pivot_table_year(pivot_df)
+    month_table = pivots.get_pivot_table_month(pivot_df)
 
     print()
     print(year_table)

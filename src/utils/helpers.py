@@ -2,6 +2,7 @@ import os
 import platform
 import json
 import sqlalchemy as db
+import pandas as pd
 from datetime import datetime
 from utils.constants import MARIADB_USER, MARIADB_PASS, MARIADB_SERVER
 
@@ -16,6 +17,21 @@ def create_mariadb_engine(database: str) -> db.Engine:
         database=database,
     )
     return db.create_engine(mariadb_url)
+
+def get_peloton_data_from_sql(engine: db.Engine) -> pd.DataFrame:
+    with engine.connect() as conn:
+        df = pd.read_sql(
+            "SELECT * from peloton",
+            conn,
+            index_col='start_time_iso',
+            parse_dates=['start_time_iso', 'start_time_local']
+            )
+    return df
+
+
+def export_peloton_data_to_sql(input_df: pd.DataFrame, engine: db.Engine):
+     with engine.connect() as conn:
+        input_df.to_sql("peloton", conn, if_exists="append", index=False)
 
 
 # UTC offset functions
