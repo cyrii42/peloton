@@ -9,6 +9,7 @@ from peloton_to_mariadb import calculate_new_workouts_num, get_new_workouts
 from utils.peloton_pivots import get_sql_data_for_pivots, get_pivot_table_year, get_pivot_table_month
 from dataclasses import dataclass, fields
 from typing import List
+from datetime import datetime
 import json
 from pylotoncycle import pylotoncycle
 from utils.constants import PELOTON_USERNAME, PELOTON_PASSWORD
@@ -48,10 +49,10 @@ py_conn = pylotoncycle.PylotonCycle(PELOTON_USERNAME, PELOTON_PASSWORD)
 
 @dataclass
 class PelotonRide:
-    workout_id: str = None
-    title: str = None
+    id: str = None
+    ride_title: str = None
     instructor: str = None
-    description: str = None
+    ride_description: str = None
     created_at: int = None
     start_time: int = None
     end_time: int = None
@@ -64,14 +65,14 @@ class PelotonRide:
     has_pedaling_metrics: str = None
     has_leaderboard_metrics: str = None
     workout_type: str = None
-    avg_effort_score: float = None
+    average_effort_score: float = None
     leaderboard_rank: int = None
     total_leaderboard_users: int = None
-    duration: int = None
-    length: int = None
+    ride_duration: int = None
+    ride_length: int = None
     distance: float = None
-    difficulty: float = None
-    calories_total: float = None
+    ride_difficulty: float = None
+    calories: float = None
     output_total: float = None
     output_avg: int = None
     output_max: int = None
@@ -127,43 +128,47 @@ def loop_through_workouts(num: int=3):
     for w in workouts:
         ride_object = PelotonRide()
         df_workout = pd.json_normalize(w)
+        df_workout_ride = pd.json_normalize(w['ride'])
         workout_id = df_workout['id'].loc[0]
         
-        ## Note that so far, you've just filled a bunch of variables; you haven't
-        ## done anything with them yet!!!
 
+        # Loop through regular columns in df_workout
         for column in df_workout.columns:
             if not df_workout[column].dropna().empty:
                 setattr(ride_object, column, df_workout[column][0])
+                
+        # Loop through the "ride" columns
+        for column in df_workout_ride.columns:
+            if not df_workout_ride[column].dropna().empty:
+                setattr(ride_object, f"ride_{column}", df_workout_ride[column][0])
 
-        # ride_object.created_at = check_column('created_at', df_workout)[0]  
-        # ride_object.start_time = check_column('start_time', df_workout)[0]   
-        # ride_object.end_time = check_column('end_time', df_workout)[0]      
-        # ride_object.user_id = check_column('user_id', df_workout)[0]
-        # ride_object.instructor = check_column('instructor_name', df_workout)[0]
-        # ride_object.timezone = check_column('timezone', df_workout)[0]
-        # ride_object.total_work = check_column('total_work', df_workout)[0]   
-        # ride_object.has_pedaling_metrics = check_column('has_pedaling_metrics', df_workout)[0]
-        # ride_object.has_leaderboard_metrics = check_column('has_leaderboard_metrics', df_workout)[0]
-        # ride_object.metrics_type = check_column('metrics_type', df_workout)[0]
-        # ride_object.workout_type = check_column('workout_type', df_workout)[0]   
-        # ride_object.title = check_column('ride.title', df_workout)[0]
-        # ride_object.description = check_column('ride.description', df_workout)[0]
-        # ride_object.duration = check_column('ride.duration', df_workout, alternate_column='ride.length')[0]
-        # ride_object.length = check_column('ride.length', df_workout, alternate_column='ride.duration')[0] 
-        # ride_object.difficulty = check_column('ride.difficulty_estimate', df_workout)[0] 
-        # ride_object.avg_effort_score = check_column('average_effort_score', df_workout)[0]  
-        # ride_object.leaderboard_rank = check_column('leaderboard_rank', df_workout)[0]    
-        # ride_object.total_leaderboard_users = check_column('total_leaderboard_users', df_workout)[0]
-        # ride_object.ride_id = check_column('ride.id', df_workout)[0]
-        # ride_object.ride_image_url = check_column('ride.image_url', df_workout)[0]
+
     
         workout_metrics_by_id_dict = py_conn.GetWorkoutMetricsById(workout_id)
         
         df_summaries = pd.json_normalize(workout_metrics_by_id_dict['summaries'])
-        for row in df_summaries:
+        df_metrics = pd.json_normalize(workout_metrics_by_id_dict['metrics'])
+        df_average_values = df_metrics.set_index('slug')['average_value']
+        df_max_values = df_metrics.set_index('slug')['max_value']
+
+        print(df_summaries)
+        print(df_metrics['average_value'])
+        print(df_metrics['max_value'])
+        
+        for index, row in df_summaries.iterrows():
+            setattr(ride_object, df_summaries['slug'][index], df_summaries['value'][index])
+
+        for index, value in df_average_values.items():
+            setattr(ride_object, f"{index}_avg", value)
             
-        if 'value' in df_summaries.columns:
+        for index, value in df_max_values.items():
+            setattr(ride_object, f"{index}_max", value)
+
+        
+        # df_summaries = pd.json_normalize(workout_metrics_by_id_dict['summaries'])
+        # for row in df_summaries:
+            
+        # if 'value' in df_summaries.columns:
         
         #     ride_object.output_total = check_row(0, 'value', df_summaries)
         #     ride_object.distance = check_row(1, 'value', df_summaries)
@@ -195,9 +200,38 @@ def loop_through_workouts(num: int=3):
         
         
 if __name__ == "__main__":
-    loop_through_workouts()
+    loop_through_workouts(1)
+    
+    # workouts = py_conn.GetWorkoutMetricsById("1549b39e75cb48c0ac6179b952ce2cac")
+    # df = pd.json_normalize(workouts['metrics'])
+    # df1 = df.set_index('slug')
+    # print(df1['max_value'])
+    # # df.to_csv(f"/mnt/home-ds920/asdf-{datetime.now().strftime('%H-%M-%s')}.csv")
         
         
+        
+        # ride_object.created_at = check_column('created_at', df_workout)[0]  
+        # ride_object.start_time = check_column('start_time', df_workout)[0]   
+        # ride_object.end_time = check_column('end_time', df_workout)[0]      
+        # ride_object.user_id = check_column('user_id', df_workout)[0]
+        # ride_object.instructor = check_column('instructor_name', df_workout)[0]
+        # ride_object.timezone = check_column('timezone', df_workout)[0]
+        # ride_object.total_work = check_column('total_work', df_workout)[0]   
+        # ride_object.has_pedaling_metrics = check_column('has_pedaling_metrics', df_workout)[0]
+        # ride_object.has_leaderboard_metrics = check_column('has_leaderboard_metrics', df_workout)[0]
+        # ride_object.metrics_type = check_column('metrics_type', df_workout)[0]
+        # ride_object.workout_type = check_column('workout_type', df_workout)[0]   
+        # ride_object.average_effort_score = check_column('average_effort_score', df_workout)[0]  
+        # ride_object.leaderboard_rank = check_column('leaderboard_rank', df_workout)[0]    
+        # ride_object.total_leaderboard_users = check_column('total_leaderboard_users', df_workout)[0]
+    
+        # ride_object.title = check_column('ride.title', df_workout)[0]
+        # ride_object.description = check_column('ride.description', df_workout)[0]
+        # ride_object.duration = check_column('ride.duration', df_workout, alternate_column='ride.length')[0]
+        # ride_object.length = check_column('ride.length', df_workout, alternate_column='ride.duration')[0] 
+        # ride_object.difficulty = check_column('ride.difficulty_estimate', df_workout)[0] 
+        # ride_object.ride_id = check_column('ride.id', df_workout)[0]
+        # ride_object.ride_image_url = check_column('ride.image_url', df_workout)[0]
         
 # # with open('/home/zvaughan/python/peloton/src/sample.json') as json_data:
 # #     data = json.load(json_data)
