@@ -1,25 +1,24 @@
 from dash import Dash, dcc, html
 from dash.dependencies import Input, Output
 import pandas as pd
-
-from ..config import ids
-from ..config.config import mariadb_engine
-from ..utils.pyloton_zmv import calculate_new_workouts_num, get_new_workouts
+import sqlalchemy as db
+from utils import ids
+from peloton_to_mariadb import calculate_new_workouts_num, get_new_workouts
 
 def render(app: Dash) -> html.Div:
     @app.callback(
         Output(ids.NATION_DROPDOWN, "value"),
         Input(ids.LOAD_NEW_DATA_BUTTON, "n_clicks"),
     )
-    def load_mariadb_data(_: int) -> pd.DataFrame():
-        with mariadb_engine.connect() as conn:
+    def load_mariadb_data(_: int, engine: db.Engine) -> pd.DataFrame():
+        with engine.connect() as conn:
             mariadb_df = pd.read_sql("SELECT * from peloton",conn,index_col='start_time_iso',parse_dates=['start_time_iso', 'start_time_local'])
 
         new_workouts_num = calculate_new_workouts_num(mariadb_df)
 
         if new_workouts_num > 0:
             new_entries = get_new_workouts(new_workouts_num)
-            with mariadb_engine.connect() as conn:
+            with engine.connect() as conn:
                 new_entries.to_sql("peloton", conn, if_exists="append", index=False)
 
     return html.Div(

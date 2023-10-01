@@ -1,15 +1,14 @@
 import pandas as pd
-from utils.pyloton_zmv import ingest_sql_data, calculate_new_workouts_num, export_to_sql, get_new_workouts
-from utils.peloton_pivots import get_pivot_table_year, get_pivot_table_month
+from peloton_to_mariadb import ingest_sql_data, calculate_new_workouts_num, export_to_sql, get_new_workouts
+from utils.peloton_pivots import get_sql_data_for_pivots, get_pivot_table_year, get_pivot_table_month
 from dataclasses import dataclass
 import json
 from pylotoncycle import pylotoncycle
-from config.config import peloton_username, peloton_password
-from config.config import mariadb_engine_zmv as mariadb_engine
-from utils.time import eastern_time
+from utils.constants import EASTERN_TIME, PELOTON_USERNAME, PELOTON_PASSWORD
+from utils.helpers import create_mariadb_engine
 
 # Create PylotonCycle connection object
-py_conn = pylotoncycle.PylotonCycle(peloton_username, peloton_password)
+py_conn = pylotoncycle.PylotonCycle(PELOTON_USERNAME, PELOTON_PASSWORD)
 
 # GetWorkoutList(self, num_workouts=None)
 # GetWorkoutSummaryById(self, workout_id)

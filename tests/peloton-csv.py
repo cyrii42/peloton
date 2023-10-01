@@ -1,8 +1,8 @@
 from pylotoncycle import pylotoncycle
-from utils.config import peloton_username, peloton_password
+from utils.constants import PELOTON_USERNAME, PELOTON_PASSWORD
 
 # Create PylotonCycle connection object
-py_conn = pylotoncycle.PylotonCycle(peloton_username, peloton_password)
+py_conn = pylotoncycle.PylotonCycle(PELOTON_USERNAME, PELOTON_PASSWORD)
 
 # Get the total number of workouts from Peloton
 total_workouts = py_conn.GetMe()["total_workouts"]

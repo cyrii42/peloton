@@ -1,39 +1,26 @@
-## List of functions
-# GetMe(self)
-# GetUrl(self,url)
-# GetWorkoutList(self, num_workouts=None)
-# GetRecentWorkouts(self, num_workouts=None)
-# GetWorkoutSummaryById(self, workout_id)
-# GetWorkoutMetricsById (self, workout_id, frequency=50)
-# GetWorkoutById(self, workout_id)
-# GetInstructorById(self, instructor_id)
-# GetFollowersById(self, userid=None)
-
 from datetime import datetime
 import pandas as pd
+import sqlalchemy as db
 from pylotoncycle import pylotoncycle
-from config.config import PELOTON_USERNAME, PELOTON_PASSWORD
-from config.config import MARIADB_ENGINE_ZMV as mariadb_engine
-from utils.time import EASTERN_TIME
-
-# Create PylotonCycle connection object
-py_conn = pylotoncycle.PylotonCycle(PELOTON_USERNAME, PELOTON_PASSWORD)
+from utils.constants import EASTERN_TIME, PELOTON_USERNAME, PELOTON_PASSWORD
+from utils.helpers import create_mariadb_engine
+from utils.peloton_pivots import get_sql_data_for_pivots, get_pivot_table_year, get_pivot_table_month
 
 # Read existing MariaDB table and output DataFrame
-def ingest_sql_data() -> pd.DataFrame:
-    with mariadb_engine.connect() as conn:
-        mariadb_df = pd.read_sql(
+def ingest_sql_data(engine: db.Engine) -> pd.DataFrame:
+    with engine.connect() as conn:
+        df = pd.read_sql(
             "SELECT * from peloton",
             conn,
             index_col='start_time_iso',
             parse_dates=['start_time_iso', 'start_time_local']
             )
-    return mariadb_df
+    return df
 
 
 # Write new workout data to MariaDB
-def export_to_sql(input_df: pd.DataFrame):
-     with mariadb_engine.connect() as conn:
+def export_to_sql(input_df: pd.DataFrame, engine: db.Engine):
+     with engine.connect() as conn:
         input_df.to_sql("peloton", conn, if_exists="append", index=False)
 
 
@@ -53,7 +40,7 @@ def calculate_excel_metrics(input_df: pd.DataFrame) -> pd.DataFrame:
 
 
 # Calculate number of new workouts not yet in DB
-def calculate_new_workouts_num(df_input: pd.DataFrame) -> int:
+def calculate_new_workouts_num(py_conn: pylotoncycle.PylotonCycle, df_input: pd.DataFrame) -> int:
     total_workouts = py_conn.GetMe()["total_workouts"]
     existing_workouts = df_input.shape[0]
     new_workouts = total_workouts - existing_workouts
@@ -66,7 +53,7 @@ def calculate_new_workouts_num(df_input: pd.DataFrame) -> int:
 
 
 # Retrieve new workouts (if any) from Peloton and create Pandas DataFrame from dict of lists
-def get_new_workouts(new_workouts_num: int) -> pd.DataFrame:
+def get_new_workouts(py_conn: pylotoncycle.PylotonCycle, new_workouts_num: int) -> pd.DataFrame:
     peloton_dict = {
     'start_time_iso': [],
     'start_time_local': [],
@@ -226,3 +213,44 @@ def get_new_workouts(new_workouts_num: int) -> pd.DataFrame:
                 peloton_dict['difficulty'].append(ride.get('difficulty_estimate', 0))
                 
         return pd.DataFrame(peloton_dict)
+
+
+
+def main():
+    EXCEL_FILENAME = "/mnt/home-ds920/peloton_workouts.xlsx"
+    
+    mariadb_engine = create_mariadb_engine(database="zmv")
+    py_conn = pylotoncycle.PylotonCycle(PELOTON_USERNAME, PELOTON_PASSWORD)
+
+    mariadb_df = ingest_sql_data(mariadb_engine)
+
+    # If there are new workouts: retrieve the data, write to MariaDB, 
+    #   re-pull from MariaDB, calculate new metrics, and write to Excel
+    new_workouts_num = calculate_new_workouts_num(py_conn, mariadb_df)
+    if new_workouts_num > 0:
+        new_entries = get_new_workouts(py_conn, new_workouts_num)
+        
+        export_to_sql(new_entries, mariadb_engine)
+            
+        all_entries = ingest_sql_data(mariadb_engine)
+
+        excel_df = calculate_excel_metrics(all_entries)
+
+        with pd.ExcelWriter(EXCEL_FILENAME, mode='a', if_sheet_exists='replace') as writer:
+            excel_df.to_excel(writer, sheet_name='peloton_workouts', index=False, float_format='%.2f') 
+            
+        print("New workout data:")
+        print(all_entries)
+            
+    pivot_df = get_sql_data_for_pivots(mariadb_engine)
+    year_table = get_pivot_table_year(pivot_df)
+    month_table = get_pivot_table_month(pivot_df)
+
+    print()
+    print(year_table)
+    print()
+    print(month_table.drop(columns=["annual_periods", "monthly_periods"]))
+    
+    
+if __name__ == "__main__":
+    main()

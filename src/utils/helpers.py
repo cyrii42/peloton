@@ -1,24 +1,24 @@
-from zoneinfo import ZoneInfo
-from datetime import datetime
-import json
 import os
 import platform
-from dotenv import load_dotenv
+import json
 import sqlalchemy as db
-
-load_dotenv()
-
-# Time zone setup & UTC offset functions
-EASTERN_TIME = ZoneInfo("America/New_York")
+from datetime import datetime
+from utils.constants import MARIADB_USER, MARIADB_PASS, MARIADB_SERVER
 
 
-def check_hostname() -> str:
-    if platform.system() == "Windows":
-        return platform.uname().node
-    else:
-        return os.uname()[1]
+# SQL database functions
+def create_mariadb_engine(database: str) -> db.Engine:
+    mariadb_url = db.URL.create(
+        "mysql+pymysql",
+        username=MARIADB_USER,
+        password=MARIADB_PASS,
+        host=MARIADB_SERVER,
+        database=database,
+    )
+    return db.create_engine(mariadb_url)
 
 
+# UTC offset functions
 class NaiveDatetimeError(Exception):
     def __init__(self, dt, message="Input datetime object is not timezone-aware"):
         self.dt = dt
@@ -44,8 +44,15 @@ def utc_offset_str(dt: datetime=datetime.now()) -> str:
         raise NaiveDatetimeError(dt)
 
 
+# Miscellaneous functions
+def check_hostname() -> str:
+    if platform.system() == "Windows":
+        return platform.uname().node
+    else:
+        return os.uname()[1]
+    
+
 def jprint(obj: dict):
-    # create a formatted string of the Python JSON object
     text = json.dumps(obj, sort_keys=True, indent=2)
     print(text)
     
@@ -76,31 +83,3 @@ def check_dir(subdir: str) -> bool:
         else:
             print("Couldn't find the 'python' directory.  Bailing out.")
             return False
-        
-
-# InfluxDB setup
-INFLUX_URL = "http://mac-mini.box:8086"
-INFLUX_ORG = "ZMV"
-INFLUX_TOKEN_HASS = os.getenv("INFLUX_TOKEN_HASS") # Home Assistant read-only
-INFLUX_TOKEN_CONED = os.getenv("INFLUX_TOKEN_CONED") # Con Edison token
-INFLUX_BUCKET_CONED = "conedison"
-INFLUX_BUCKET_HASS = "homeassistant"
-
-# Home Assistant MariaDB setup
-MARIADB_SERVER = os.getenv("MARIADB_HASS_IP")
-MARIADB_DATABASE_HASS = "homeassistant"
-MARIADB_DATABASE_ZMV = "zmv"
-MARIADB_USER = os.getenv("MARIADB_USERNAME_PYTHON")
-MARIADB_PASS = os.getenv("MARIADB_PASSWORD_PYTHON")
-MARIADB_ENGINE_HASS = db.create_engine(
-    f'mysql+pymysql://{MARIADB_USER}:{MARIADB_PASS}@{MARIADB_SERVER}/{MARIADB_DATABASE_HASS}?charset=utf8mb4')
-MARIADB_ENGINE_ZMV = db.create_engine(
-    f'mysql+pymysql://{MARIADB_USER}:{MARIADB_PASS}@{MARIADB_SERVER}/{MARIADB_DATABASE_ZMV}?charset=utf8mb4')
-
-# Tautulli setup
-TAUTULLI_URL = os.getenv("TAUTULLI_URL")
-TAUTULLI_API_KEY = os.getenv("TAUTULLI_API_KEY")
-
-# PylotonCycle setup
-PELOTON_USERNAME = os.getenv("PELOTON_USERNAME")
-PELOTON_PASSWORD = os.getenv("PELOTON_PASSWORD")

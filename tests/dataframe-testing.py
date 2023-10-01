@@ -1,14 +1,13 @@
 from datetime import datetime
 from pylotoncycle import pylotoncycle
-from ..utils.config import peloton_username, peloton_password
-from ..utils.time import eastern_time
+from utils.constants import EASTERN_TIME, PELOTON_USERNAME, PELOTON_PASSWORD
 import pandas as pd
 import csv
 import json
 from pprint import pprint
 
 # Create PylotonCycle connection object
-py_conn = pylotoncycle.PylotonCycle(peloton_username, peloton_password)
+py_conn = pylotoncycle.PylotonCycle(PELOTON_USERNAME, PELOTON_PASSWORD)
 
 # # Get some recent workouts
 # workouts = pd.Series(py_conn.GetRecentWorkouts(1))

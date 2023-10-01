@@ -4,19 +4,20 @@
 ###### run server with command:  gunicorn --reload -w 3 -b 0.0.0.0:9999 app:server   ########
 
 # Import packages
-import datetime
+import datetime as datetime
 from dash import Dash, html, dash_table, dcc, callback, Output, Input
 import pandas as pd
-import sqlite3
 import plotly.express as px
 import dash_bootstrap_components as dbc
-from config.config import mariadb_engine
-from utils.time import eastern_time
-from config import ids
-from utils.peloton_pivots import get_pivot_table_year, get_pivot_table_month
+from utils.constants import EASTERN_TIME
+from utils import ids
+import utils.peloton_pivots as pivots
+from utils.helpers import create_mariadb_engine
 
-df_pivot = get_pivot_table_month()
-df_pivot = df_pivot.drop(columns=['annual_periods', 'monthly_periods']).round(2)
+mariadb_engine = create_mariadb_engine(database="zmv")
+
+df_pivot = pivots.get_pivot_table_month(pivots.get_sql_data_for_pivots(mariadb_engine))
+df_pivot = df_pivot.drop(columns=['annual_periods', 'monthly_periods'])
 
 
 # Create Pandas DataFrame from existing table

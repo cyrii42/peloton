@@ -1,8 +1,9 @@
 import pandas as pd
-from config.config import MARIADB_ENGINE_ZMV as mariadb_engine
+import sqlalchemy as db
+from utils.helpers import create_mariadb_engine
 
-def get_pt_data() -> pd.DataFrame():
-    with mariadb_engine.connect() as conn:
+def get_sql_data_for_pivots(engine: db.Engine) -> pd.DataFrame():
+    with engine.connect() as conn:
        df = pd.read_sql("SELECT * from peloton", conn, parse_dates=['start_time_iso', 'start_time_local'])
 
     df['annual_periods'] = [x.to_period(freq='Y') for x in df['start_time_iso'].tolist()]
@@ -18,9 +19,7 @@ def get_pt_data() -> pd.DataFrame():
     
     return df.reset_index()
 
-def get_pivot_table_year() -> pd.DataFrame():
-    df = get_pt_data()
-
+def get_pivot_table_year(df: pd.DataFrame) -> pd.DataFrame():
     year_table = df.pivot_table(
         values=[
             'title', 
@@ -43,11 +42,9 @@ def get_pivot_table_year() -> pd.DataFrame():
             }
         )
     
-    return year_table.reset_index()
+    return year_table.reset_index().round(2)
 
-def get_pivot_table_month() -> pd.DataFrame():
-    df = get_pt_data()
-    
+def get_pivot_table_month(df: pd.DataFrame) -> pd.DataFrame():
     month_table = df.pivot_table( 
         values=[
             'title', 
@@ -74,11 +71,16 @@ def get_pivot_table_month() -> pd.DataFrame():
             }
         )
     
-    return month_table.reset_index()
+    return month_table.reset_index().round(2)
 
-if __name__ == "__main__":
-    year_table = get_pivot_table_year()
-    month_table = get_pivot_table_month()
+
+def main():
+    mariadb_engine = create_mariadb_engine(database="zmv")
+    
+    df = get_sql_data_for_pivots(mariadb_engine)
+    
+    year_table = get_pivot_table_year(df)
+    month_table = get_pivot_table_month(df)
     
     ##### Aug 31, 2023: added "to_string()" at the end so that full table prints #####
     # print(year_table[['title', 'unique_days', 'duration_min', 'distance', 'calories', 'difficulty', 'output_per_min']].round(2).to_string())  
@@ -90,3 +92,8 @@ if __name__ == "__main__":
     # print(df['monthly_periods'].nunique())
 
     # table.to_excel('test2.xlsx', sheet_name='peloton_pivot', index=True, float_format='%.2f')
+
+
+if __name__ == "__main__":
+    main()
+
