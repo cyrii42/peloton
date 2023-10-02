@@ -5,16 +5,17 @@
 # GetFollowersById(self, userid=None)
 
 import pandas as pd
+import sqlalchemy as db
 from dataclasses import dataclass
 from typing import List
-from datetime import datetime, timezone
+from datetime import datetime
 from pylotoncycle import pylotoncycle
 from zoneinfo import ZoneInfo
 from utils.constants import EASTERN_TIME, PELOTON_USERNAME, PELOTON_PASSWORD
-from utils.helpers import create_mariadb_engine, get_peloton_data_from_sql, export_peloton_data_to_sql
-from peloton_to_mariadb import calculate_new_workouts_num, get_new_workouts
+from utils.helpers import create_mariadb_engine
 from utils.peloton_pivots import get_sql_data_for_pivots, get_pivot_table_year, get_pivot_table_month
  
+
 @dataclass
 class PelotonRide:
     id: str = None
@@ -41,9 +42,9 @@ class PelotonRide:
     ride_duration: int = None
     ride_length: int = None
     distance: float = None
-    ride_difficulty: float = None
+    ride_difficulty_estimate: float = None
     calories: float = None
-    output_total: float = None
+    total_output: float = None
     output_avg: int = None
     output_max: int = None
     cadence_avg: int = None
@@ -72,16 +73,19 @@ class PelotonRide:
                 self.end_time_iso = datetime.fromtimestamp(self.end_time, tz=ZoneInfo(self.timezone)).isoformat()
             else:
                 self.end_time_iso = datetime.fromtimestamp(
-                    self.end_time, tz=EASTERN_TIME).isoformat()     
+                    self.end_time, tz=EASTERN_TIME).isoformat()   
                 
-                
-    # def create_dataframe_for_sql(self):
-        
-            
+    # Added "dropna(axis='columns')" to drop empty columns and avoid FUTUREWARNING: 
+    #       "FutureWarning: The behavior of DataFrame concatenation with empty 
+    #       or all-NA entries is deprecated. In a future version, this will no longer
+    #       exclude empty or all-NA columns when determining the result dtypes. To retain 
+    #       the old behavior, exclude the relevant entries before the concat operation."
+    def create_dataframe(self):
+        return pd.DataFrame([self]).dropna(axis='columns', how='all')
     
     
 @dataclass
-class RideGroup:
+class PelotonRideGroup:
     rides: List[PelotonRide]
     
     def __str__(self):
@@ -89,10 +93,45 @@ class RideGroup:
         for ride in self.rides:
             string = string + "\n" + "\n" + ride.__repr__()
         return f"{self.__class__.__name__} ({len(self.rides)} rides):{string}"
+    
+    def create_dataframe(self):
+        rides_list = [ride.create_dataframe() for ride in self.rides]
+        
+        return pd.concat(rides_list, ignore_index=True)
 
 
+################# FUNCTIONS ########################
 
-def loop_through_workouts(py_conn: pylotoncycle.PylotonCycle, workouts_num: int):
+def get_peloton_data_from_sql(engine: db.Engine) -> pd.DataFrame:
+    with engine.connect() as conn:
+        df = pd.read_sql(
+            "SELECT * from peloton",
+            conn,
+            index_col='start_time_iso',
+            parse_dates=['start_time_iso', 'start_time_local']
+            )
+    return df
+
+
+def export_peloton_data_to_sql(input_df: pd.DataFrame, engine: db.Engine):
+     with engine.connect() as conn:
+        input_df.to_sql("peloton", conn, if_exists="append", index=False)
+        
+
+# Calculate number of new workouts not yet in DB
+def calculate_new_workouts_num(py_conn: pylotoncycle.PylotonCycle, df_input: pd.DataFrame) -> int:
+    total_workouts = py_conn.GetMe()["total_workouts"]
+    existing_workouts = df_input.shape[0]
+    new_workouts = total_workouts - existing_workouts
+
+    print("Total Workouts: " + str(total_workouts))
+    print("Workouts in Database: " + str(existing_workouts))
+    print("New Workouts to Write: " + str(new_workouts))
+    
+    return new_workouts
+
+
+def loop_through_workouts(py_conn: pylotoncycle.PylotonCycle, workouts_num: int) -> pd.DataFrame:
     workouts = py_conn.GetRecentWorkouts(workouts_num)
     ride_objects_list = []
     for w in workouts:
@@ -146,17 +185,57 @@ def loop_through_workouts(py_conn: pylotoncycle.PylotonCycle, workouts_num: int)
         # We've pulled everything from this ride, so add this new ride object to the running list
         ride_objects_list.append(ride_object)
                                  
-    # Once we've looped through all new rides, create a RideGroup object from the list
-    new_rides = RideGroup(ride_objects_list)
-    print(new_rides)    
+    # Once we've looped through all new rides, create a PelotonRideGroup object from the list
+    ride_group = PelotonRideGroup(ride_objects_list)
     
+    # Use the "create_dataframe" method in the PelotonRideGroup object to make a DataFrame
+    return ride_group.create_dataframe()
+
 
 def main():
-    sql_engine = create_mariadb_engine(database="zmv")
-    
+    EXCEL_FILENAME = "/mnt/home-ds920/peloton_workouts.xlsx"
+
+
     py_conn = pylotoncycle.PylotonCycle(PELOTON_USERNAME, PELOTON_PASSWORD) 
     
-    loop_through_workouts(py_conn, workouts_num=3)   
+    ########## consider creating multiple SQL tables for stuff like 
+    ##########  splits data, and joining them together!!!
+    
+    
+    
+    ########## consider dumping ALL returned data to a DF and then to MariaDB
+    
+    
+    
+    ########## DON'T UNCOMMENT BELOW UNTIL YOU MAKE NEW TABLE ############
+    ######################################################################
+    # sql_engine = create_mariadb_engine(database="zmv")
+    # mariadb_df = get_peloton_data_from_sql(sql_engine)
+    
+    # # If there are new workouts: retrieve the data, write to MariaDB, 
+    # #   re-pull from MariaDB, calculate new metrics, and write to Excel
+    # new_workouts_num = calculate_new_workouts_num(py_conn, mariadb_df)
+    # if new_workouts_num > 0:
+    #     new_entries = loop_through_workouts(py_conn, new_workouts_num)
+        
+    #     export_peloton_data_to_sql(new_entries, sql_engine)
+            
+    #     all_entries = get_peloton_data_from_sql(sql_engine)
+
+    #     # excel_df = calculate_excel_metrics(all_entries)
+
+    #     # with pd.ExcelWriter(EXCEL_FILENAME, mode='a', if_sheet_exists='replace') as writer:
+    #     #     excel_df.to_excel(writer, sheet_name='peloton_workouts', index=False, float_format='%.2f') 
+            
+    #     print("New workout data:")
+    #     print(all_entries)
+    
+    
+    
+    
+    df = loop_through_workouts(py_conn, workouts_num=6)
+    print(df)   
+    df.to_csv(f"/mnt/home-ds920/asdf-{datetime.now().strftime('%H-%M-%s')}.csv")
         
         
 if __name__ == "__main__":
