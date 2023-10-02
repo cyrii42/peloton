@@ -4,7 +4,7 @@ from utils.helpers import create_mariadb_engine
 
 def get_sql_data_for_pivots(engine: db.Engine) -> pd.DataFrame():
     with engine.connect() as conn:
-       df = pd.read_sql("SELECT * from peloton", conn, parse_dates=['start_time_iso', 'start_time_local'])
+       df = pd.read_sql(f"SELECT * from peloton", conn, parse_dates=['start_time_iso', 'start_time_local'])
 
     df['annual_periods'] = [x.to_period(freq='Y') for x in df['start_time_iso'].tolist()]
     df['monthly_periods'] = [x.to_period(freq='M') for x in df['start_time_iso'].tolist()]
