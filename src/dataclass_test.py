@@ -6,7 +6,7 @@
 
 import pandas as pd
 import sqlalchemy as db
-from dataclasses import dataclass
+from dataclasses import dataclass, make_dataclass
 from typing import List
 from datetime import datetime
 from pylotoncycle import pylotoncycle
@@ -133,10 +133,13 @@ def calculate_new_workouts_num(py_conn: pylotoncycle.PylotonCycle, df_input: pd.
 
 
 def loop_through_workouts(py_conn: pylotoncycle.PylotonCycle, workouts_num: int) -> pd.DataFrame:
-    workouts = py_conn.GetRecentWorkouts(workouts_num)
-    ride_objects_list = []
+    ride_group_list = []
+    
+    workouts = py_conn.GetRecentWorkouts(workouts_num) # defaults to all workouts if nothing passed
+    
     for w in workouts:
         ride_object = PelotonRide()
+        # ride_column_dict = {}
         df_workout = pd.json_normalize(w)
         df_workout_ride = pd.json_normalize(w['ride'])
         workout_id = df_workout['id'].loc[0]
@@ -145,11 +148,14 @@ def loop_through_workouts(py_conn: pylotoncycle.PylotonCycle, workouts_num: int)
         for column in df_workout.columns:
             if not df_workout[column].dropna().empty:
                 setattr(ride_object, column, df_workout[column][0])
+        # ride_column_dict.update({column: df_workout[column][0] for column in df_workout.columns})
+        
                 
         # Loop through the "ride" columns
         for column in df_workout_ride.columns:
             if not df_workout_ride[column].dropna().empty:
                 setattr(ride_object, f"ride_{column}", df_workout_ride[column][0])
+        # ride_column_dict.update({column: df_workout_ride[column][0] for column in df_workout_ride.columns})
 
         # Pull metrics from Peloton, copy into a dictionary, create DataFrames
         workout_metrics_by_id_dict = py_conn.GetWorkoutMetricsById(workout_id)
@@ -163,31 +169,40 @@ def loop_through_workouts(py_conn: pylotoncycle.PylotonCycle, workouts_num: int)
         # Loop through summaries (total_output, distance, calories)
         for index, row in df_summaries.iterrows():
             setattr(ride_object, df_summaries['slug'][index], df_summaries['value'][index])
+        # ride_column_dict.update({ df_summaries['slug'][index]: df_summaries['value'][index] for index, row in df_summaries.iterrows()})
 
         # Loop through average values (output, cadence, resistance, speed, HR)
         for index, value in df_average_values.items():
             setattr(ride_object, f"{index}_avg", value)
+        # ride_column_dict.update({ f"{index}_avg": value for index, value in df_average_values.items() })
           
         # Loop through maximum values (output, cadence, resistance, speed, HR)  
         for index, value in df_max_values.items():
             setattr(ride_object, f"{index}_max", value)
+        # ride_column_dict.update({ f"{index}_max": value for index, value in df_max_values.items() })
             
         # Write "total_effort_points" to "scrive_score"
         setattr(ride_object, "strive_score", df_effort_zones['total_effort_points'][0])
+        # ride_column_dict.update({ "strive_score": df_effort_zones['total_effort_points'][0] })
         
         # Loop through HR zone durations
         for column in df_hr_zone_durations.columns:
             if not df_hr_zone_durations[column].dropna().empty:
                 setattr(ride_object, column, df_hr_zone_durations[column][0])
+        # ride_column_dict.update({ column: df_hr_zone_durations[column][0] for column in df_hr_zone_durations.columns })
 
         # Go back through and create ISO strings from "start_time" and "end_time"
         ride_object.set_datetimes()
+        
+        # # Create the PelotonRide object from the "ride_column_dict" dictionary
+        # ride_object = PelotonRide([ride_column_dict])
+        # print(ride_object)
 
         # We've pulled everything from this ride, so add this new ride object to the running list
-        ride_objects_list.append(ride_object)
+        ride_group_list.append(ride_object)   ### REPLACE WITH "ADD RIDE" METHOD IN PELOTONRIDEGROUP?????
                                  
     # Once we've looped through all new rides, create a PelotonRideGroup object from the list
-    ride_group = PelotonRideGroup(ride_objects_list)
+    ride_group = PelotonRideGroup(ride_group_list)
     
     # Use the "create_dataframe" method in the PelotonRideGroup object to make a DataFrame
     return ride_group.create_dataframe()
