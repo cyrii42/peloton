@@ -60,6 +60,7 @@ class PelotonRide:
     heart_rate_z2_duration: int = None
     heart_rate_z3_duration: int = None
     heart_rate_z4_duration: int = None
+    heart_rate_z5_duration: int = None
     
     def set_datetimes(self):
         if self.start_time:          
@@ -201,9 +202,47 @@ def main():
     ########## consider creating multiple SQL tables for stuff like 
     ##########  splits data, and joining them together!!!
     
+    '''
+    ideas for further improvement:
     
+    - loop through ALL Pyloton functions and dump ALL raw data to MariaDB 
+        (with workout_id) as the index/primary key
     
-    ########## consider dumping ALL returned data to a DF and then to MariaDB
+    - make multiple other tables, each with the workout_id as the index/primary key
+        - ride mile splits
+        - output, speed, resistance for each minute (in metrics/metrics JSON)
+        
+        - subcategories to examine from GetWorkoutMetricsById (see "metrics-10am.csv"):
+            - average_summaries
+            - summaries
+            - metrics
+                - values (in output, cadence, resistance, and heart rate)
+                - zones (in heart rate)
+                
+            - effort_zones
+            
+            - segment_list
+            - seconds_since_pedaling_start
+            - muscle_group_score
+            - splits_data
+
+                - splits
+            - splits_metrics
+                - header
+                - metrics
+                    - data (in each sub-unit)
+            - target_performance_metrics
+                - target_graph_metrics
+                    - upper, lower, average (in each sub-unit)
+
+            - target_metrics_performance_data
+                - target_metrics
+                    - metrics (in each sub-unit)
+                - time_in_metric
+    
+    - learn about SQL/Pandas "join" functions
+    
+    '''
     
     
     
