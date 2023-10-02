@@ -81,7 +81,7 @@ class PelotonRide:
     #       exclude empty or all-NA columns when determining the result dtypes. To retain 
     #       the old behavior, exclude the relevant entries before the concat operation."
     def create_dataframe(self):
-        return pd.DataFrame([self]).dropna(axis='columns', how='all')
+        return pd.DataFrame([self]).dropna(axis='columns', how='all')   #.set_index('id')
     
     
 @dataclass
@@ -97,7 +97,7 @@ class PelotonRideGroup:
     def create_dataframe(self):
         rides_list = [ride.create_dataframe() for ride in reversed(self.rides)]
         
-        return pd.concat(rides_list, ignore_index=True)
+        return pd.concat(rides_list, ignore_index=True)  # if set_index('id') above, set ignore_index=False 
 
 
 ################# FUNCTIONS ########################
