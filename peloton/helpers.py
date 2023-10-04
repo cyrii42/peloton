@@ -19,38 +19,6 @@ def create_mariadb_engine(database: str) -> db.Engine:
     return db.create_engine(mariadb_url)
 
 
-def select_all_from_table(
-                        engine: db.Engine, 
-                        table: str, 
-                        index_col: str = None, 
-                        parse_dates: list[str] = None
-                            ) -> pd.DataFrame:
-    with engine.connect() as conn:
-        df = pd.read_sql(
-            f"SELECT * from {table}",
-            conn,
-            index_col=index_col,
-            parse_dates=parse_dates
-            )
-    return df
-
-
-def get_peloton_data_from_sql(engine: db.Engine) -> pd.DataFrame:
-    with engine.connect() as conn:
-        df = pd.read_sql(
-            "SELECT * from peloton",
-            conn,
-            index_col='start_time_iso',
-            parse_dates=['start_time_iso', 'start_time_local']
-            )
-    return df
-
-
-def export_peloton_data_to_sql(input_df: pd.DataFrame, engine: db.Engine):
-     with engine.connect() as conn:
-        input_df.to_sql("peloton", conn, if_exists="append", index=False)
-
-
 # UTC offset functions
 class NaiveDatetimeError(Exception):
     def __init__(self, dt, message="Input datetime object is not timezone-aware"):
