@@ -6,6 +6,7 @@
 
 import pandas as pd
 import sqlalchemy as db
+import inspect
 from dataclasses import dataclass
 from typing import List
 from datetime import datetime
@@ -60,6 +61,16 @@ class PelotonRide:
     heart_rate_z3_duration: int = None
     heart_rate_z4_duration: int = None
     heart_rate_z5_duration: int = None
+    
+    # adapted from:
+    # https://stackoverflow.com/questions/54678337/how-does-one-ignore-extra-arguments-passed-to-a-dataclass
+    @classmethod
+    def from_dict(cls, dict):    # "cls" is like "self" but for a @classmethod
+        dataclass_fields = inspect.signature(cls).parameters  # an OrderedDict of the class attr keys
+        return cls(**{  ## return a instantation of the class with the dict keypairs as parameters
+            k: v for k, v in dict.items()   # items() returns the dict in a list of tuples
+            if k in dataclass_fields  # checks if key is one of the class's parameters
+        })
     
     def set_datetimes(self):
         if self.start_time:          
