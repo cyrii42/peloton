@@ -12,8 +12,8 @@ from typing import List
 from datetime import datetime
 from pylotoncycle import pylotoncycle
 from zoneinfo import ZoneInfo
-from utils.constants import EASTERN_TIME, PELOTON_USERNAME, PELOTON_PASSWORD
-from utils.helpers import create_mariadb_engine, select_all_from_table
+from utils.constants import EASTERN_TIME, PELOTON_USERNAME, PELOTON_PASSWORD, \
+    MARIADB_USER, MARIADB_PASS, MARIADB_SERVER
  
 
 @dataclass
@@ -112,6 +112,39 @@ class PelotonRideGroup:
 
 
 ################# FUNCTIONS ########################
+# SQL database functions
+def create_mariadb_engine(database: str) -> db.Engine:
+    mariadb_url = db.URL.create(
+        drivername="mysql+pymysql",
+        username=MARIADB_USER,
+        password=MARIADB_PASS,
+        host=MARIADB_SERVER,
+        database=database,
+    )
+    return db.create_engine(mariadb_url)
+
+
+# def select_all_from_table(engine: db.Engine, table: str, index_col: str = None, 
+#                           parse_dates: list[str] = None) -> pd.DataFrame:
+#     with engine.connect() as conn:
+#         df = pd.read_sql(
+#             f"SELECT * from {table}",
+#             conn,
+#             index_col=index_col,
+#             parse_dates=parse_dates
+#             )
+#     return df
+
+
+# def get_peloton_data_from_sql(engine: db.Engine) -> pd.DataFrame:
+#     with engine.connect() as conn:
+#         df = pd.read_sql(
+#             "SELECT * from peloton",
+#             conn,
+#             index_col='start_time_iso',
+#             parse_dates=['start_time_iso', 'start_time_local']
+#             )
+#     return df
 
 
 def export_peloton_data_to_sql(input_df: pd.DataFrame, engine: db.Engine, table: str, index: bool = False):
@@ -132,7 +165,7 @@ def calculate_new_workouts_num(py_conn: pylotoncycle.PylotonCycle, df_input: pd.
     return new_workouts
 
 
-def process_workouts(py_conn: pylotoncycle.PylotonCycle, workouts_num: int) -> pd.DataFrame:
+def process_workouts(py_conn: pylotoncycle.PylotonCycle, workouts_num: int = None) -> pd.DataFrame:
     ride_group_list = []
     
     workouts = py_conn.GetRecentWorkouts(workouts_num)  ## defaults to all workouts if nothing passed
@@ -149,29 +182,32 @@ def process_workouts(py_conn: pylotoncycle.PylotonCycle, workouts_num: int) -> p
 
         # Pull metrics from Peloton, copy into a dictionary, create DataFrames
         workout_metrics_by_id_dict = py_conn.GetWorkoutMetricsById(workout_id)
-        df_summaries = pd.json_normalize(workout_metrics_by_id_dict['summaries'])
-        df_metrics = pd.json_normalize(workout_metrics_by_id_dict['metrics'])
-        df_effort_zones = pd.json_normalize(workout_metrics_by_id_dict['effort_zones'])
-        df_hr_zone_durations = pd.json_normalize(workout_metrics_by_id_dict['effort_zones']['heart_rate_zone_durations'])
-        df_average_values = df_metrics.set_index('slug')['average_value']
-        df_max_values = df_metrics.set_index('slug')['max_value']
         
         # Loop through summaries (total_output, distance, calories)
+        df_summaries = pd.json_normalize(workout_metrics_by_id_dict['summaries'])
         ride_attributes_dict.update({ df_summaries['slug'][index]: df_summaries['value'][index] for index, row in df_summaries.iterrows() })
-
+                     
         # Loop through average & max values (output, cadence, resistance, speed, HR)
+        df_metrics = pd.json_normalize(workout_metrics_by_id_dict['metrics'])
+        df_average_values = df_metrics.set_index('slug')['average_value']
+        df_max_values = df_metrics.set_index('slug')['max_value']
         ride_attributes_dict.update({ f"{index}_avg": value for index, value in df_average_values.items() })
         ride_attributes_dict.update({ f"{index}_max": value for index, value in df_max_values.items() })
-        
-        # Set "Strive Score" attribute & loop through HR Zone Duration columns
-        ride_attributes_dict.update({ "strive_score": df_effort_zones['total_effort_points'][0] })
-        ride_attributes_dict.update({ column: df_hr_zone_durations[column][0] for column in df_hr_zone_durations.columns })
+
+        # Set "Strive Score" attribute & loop through HR Zone Duration columns        
+        if 'effort_zones' in workout_metrics_by_id_dict.keys():
+            df_effort_zones = pd.json_normalize(workout_metrics_by_id_dict['effort_zones'])
+            df_hr_zone_durations = pd.json_normalize(workout_metrics_by_id_dict['effort_zones']['heart_rate_zone_durations'])
+
+            ride_attributes_dict.update({ "strive_score": df_effort_zones['total_effort_points'][0] })
+            ride_attributes_dict.update({ column: df_hr_zone_durations[column][0] for column in df_hr_zone_durations.columns })        
 
         # Create the PelotonRide object from the "ride_attributes_dict" dictionary you just created
         ride_object = PelotonRide.from_dict(ride_attributes_dict)
 
         # Add newly created ride object to the running list (which will be used after the loop to make a PelotonRideGroup object)
         ride_group_list.append(ride_object)
+        print(f"Pulled and processed {ride_object.start_time_iso}")
                                  
     # After the loop, create a PelotonRideGroup object from the list of PelotonRide objects
     ride_group = PelotonRideGroup(ride_group_list)
@@ -189,9 +225,9 @@ def main():
         
     sql_engine = create_mariadb_engine(SQL_DB)
          
-    df_sql = select_all_from_table(sql_engine, SQL_TABLE, index_col=None, parse_dates=None)
+    # df_sql = select_all_from_table(sql_engine, SQL_TABLE, index_col=None, parse_dates=None)
 
-    print(df_sql)
+    # print(df_sql)
     
     # If there are new workouts: retrieve the data, write to MariaDB, 
     #   re-pull from MariaDB, calculate new metrics, and write to Excel
@@ -213,11 +249,11 @@ def main():
     #     print(all_workouts_df)
     
 
-    df = process_workouts(py_conn, workouts_num=2)
-    print(df)   
+    df = process_workouts(py_conn, workouts_num=20)  ## might need to pull data in batches to avoid API timeout
+    print(df)    
     df.to_csv(f"/mnt/home-ds920/asdf-{datetime.now().strftime('%Y-%m-%d %H-%M-%s')}.csv")
     
-    # export_peloton_data_to_sql(df, sql_engine, "test")
+    export_peloton_data_to_sql(df, sql_engine, "test")
     
     
     
