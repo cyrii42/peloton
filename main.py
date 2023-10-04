@@ -12,7 +12,7 @@ from typing import List
 from datetime import datetime
 from pylotoncycle import pylotoncycle
 from zoneinfo import ZoneInfo
-from utils.constants import EASTERN_TIME, PELOTON_USERNAME, PELOTON_PASSWORD, \
+from peloton.constants import EASTERN_TIME, PELOTON_USERNAME, PELOTON_PASSWORD, \
     MARIADB_USER, MARIADB_PASS, MARIADB_SERVER
  
 
@@ -249,7 +249,7 @@ def main():
     #     print(all_workouts_df)
     
 
-    df = process_workouts(py_conn, workouts_num=20)  ## might need to pull data in batches to avoid API timeout
+    df = process_workouts(py_conn, workouts_num=2)  ## might need to pull data in batches to avoid API timeout
     print(df)    
     df.to_csv(f"/mnt/home-ds920/asdf-{datetime.now().strftime('%Y-%m-%d %H-%M-%s')}.csv")
     
