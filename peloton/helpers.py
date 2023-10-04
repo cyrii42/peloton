@@ -4,7 +4,7 @@ import json
 import sqlalchemy as db
 import pandas as pd
 from datetime import datetime
-from utils.constants import MARIADB_USER, MARIADB_PASS, MARIADB_SERVER
+from constants import MARIADB_USER, MARIADB_PASS, MARIADB_SERVER
 
 
 # SQL database functions
