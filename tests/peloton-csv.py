@@ -1,5 +1,5 @@
 from pylotoncycle import pylotoncycle
-from utils.constants import PELOTON_USERNAME, PELOTON_PASSWORD
+from peloton.utils.constants import PELOTON_USERNAME, PELOTON_PASSWORD
 
 # Create PylotonCycle connection object
 py_conn = pylotoncycle.PylotonCycle(PELOTON_USERNAME, PELOTON_PASSWORD)

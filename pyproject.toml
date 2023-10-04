@@ -1,14 +1,23 @@
-[build-system]
-requires = ["setuptools", "setuptools-scm"]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "peloton"
-version = "0.0.1"
-dependencies = [
-    "requests",
-    'importlib-metadata; python_version<"3.8"',
-]
+version = "0.1.0"
+description = "Python tools for downloading and manipulating Peloton workout data"
+authors = ["Zach Vaughan <85461794+cyrii42@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
 
-# pip install --upgrade build
-# pip install --editable .
+[tool.poetry.dependencies]
+python = "<3.13,>=3.9"
+pandas = "^2.1.1"
+SQLAlchemy = "^2.0.21"
+pymysql = "^1.1.0"
+pylotoncycle = "^0.6.0"
+dash = "^2.13.0"
+plotly = "^5.17.0"
+influxdb-client = "^1.38.0"
+gunicorn = "^21.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
