@@ -1,5 +1,6 @@
 import os
 from zoneinfo import ZoneInfo
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -17,6 +18,7 @@ INFLUX_TOKEN_CONED = os.getenv("INFLUX_TOKEN_CONED") # Con Edison token
 MARIADB_SERVER = os.getenv("MARIADB_HASS_IP")
 MARIADB_USER = os.getenv("MARIADB_USERNAME_PYTHON")
 MARIADB_PASS = os.getenv("MARIADB_PASSWORD_PYTHON")
+MARIADB_DATABASE = "peloton"
 
 # PylotonCycle setup
 PELOTON_USERNAME = os.getenv("PELOTON_USERNAME")
