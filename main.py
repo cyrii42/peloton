@@ -89,7 +89,7 @@ def main():
     print(df)    
     df.to_csv(f"/mnt/home-ds920/asdf-{datetime.now().strftime('%Y-%m-%d %H-%M-%s')}.csv")
     
-    zmv_peloton.export_peloton_data_to_sql(df, sql_engine, "test")
+    # zmv_peloton.export_peloton_data_to_sql(df, sql_engine, "test")
     
 
         
