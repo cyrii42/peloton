@@ -1,15 +1,17 @@
 import inspect
-import pandas as pd
-from dataclasses import dataclass 
+from dataclasses import dataclass
 from datetime import datetime
 from typing import List
 from zoneinfo import ZoneInfo
-from constants import EASTERN_TIME
+
+import pandas as pd
+
+from peloton.constants import EASTERN_TIME
 
 
 @dataclass
 class PelotonRide:
-    id: str = None
+    workout_id: str = None
     start_time: int = None
     start_time_iso: str = None
     end_time: int = None
