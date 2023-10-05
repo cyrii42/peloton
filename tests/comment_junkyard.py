@@ -5,6 +5,179 @@
 ################################################################################
 ################################################################################
 
+
+
+
+
+
+
+
+
+    
+
+    # (df_raw_workout_data_new, df_raw_workout_metrics_data_new) = pull_new_raw_data_from_peloton(py_conn, 3)
+
+    # # print(df_raw_workout_data_new)
+    # # print("")
+    # # print(df_raw_workout_metrics_data_new)
+
+    # df_processed = process_workouts_from_raw_pyloton_data(df_raw_workout_data_new, df_raw_workout_metrics_data_new)
+
+    # print(df_processed)
+
+    # filename_out_workouts_processed = str(datetime.now().strftime("%Y-%m-%d_%H-%M")) + "_peloton_raw_data_metrics.csv"
+    # filename_out_metrics_processed = str(datetime.now().strftime("%Y-%m-%d_%H-%M")) + "_peloton_raw_data_metrics.csv"
+
+    # df_raw_workout_data_for_processing = ingest_raw_workout_data_from_sql(sql_engine).reset_index()
+    # df_raw_metrics_data_for_processing = ingest_raw_metrics_data_from_sql(sql_engine).reset_index()
+
+    # df_processed = process_workouts_from_raw_data(df_raw_workout_data_for_processing, df_raw_metrics_data_for_processing)
+    # print(df_processed)
+    # filename_out_processed = str(datetime.now().strftime("%Y-%m-%d_%H-%M")) + "_peloton_processed_data.csv"
+
+    # df_processed.to_csv(filename_out_processed, index=False, index_label='id')
+
+    # export_processed_data_to_sql(df_processed, sql_engine)
+
+    ##### VARIABLES FOR AN INITIAL WRITE OF DATA TO SQL FROM CSV FILES###############
+    # df_workouts_first_time = pd.read_csv("2023-10-04_22-16_peloton_raw_data_workouts.csv", index_col=0)
+    # export_raw_workout_data_to_sql(df_workouts_first_time, sql_conn)
+
+    # df_workout_metrics_first_time = pd.read_csv("2023-10-05_11-25_peloton_raw_data_metrics.csv", index_col=0)
+    # export_raw_metrics_data_to_sql(df_workout_metrics_first_time, sql_conn)
+    ####################################################################################
+
+    # df_workouts_existing = pd.read_csv("2023-10-04_22-16_peloton_raw_data_workouts.csv", index_col=0)
+    # df_workout_metrics_existing = pd.read_csv("2023-10-05_11-25_peloton_raw_data_metrics.csv", index_col=0)
+
+    # new_workouts_num = calculate_new_workouts_num(py_conn, df_workouts_existing)
+
+    # if new_workouts_num > 0:
+    #     (df_workouts_new, df_workout_metrics_new) = pull_new_raw_data_from_peloton(py_conn, new_workouts_num)
+
+    #     ##### Add something here to WRITE the new raw data to CSV / MariaDB
+
+    #     df_processed = process_workouts_from_raw_data(df_workouts_new, df_workout_metrics_new)
+
+    #     ##### Add something here to WRITE the new processed data to CSV / MariaDB
+
+    # process_workouts_from_raw_data()
+    # filename_out_workouts_processed = str(datetime.now().strftime("%Y-%m-%d_%H-%M")) + "_peloton_raw_data_metrics.csv"
+    # filename_out_metrics_processed = str(datetime.now().strftime("%Y-%m-%d_%H-%M")) + "_peloton_raw_data_metrics.csv"
+
+    # print(get_total_workouts_num(py_conn))
+
+    # random_str_list = [random.randint(100000, 999999) for x in range(170)]
+    # split_workout_ids_into_groups(random_str_list)
+
+    # get_full_list_of_workout_ids(py_conn, 170)
+
+    # get_full_list_of_workout_ids_from_csv("workout_ids.csv")
+
+    # workout_ids_list = get_full_list_of_workout_ids_from_csv("workout_ids.csv")
+    # workout_ids_list_of_lists = split_workout_ids_into_groups(workout_ids_list)
+
+    # filename_out_workouts = str(datetime.now().strftime("%Y-%m-%d_%H-%M")) + "_peloton_raw_data_workouts.csv"
+    # workouts_df = pull_all_raw_workout_data_from_peloton(py_conn, 170)
+    # print(workouts_df)
+    # workouts_df.to_csv(filename_out_workouts)
+
+    # filename_out_metrics = str(datetime.now().strftime("%Y-%m-%d_%H-%M")) + "_peloton_raw_data_metrics.csv"
+    # workout_metrics_df = pull_all_raw_metrics_data_from_peloton(py_conn, workout_ids_list_of_lists)
+    # print(workout_metrics_df)
+    # workout_metrics_df.to_csv(filename_out_metrics)
+
+    # workouts_df = pd.read_csv("2023-10-04_22-16_peloton_raw_data_workouts.csv", index_col=0)
+    # workout_metrics_df = pd.read_csv("2023-10-04_22-34_peloton_raw_data_metrics.csv", index_col=0)
+
+    # df_combined = combine_workout_dataframes(workouts_df, workout_metrics_df)
+
+    # print(df_combined)
+
+    # filename_out_combined = str(datetime.now().strftime("%Y-%m-%d_%H-%M")) + "_peloton_raw_data_combined.csv"
+
+    # df_combined.to_csv(filename_out_combined)
+
+    # for index, workout_series in df_workouts.iterrows():
+    #     workout_id = workout_series['id']
+    #     ride_attributes_dict = {}
+
+    #     workout_metrics_series = df_workout_metrics.loc[workout_id]
+    # # Set "Strive Score" attribute & loop through HR Zone Duration columns
+    #     if workout_metrics_series.notna()['effort_zones']:
+    #         df_effort_zones = pd.json_normalize(ast.literal_eval(workout_metrics_series['effort_zones']))
+    #         # df_hr_zone_durations = pd.json_normalize(ast.literal_eval(workout_metrics_series['effort_zones']['heart_rate_zone_durations']))
+
+    #         ride_attributes_dict.update({ "strive_score": df_effort_zones['total_effort_points'][0] })
+    #         for x in range(4):
+    #             zone_num = x + 1
+    #             column_name = f"heart_rate_zone_durations.heart_rate_z{zone_num}_duration"
+    #             ride_attributes_dict.update({ column_name: df_effort_zones[column_name][0] })
+
+    #     print(ride_attributes_dict)
+
+    # for index, workout_series in df_workouts.iterrows():
+    #     workout_id = workout_series['id']
+    #     workout_metrics_series = df_workout_metrics.loc[workout_id]
+    #     print(workout_metrics_series)
+
+    # ride_series = pd.Series(workouts_df['ride'])
+    # ride_string = ast.literal_eval(ride_series[0])
+    # print(pd.json_normalize(ride_string))
+
+    # if workout_metrics_df.notna()['effort_zones']:
+    #     df_effort_zones = pd.json_normalize(ast.literal_eval(workout_metrics_df['effort_zones']))
+    #     df_hr_zone_durations = pd.json_normalize(ast.literal_eval(workout_metrics_df['effort_zones']['heart_rate_zone_durations']))
+    #     print(df_effort_zones)
+    #     print(df_hr_zone_durations)
+
+    # for index, df_metrics_row in workout_metrics_df.iterrows():
+    #     # if 'effort_zones' in df_metrics_row.index.values:
+    #     if df_metrics_row.notna()['effort_zones']:
+    #         effort_zones_df = pd.json_normalize(ast.literal_eval(df_metrics_row['effort_zones']))
+    #         for index, item in effort_zones_df.items():
+    #             print(item)
+
+    # all_workout_ids = get_full_list_of_workout_ids_from_csv("workout_ids.csv")
+
+    # workout_ids_list_of_lists = split_workout_ids_into_groups(all_workout_ids)
+
+    # metrics_df = pull_all_raw_metrics_data_from_peloton(py_conn, workout_ids_list_of_lists)
+
+    # print(metrics_df)
+
+    # filename_out_metrics = str(datetime.now().strftime("%Y-%m-%d_%H-%M")) + "_peloton_raw_data_metrics.csv"
+
+    # metrics_df.to_csv(filename_out_metrics)
+
+    # existing_workouts_df = pd.read_csv("2023-10-04_22-16_peloton_raw_data_workouts.csv", index_col=0)
+    # existing_workout_metrics_df = pd.read_csv("2023-10-04_22-34_peloton_raw_data_metrics.csv", index_col=0)
+
+    # new_workouts_num = calculate_new_workouts_num(py_conn, existing_workouts_df)
+
+    # if new_workouts_num > 0:
+    #     df_tuple = pull_new_raw_data_from_peloton(py_conn, new_workouts_num)
+    #     new_workouts_df = df_tuple[0]
+    #     new_workout_metrics_df = df_tuple[1]
+    #     print(new_workouts_df)
+    #     print("")
+    #     print(new_workout_metrics_df)
+    # else:
+    #     print(existing_workouts_df)
+    #     print("")
+    #     print(existing_workout_metrics_df)
+
+
+
+
+
+
+
+
+
+
+
+
     
     # workouts = py_conn.GetWorkoutMetricsById("1549b39e75cb48c0ac6179b952ce2cac")
     # df = pd.json_normalize(workouts['metrics'])
