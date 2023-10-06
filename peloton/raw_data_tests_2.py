@@ -7,22 +7,23 @@ import sqlalchemy as db
 
 import peloton.raw_data_tests as rdt
 from peloton.classes import PelotonRide, PelotonRideGroup
-from peloton.constants import MARIADB_DATABASE as SQL_DB
 from peloton.constants import PELOTON_PASSWORD, PELOTON_USERNAME
 from peloton.copy_tables_to_test_db import (
     copy_df_to_new_table_in_testing_database, copy_tables_to_testing_database)
 from peloton.helpers import create_mariadb_engine
 
-SQL_ENGINE_TEST_DB = create_mariadb_engine("peloton_test")
+    # df_metrics_raw = rdt.ingest_raw_metrics_data_from_sql(SQL_ENGINE_TEST)
+    # df_processed = rdt.ingest_processed_data_from_sql(SQL_ENGINE_TEST)    
+    # df_workouts_raw = rdt.ingest_raw_workout_data_from_sql(SQL_ENGINE_TEST)
 
 
-# df_workouts_raw = rdt.ingest_raw_workout_data_from_sql(SQL_ENGINE_TEST_DB)
-# df_metrics_raw  = rdt.ingest_raw_metrics_data_from_sql(SQL_ENGINE_TEST_DB)
-# df_processed = rdt.ingest_processed_data_from_sql(SQL_ENGINE_TEST_DB)
-
+def get_full_list_of_workout_ids_from_peloton(py_conn, num_workouts, limit: int = 25):
+    workouts_list = py_conn.GetRecentWorkouts()
+    workout_ids_list = [w["id"] for w in workouts_list]
+    workout_ids_df = pd.DataFrame(workout_ids_list)
+    workout_ids_df.to_csv("workout_ids.csv")
 
 def generate_ride_df(df_workouts_raw: pd.DataFrame) -> pd.DataFrame:
-    df_workouts_raw = rdt.ingest_raw_workout_data_from_sql(SQL_ENGINE_TEST_DB)
     ride_series = df_workouts_raw['ride']
     ride_list_of_dicts = [ast.literal_eval(value) for index, value in ride_series.items()]
 
@@ -36,11 +37,78 @@ def generate_ride_df(df_workouts_raw: pd.DataFrame) -> pd.DataFrame:
     return ride_df
 
 
+def generate_splits_data_df(df_workouts_raw: pd.DataFrame, df_metrics_raw: pd.DataFrame) -> pd.DataFrame:
+    splits_data_series = df_metrics_raw['splits_data']
+    # splits_list_of_dicts = []
+    
+    # # for index, value in splits_data_series.items():
+    # #     dict = ast.literal_eval(value)
+    # #     if 'splits' in dict.keys():
+    # #         splits_list_of_dicts.append(dict)
+    # #     else:
+    # #         print("NO")
+
+    ############# This one is hard because it's a two-dimensional thing:  once you get each "splits" table, you'll
+    ############# need to make a DataFrame with a MultiIndex -- like this:
+    ############# ID1 0 DATA
+    ############# ID1 1 DATA
+    ############# ID1 2 DATA
+    ############# ID2 0 DATA
+    ############# ID2 1 DATA
+    ############# ID2 2 DATA
+    
+    splits_data_list_of_dicts = [ast.literal_eval(value[index]) if 'splits' in ast.literal_eval(value).keys() else {} for index, value in splits_data_series.items() ]
+
+    print(pd.json_normalize(splits_data_list_of_dicts[2]['splits']))
+    if len(splits_data_list_of_dicts) != len(df_workouts_raw['workout_id'].tolist()):
+        print("ERROR: Number of Workout IDs does not equal number of workouts in dataset")
+        return None
+    
+    for i, x in enumerate(splits_data_list_of_dicts):
+        x.update({'workout_id': df_workouts_raw['workout_id'][i]})
+
+    return pd.json_normalize(splits_data_list_of_dicts)
+
+
 def main():
-    df_workouts_raw = rdt.ingest_raw_workout_data_from_sql(SQL_ENGINE_TEST_DB)
-    ride_df = generate_ride_df(df_workouts_raw)
-    print(ride_df)
-    copy_df_to_new_table_in_testing_database(ride_df, "raw_data_ride", convert_dtypes=True)
+    py_conn = pylotoncycle.PylotonCycle(PELOTON_USERNAME, PELOTON_PASSWORD)
+    SQL_ENGINE_TEST = create_mariadb_engine("peloton_test")
+
+    df_workouts_raw = rdt.ingest_raw_workout_data_from_sql(SQL_ENGINE_TEST)
+    df_metrics_raw = rdt.ingest_raw_metrics_data_from_sql(SQL_ENGINE_TEST)
+    # df_processed = rdt.ingest_processed_data_from_sql(SQL_ENGINE_TEST)  
+
+    splits_data_df = generate_splits_data_df(df_workouts_raw, df_metrics_raw)
+    # print(splits_data_df.columns)
+    splits_data_df.to_csv("splits_test2.csv")
+    # copy_df_to_new_table_in_testing_database(ride_df, "raw_data_ride", convert_dtypes=True)
+
+
+
+#### OTHER SUBTABLES FROM "WORKOUTS":
+# - "total_heart_rate_zone_durations" - can probably skip
+# - "achievement_templates" - only filled when there's an achievement; empty otherwise
+# - "overall_summary"
+
+#### OTHER SUBTABLES FROM "METRICS":
+# - "segment_list" - can probably skip; just lists data for "warmup," "cooldown," etc.
+# - "seconds_since_pedaling_start" - can probably skip
+# - "splits_data"
+# - "splits_metrics"
+# - "target_performance_metrics"
+# - "target_metrics_performance_data"
+# - "muscle_group_score"
+
+#### SUBTABLES FROM METRICS - ALREADY PROCSSED IN MAIN FUNCTION:
+# - "average_summaries"
+# - "summaries"
+# - "metrics" 
+# - "effort_zones"
+
+################## CODE FOR GENERATING & EXPORTING "RIDE" TABLE ##############################    
+    # ride_df = generate_ride_df(df_workouts_raw)
+    # print(ride_df)
+    # copy_df_to_new_table_in_testing_database(ride_df, "raw_data_ride", convert_dtypes=True)
     
 
 
