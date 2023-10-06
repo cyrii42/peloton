@@ -288,7 +288,7 @@ def process_workouts_from_raw_pyloton_data(df_workouts: pd.DataFrame, df_workout
 
 
 def main():
-
+ 
     py_conn = pylotoncycle.PylotonCycle(PELOTON_USERNAME, PELOTON_PASSWORD)
     sql_engine = create_mariadb_engine(database=SQL_DB)
 
