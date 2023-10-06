@@ -1,8 +1,4 @@
 import ast
-import csv
-import json
-import random
-from datetime import datetime
 
 import pandas as pd
 import pylotoncycle
@@ -119,9 +115,7 @@ def get_full_list_of_workout_ids_from_csv(filename: str) -> list[str]:
     return workout_ids_df["0"].values.tolist()
 
 
-def split_workout_ids_into_groups(
-    workout_ids_list: list[str], limit: int = 25
-) -> list[list[str]]:
+def split_workout_ids_into_groups(workout_ids_list: list[str], limit: int = 25) -> list[list[str]]:
     limit = limit
     num_workouts = len(workout_ids_list)
     num_groups = num_workouts // limit
