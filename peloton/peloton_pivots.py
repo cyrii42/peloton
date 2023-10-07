@@ -1,6 +1,8 @@
 import pandas as pd
 import sqlalchemy as db
-from helpers import create_mariadb_engine
+
+from peloton.helpers import create_mariadb_engine
+
 
 def get_sql_data_for_pivots(engine: db.Engine) -> pd.DataFrame():
     with engine.connect() as conn:
