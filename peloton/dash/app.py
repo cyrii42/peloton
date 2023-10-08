@@ -6,9 +6,8 @@
 # Import packages
 import datetime as datetime
 
-import dash
 import dash_bootstrap_components as dbc
-from dash import Dash, html
+from dash import Dash, html, page_container
 
 from peloton.dash.components import footer, navbar
 
@@ -36,13 +35,13 @@ def serve_layout():
     '''Define the layout of the application'''
     return html.Div(
         [
-            navbar,
+            navbar,   # imported from "components"
             dbc.Container(
-                dash.page_container,
+                page_container,  # imported from dash
                 class_name='my-2',
                 fluid=True
             ),
-            footer,
+            footer,   # imported from "components"
         ]
     )
 
