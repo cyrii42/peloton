@@ -1,10 +1,12 @@
 from datetime import datetime
+
+import helpers as helpers
 import pandas as pd
+import peloton_pivots as pivots
 import sqlalchemy as db
 from pylotoncycle import pylotoncycle
-from constants import EASTERN_TIME, PELOTON_USERNAME, PELOTON_PASSWORD
-import helpers as helpers
-import peloton_pivots as pivots
+
+from peloton.constants import EASTERN_TIME, PELOTON_PASSWORD, PELOTON_USERNAME
 
 
 # Calculate number of new workouts not yet in DB
