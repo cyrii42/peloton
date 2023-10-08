@@ -1,18 +1,16 @@
-########### from: https://dash.plotly.com/tutorial ###########
-#### https://plotly.com/python/
-#### https://dash-bootstrap-components.opensource.faculty.ai/docs/themes/
-###### run server with command:  gunicorn --reload -w 3 -b 0.0.0.0:9999 app:server   ########
-
-# Import packages
-import datetime as datetime
-
+import dash
 import dash_bootstrap_components as dbc
 import plotly.express as px
-from dash import Dash, Input, Output, callback, dash_table, dcc, html
+from dash import Input, Output, callback, dash_table, dcc, html, register_page
 
-import peloton.dash.functions as dash_funcs
+import peloton.dash.utils.functions as dash_funcs
 import peloton.helpers as helpers
 import peloton.peloton_pivots as pivots
+
+register_page(
+    __name__,
+    title='Peloton Data - Dash'
+)
 
 mariadb_engine = helpers.create_mariadb_engine(database="peloton")
 
@@ -23,12 +21,6 @@ sql_data_for_pivots = pivots.get_sql_data_for_pivots(mariadb_engine)
 df_pivot_month = pivots.get_pivot_table_month(sql_data_for_pivots)
 
 df_pivot_year = pivots.get_pivot_table_year(sql_data_for_pivots)
-
-# Initialize the app - incorporate css
-external_stylesheets = [dbc.themes.SUPERHERO]
-app = Dash(__name__, external_stylesheets=external_stylesheets)
-server = app.server
-app.title = "Peloton Data - Dash"
 
 # Define list of columns for datatable
 table_column_list = [
@@ -69,12 +61,10 @@ chart_radio_buttons = [
     'pie',
 ]
 
-# App layout
-app.layout = dbc.Container([
+layout = html.Div([
     dbc.Row([
         html.Div("Zach's Peloton Data", className="text-primary text-center fs-3")
     ]),    
-
     dbc.Row([
         dbc.Col([
             html.Div('Latest Rides', className="text-primary text-center fs-4")
@@ -155,15 +145,7 @@ app.layout = dbc.Container([
             ),
         ]),
     ]),
-    
     dbc.Row([
-        dbc.Col([
-
-        ]),
-    ]),
-
-    dbc.Row([
-        dbc.Col(),
         dbc.Col([
             dbc.Row([
                 dbc.RadioItems(options=[{"label": y, "value": y} for y in yaxis_radio_buttons],
@@ -171,14 +153,12 @@ app.layout = dbc.Container([
                             inline=True,
                             id='yaxis-radio-buttons')
             ]),
-        
             dbc.Row([
                 dbc.RadioItems(options=[{"label": x, "value": x} for x in xaxis_radio_buttons],
                             value='month',
                             inline=True,
                             id='xaxis-radio-buttons')
             ]),
-            
             dbc.Row([
                 dbc.RadioItems(options=[{"label": m, "value": m} for m in metric_radio_buttons],
                             value='avg',
@@ -193,27 +173,16 @@ app.layout = dbc.Container([
             ]),
         ]),
     ]),
-
-    # dbc.Row([
-    #         dcc.Graph(figure={}, id='my-first-graph-final')
-    #     ]),
-
-    # dbc.Row([
-    #         dash_table.DataTable(data=df[column_list].to_dict('records'), page_size=25, style_table={'overflowX': 'auto'})
-    #     ]),
-    
     dbc.Row([
         dbc.Col([
-            dcc.Graph(figure={}, id='my-first-graph-final')
+            dcc.Graph(figure={}, id='peloton-graph-1')
         ]),
     ]),
-
-], fluid=True)
-
+])
 
 # Add controls to build the interaction
 @callback(
-    Output(component_id='my-first-graph-final', component_property='figure'),
+    Output(component_id='peloton-graph-1', component_property='figure'),
     Input(component_id='xaxis-radio-buttons', component_property='value'),
     Input(component_id='yaxis-radio-buttons', component_property='value'),
     Input(component_id='metric-radio-buttons', component_property='value'),
@@ -240,7 +209,3 @@ def update_graph(xaxis_chosen, yaxis_chosen, metric_chosen, chart_chosen):
             values = yaxis_chosen
         )
     return fig
-
-# Run the app
-if __name__ == '__main__':
-    app.run(debug=True, port=9999, host='0.0.0.0')
