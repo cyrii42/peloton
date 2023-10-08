@@ -36,11 +36,10 @@ def serve_layout():
     '''Define the layout of the application'''
     return html.Div(
         [
-            # login_location,
             navbar,
             dbc.Container(
                 dash.page_container,
-                # class_name='my-2',
+                class_name='my-2',
                 fluid=True
             ),
             footer,
