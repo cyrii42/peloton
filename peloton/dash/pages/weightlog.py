@@ -65,7 +65,7 @@ layout = html.Div([
         dbc.Col([
             dash_table.DataTable(
                 data=df[table_column_list].sort_values(by='time_dt', ascending=False).drop(columns=['time_dt']).to_dict('records'),
-                page_size=20, 
+                page_size=15, 
                 style_table={
                     'overflowX': 'auto'
                     }, 
@@ -110,7 +110,7 @@ def update_graph(y_chosen):
         y = y_chosen,
         title = "Zach's Weight Log Chart",
         # barmode = 'group', 
-        height = 700, 
+        height = 600, 
         # histfunc = metric_chosen,
         template = 'plotly_dark',
         # text_auto=True,
