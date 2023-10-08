@@ -12,20 +12,6 @@ from dash import Dash, html
 
 from peloton.dash.components import footer, navbar
 
-# import peloton.dash.functions as dash_funcs
-# import peloton.helpers as helpers
-# import peloton.peloton_pivots as pivots
-
-# mariadb_engine = helpers.create_mariadb_engine(database="peloton")
-
-# df_table = dash_funcs.create_table_df(mariadb_engine)
-
-# sql_data_for_pivots = pivots.get_sql_data_for_pivots(mariadb_engine)
-
-# df_pivot_month = pivots.get_pivot_table_month(sql_data_for_pivots)
-
-# df_pivot_year = pivots.get_pivot_table_year(sql_data_for_pivots)
-
 # Initialize the app - incorporate css
 app = Dash(
     __name__, 
@@ -45,6 +31,7 @@ app = Dash(
 )
 server = app.server
 
+
 def serve_layout():
     '''Define the layout of the application'''
     return html.Div(
@@ -60,7 +47,9 @@ def serve_layout():
         ]
     )
 
+
 app.layout = serve_layout  # set the layout to the serve_layout function
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=9999, host='0.0.0.0')
