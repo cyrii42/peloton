@@ -1,10 +1,12 @@
+import json
 import os
 import platform
-import json
-import sqlalchemy as db
-import pandas as pd
 from datetime import datetime
-from peloton.constants import MARIADB_USER, MARIADB_PASS, MARIADB_SERVER
+
+import pandas as pd
+import sqlalchemy as db
+
+from peloton.constants import MARIADB_PASS, MARIADB_SERVER, MARIADB_USER
 
 
 # SQL database functions
