@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from pylotoncycle import pylotoncycle
 
 import peloton.constants as const
@@ -17,7 +15,7 @@ def main():
 
     df_processed_data_in_sql = func.ingest_processed_data_from_sql(sql_engine)
     df_raw_workouts_data_in_sql = func.ingest_raw_workout_data_from_sql(sql_engine)
-    df_raw_metrics_data_in_sql = func.ingest_raw_metrics_data_from_sql(sql_engine)
+    # df_raw_metrics_data_in_sql = func.ingest_raw_metrics_data_from_sql(sql_engine)
 
     new_workouts_num = func.calculate_new_workouts_num(py_conn, df_raw_workouts_data_in_sql)
     if new_workouts_num > 0:
