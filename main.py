@@ -13,26 +13,26 @@ def main():
         
     sql_engine = helpers.create_mariadb_engine(SQL_DB)
 
-    df_processed_data_in_sql = func.ingest_processed_data_from_sql(sql_engine)
+    # Pull raw workout data from MariaDB and use it to calculate the number of new Peloton workouts
     df_raw_workouts_data_in_sql = func.ingest_raw_workout_data_from_sql(sql_engine)
-    # df_raw_metrics_data_in_sql = func.ingest_raw_metrics_data_from_sql(sql_engine)
-
     new_workouts_num = func.calculate_new_workouts_num(py_conn, df_raw_workouts_data_in_sql)
+    
     if new_workouts_num > 0:
         (df_raw_workout_data_new, df_raw_workout_metrics_data_new) = func.pull_new_raw_data_from_peloton(py_conn, new_workouts_num)
 
         # Write the new raw data to MariaDB
         func.export_raw_workout_data_to_sql(df_raw_workout_data_new, sql_engine)
         func.export_raw_metrics_data_to_sql(df_raw_workout_metrics_data_new, sql_engine)
-
-        df_processed = func.process_workouts_from_raw_pyloton_data(df_raw_workout_data_new, df_raw_workout_metrics_data_new)
+        
+        # Process the new raw data
+        df_processed = func.process_workouts_from_raw_data(df_raw_workout_data_new, df_raw_workout_metrics_data_new)
 
         # Write the new processed data to MariaDB
         func.export_processed_data_to_sql(df_processed, sql_engine)
 
-        print(df_processed)
-    else:
-        print(df_processed_data_in_sql)
+    # Whether or not there are new workouts, pull the full processed dataset from MariaDB and print to terminal
+    df_processed_workouts_data_in_sql = func.ingest_processed_data_from_sql(sql_engine)
+    print(df_processed_workouts_data_in_sql)
 
        
 if __name__ == "__main__":
