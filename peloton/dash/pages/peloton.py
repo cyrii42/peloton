@@ -1,4 +1,3 @@
-import dash
 import dash_bootstrap_components as dbc
 import plotly.express as px
 from dash import Input, Output, callback, dash_table, dcc, html, register_page
@@ -18,9 +17,9 @@ df_table = dash_funcs.create_table_df(mariadb_engine)
 
 sql_data_for_pivots = pivots.get_sql_data_for_pivots(mariadb_engine)
 
-df_pivot_month = pivots.get_pivot_table_month(sql_data_for_pivots)
+df_pivot_month = pivots.get_pivot_table_month(sql_data_for_pivots, ascending=False)
 
-df_pivot_year = pivots.get_pivot_table_year(sql_data_for_pivots)
+df_pivot_year = pivots.get_pivot_table_year(sql_data_for_pivots, ascending=False)
 
 # Define list of columns for datatable
 table_column_list = [

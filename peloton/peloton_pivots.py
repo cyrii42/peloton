@@ -34,7 +34,7 @@ def get_sql_data_for_pivots(engine: db.Engine) -> pd.DataFrame():
     return df.reset_index()
 
 
-def get_pivot_table_year(df: pd.DataFrame) -> pd.DataFrame():
+def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFrame():
     year_table = df.pivot_table(
         values=[
             'title', 
@@ -57,9 +57,8 @@ def get_pivot_table_year(df: pd.DataFrame) -> pd.DataFrame():
             }
         )
 
-    year_table = year_table.sort_values(by=['annual_periods'], ascending=False)
-    year_table = year_table.reset_index().round(2)
-    year_table = year_table.drop(columns=['annual_periods'])
+    year_table = year_table.sort_values(by=['annual_periods'], ascending=ascending)
+    year_table = year_table.reset_index().drop(columns=['annual_periods']).round(2)
     year_table = year_table.rename(columns={
         'title': 'rides'
     })
@@ -69,7 +68,7 @@ def get_pivot_table_year(df: pd.DataFrame) -> pd.DataFrame():
     return year_table
 
 
-def get_pivot_table_month(df: pd.DataFrame) -> pd.DataFrame():
+def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFrame():
     month_table = df.pivot_table( 
         values=[
             'title', 
@@ -96,9 +95,8 @@ def get_pivot_table_month(df: pd.DataFrame) -> pd.DataFrame():
             }
         )
 
-    month_table = month_table.sort_values(by=['monthly_periods'], ascending=False)
-    month_table = month_table.reset_index().round(2)
-    month_table = month_table.drop(columns=['annual_periods', 'monthly_periods'])
+    month_table = month_table.sort_values(by=['monthly_periods'], ascending=ascending)
+    month_table = month_table.reset_index().drop(columns=['annual_periods', 'monthly_periods']).round(2)
     month_table = month_table.rename(columns={
         'title': 'rides'
     })
