@@ -20,12 +20,12 @@ def get_sql_data_for_pivots(engine: db.Engine) -> pd.DataFrame():
     output_list = df['total_output'].tolist()
     duration_list = df['ride_duration'].tolist()
     df['output_per_min'] = [(x[0] / (x[1] / 60)) for x in zip(output_list, duration_list) if x[1] != 0]
-    df['duration_min'] = [int(round((x / 60), 0)) for x in duration_list if x != 0]
+    df['duration_hrs'] = [round((x / 3600), 2) for x in duration_list if x != 0]
     df['unique_days'] = [x.date() for x in df['start_time_iso'].tolist()]
 
     df = df.rename(columns={
         'ride_title': 'title',
-        'duration_min': 'min', 
+        'duration_hrs': 'hours', 
         'unique_days': 'days',
         'ride_difficulty_estimate': 'difficulty',
         'output_per_min': 'output/min',
@@ -39,7 +39,7 @@ def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFra
         values=[
             'title', 
             'days',
-            'min',
+            'hours',
             'calories',
             'distance',
             'difficulty',
@@ -49,7 +49,7 @@ def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFra
         aggfunc= {
             'title': 'count', 
             'days': pd.Series.nunique, 
-            'min': 'sum', 
+            'hours': 'sum', 
             'calories': 'mean', 
             'distance': 'sum', 
             'difficulty': 'mean', 
@@ -60,10 +60,14 @@ def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFra
     year_table = year_table.sort_values(by=['annual_periods'], ascending=ascending)
     year_table = year_table.reset_index().drop(columns=['annual_periods']).round(2)
     year_table = year_table.rename(columns={
-        'title': 'rides'
+        'title': 'rides',
+        'calories': 'avg_calories',
+        'difficulty': 'avg_difficulty',
+        'hours': 'total_hours',
+        'distance': 'total_distance',
     })
     # Change the column order
-    year_table = year_table.reindex(columns=['year', 'rides', 'days', 'calories', 'distance', 'difficulty', 'output/min'])
+    year_table = year_table.reindex(columns=['year', 'rides', 'days', 'total_hours', 'total_distance', 'avg_calories', 'avg_difficulty', 'output/min'])
     
     return year_table
 
@@ -73,7 +77,7 @@ def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFr
         values=[
             'title', 
             'days',
-            'min',
+            'hours',
             'calories',
             'distance',
             'difficulty',
@@ -87,7 +91,7 @@ def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFr
         aggfunc= {
             'title': 'count', 
             'days': pd.Series.nunique, 
-            'min': 'sum', 
+            'hours': 'sum', 
             'calories': 'mean', 
             'distance': 'sum', 
             'difficulty': 'mean', 
@@ -98,10 +102,14 @@ def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFr
     month_table = month_table.sort_values(by=['monthly_periods'], ascending=ascending)
     month_table = month_table.reset_index().drop(columns=['annual_periods', 'monthly_periods']).round(2)
     month_table = month_table.rename(columns={
-        'title': 'rides'
+        'title': 'rides',
+        'calories': 'avg_calories',
+        'difficulty': 'avg_difficulty',
+        'hours': 'total_hours',
+        'distance': 'total_distance',
     })
     # Change the column order
-    month_table = month_table.reindex(columns=['month', 'rides', 'days', 'calories', 'distance', 'difficulty', 'output/min'])
+    month_table = month_table.reindex(columns=['month', 'rides', 'days', 'total_hours', 'total_distance', 'avg_calories', 'avg_difficulty', 'output/min'])
     
     return month_table
 
