@@ -5,6 +5,8 @@ from peloton.helpers import create_mariadb_engine
 
 
 def get_sql_data_for_pivots(engine: db.Engine) -> pd.DataFrame():
+    """ Fetches Peloton workout data from SQL server and performs
+        transformations necessary to generate pivot tables """
     with engine.connect() as conn:
         df = pd.read_sql_table("peloton", conn)
 
@@ -35,6 +37,7 @@ def get_sql_data_for_pivots(engine: db.Engine) -> pd.DataFrame():
 
 
 def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFrame():
+    """ Generates a uear-by-year pivot table from Peloton data """
     year_table = df.pivot_table(
         values=[
             'title', 
@@ -43,7 +46,7 @@ def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFra
             'calories',
             'distance',
             'difficulty',
-            'output/min'
+            'output/min',
             ], 
         index=['annual_periods', 'year'],
         aggfunc= {
@@ -53,7 +56,7 @@ def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFra
             'calories': 'mean', 
             'distance': 'sum', 
             'difficulty': 'mean', 
-            'output/min': 'mean'
+            'output/min': 'mean',
             }
         )
 
@@ -64,15 +67,41 @@ def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFra
         'calories': 'avg_calories',
         'difficulty': 'avg_difficulty',
         'hours': 'total_hours',
-        'distance': 'total_distance',
+        'distance': 'total_miles',
+        'output/min': "avg_output/min",
     })
     # Change the column order
-    year_table = year_table.reindex(columns=['year', 'rides', 'days', 'total_hours', 'total_distance', 'avg_calories', 'avg_difficulty', 'output/min'])
+    year_table = year_table.reindex(columns=['year', 'rides', 'days', 'total_hours', 'total_miles', 'avg_calories', 'avg_difficulty', 'avg_output/min'])
+
+    # totals_list_sum_cols = ['rides', 'days', 'total_hours', 'total_distance']
+    # totals_list_mean_cols = ['avg_calories', 'avg_difficulty', 'output/min']
+
+    # totals_dict_sum = {x: year_table[x].sum() for x in totals_list_sum_cols}
+    # totals_dict_mean = {x: year_table[x].mean() for x in totals_list_mean_cols}
+    # totals_dict = totals_dict_sum | totals_dict_mean
+    # totals_df = pd.DataFrame([totals_dict])
+
+    # concat_df = pd.concat([year_table, totals_df], ignore_index=True)
+    # concat_df['year'][concat_df.shape[0]-1] = "TOTALS"
     
     return year_table
 
 
+def get_grand_totals_table(year_table: pd.DataFrame) -> pd.DataFrame:
+    """Takes an annual pivot table and returns a DataFrame with the grand totals (or averages)"""
+ 
+    sum_cols = year_table[['rides', 'total_hours', 'total_miles']].sum()
+    avg_cols = year_table[['avg_calories', 'avg_difficulty', 'avg_output/min']].mean()
+
+    totals_table = pd.concat([sum_cols, avg_cols])
+
+    return totals_table
+
+    
+
+
 def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFrame():
+    """ Generates a month-by-month pivot table from Peloton data """
     month_table = df.pivot_table( 
         values=[
             'title', 
@@ -81,12 +110,12 @@ def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFr
             'calories',
             'distance',
             'difficulty',
-            'output/min'
+            'output/min',
             ], 
         index=[
             'annual_periods', 
             'monthly_periods', 
-            'month'
+            'month',
             ], 
         aggfunc= {
             'title': 'count', 
@@ -95,7 +124,7 @@ def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFr
             'calories': 'mean', 
             'distance': 'sum', 
             'difficulty': 'mean', 
-            'output/min': 'mean'
+            'output/min': 'mean',
             }
         )
 
@@ -106,13 +135,14 @@ def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFr
         'calories': 'avg_calories',
         'difficulty': 'avg_difficulty',
         'hours': 'total_hours',
-        'distance': 'total_distance',
+        'distance': 'total_miles',
+        'output/min': "avg_output/min",
     })
     # Change the column order
-    month_table = month_table.reindex(columns=['month', 'rides', 'days', 'total_hours', 'total_distance', 'avg_calories', 'avg_difficulty', 'output/min'])
+    month_table = month_table.reindex(columns=['month', 'rides', 'days', 'total_hours', 'total_miles', 'avg_calories', 'avg_difficulty', 'avg_output/min'])
     
     return month_table
-
+   
 
 def main():
     mariadb_engine = create_mariadb_engine(database="peloton")
@@ -121,13 +151,22 @@ def main():
     
     year_table = get_pivot_table_year(df)
     month_table = get_pivot_table_month(df)
+    totals_table = get_grand_totals_table(year_table)
     
-    ##### Aug 31, 2023: added "to_string()" at the end so that full table prints #####
-    # print(year_table[['title', 'unique_days', 'duration_min', 'distance', 'calories', 'difficulty', 'output_per_min']].round(2).to_string())  
-    # print(month_table[['title', 'unique_days', 'duration_min', 'distance', 'calories', 'difficulty', 'output_per_min']].round(2).to_string())  
+    # ##### Aug 31, 2023: added "to_string()" at the end so that full table prints #####
+    # # print(year_table[['title', 'unique_days', 'duration_min', 'distance', 'calories', 'difficulty', 'output_per_min']].round(2).to_string())  
+    # # print(month_table[['title', 'unique_days', 'duration_min', 'distance', 'calories', 'difficulty', 'output_per_min']].round(2).to_string())  
 
+
+
+    print("")
     print(year_table)
+    print("")
     print(month_table)
+    print("")
+    print("      GRAND TOTALS")
+    print(totals_table.round(2))
+    # print(totals_table.format(formatter))
 
     # print(df['monthly_periods'].nunique())
 

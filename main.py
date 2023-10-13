@@ -3,6 +3,7 @@ from pylotoncycle import pylotoncycle
 import peloton.constants as const
 import peloton.functions as func
 import peloton.helpers as helpers
+import peloton.peloton_pivots as pivots
 
 
 def main():
@@ -33,6 +34,20 @@ def main():
     # Whether or not there are new workouts, pull the full processed dataset from MariaDB and print to terminal
     df_processed_workouts_data_in_sql = func.ingest_processed_data_from_sql(sql_engine)
     print(df_processed_workouts_data_in_sql)
+
+    # Print pivot tables
+    df_pivots = pivots.get_sql_data_for_pivots(sql_engine)  
+    year_table = pivots.get_pivot_table_year(df_pivots)
+    month_table = pivots.get_pivot_table_month(df_pivots)
+    totals_table = pivots.get_grand_totals_table(year_table)
+    
+    print("")
+    print(year_table)
+    print("")
+    print(month_table)
+    print("")
+    print("      GRAND TOTALS")
+    print(totals_table.round(2))
 
        
 if __name__ == "__main__":
