@@ -5,6 +5,7 @@ from typing import List
 from zoneinfo import ZoneInfo
 
 import pandas as pd
+from typing_extensions import Self
 
 from peloton.constants import EASTERN_TIME
 
@@ -55,15 +56,20 @@ class PelotonRide:
     heart_rate_z4_duration: int = None
     heart_rate_z5_duration: int = None
     
-    # adapted from:
-    # https://stackoverflow.com/questions/54678337/how-does-one-ignore-extra-arguments-passed-to-a-dataclass
     @classmethod
-    def from_dict(cls, dict):    # "cls" is like "self" but for a @classmethod
-        dataclass_fields = inspect.signature(cls).parameters  # an OrderedDict of the class attr keys
-        return cls(**{  ## return a instantation of the class with the dict keypairs as parameters
-            k: v for k, v in dict.items()   # items() returns the dict in a list of tuples
-            if k in dataclass_fields  # checks if key is one of the class's parameters
-        })
+    def from_dict(cls, dict) -> Self:
+        """ Instantiates a new object of this dataclass with attributes populated from a (potentially overinclusive) dictionary.  
+
+            * ``inspect.signature(cls).parameters`` returns an OrderedDict containing this dataclass's attribute keys.
+            * ``{ k: v for k, v in dict.items() if k in dataclass_fields })`` is a dictionary comprehension that collects
+            key/value pairs for all dict entries that correspond with one of the dataclass's attribute keys.
+            * ``cls(**)`` then unpacks the key/value pairs and instantiates a new object of class "cls" (i.e., this class) 
+            with those key/value pairs as its attributes.
+
+        (Adapted from https://stackoverflow.com/questions/54678337/how-does-one-ignore-extra-arguments-passed-to-a-dataclass)
+        """
+        dataclass_fields = inspect.signature(cls).parameters
+        return cls(**{ k: v for k, v in dict.items() if k in dataclass_fields })
     
     def __post_init__(self):
         if self.start_time:          
