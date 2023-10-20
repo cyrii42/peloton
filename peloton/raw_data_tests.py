@@ -36,6 +36,41 @@ def pull_new_raw_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, workouts_
     return (workouts_df, workout_metrics_df)
 
 
+def pull_new_raw_workouts_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, df_raw_workouts_data_in_sql: pd.DataFrame, new_workouts: int) -> pd.DataFrame:
+    """ NOT YET FULLY IMPLEMENTED: a function for double-checking the count returned by calculate_new_workouts_num() """
+    
+    workouts_from_peloton = pd.DataFrame(py_conn.GetRecentWorkouts(new_workouts + 1))
+    workouts_from_peloton['workout_id'] = [x for x in workouts_from_peloton['id'].tolist()]
+    workout_ids_from_peloton = workouts_from_peloton['workout_id']
+
+    last_non_new_workout_on_peloton = workout_ids_from_peloton.iloc[-1]
+    print(f"Last non-new workout on Peloton: {workout_ids_from_peloton.iloc[-1]}")  # "-1" gets the final entry; the list is in reverse-chron, so the last row is the least recent
+
+    workout_ids_from_sql = df_raw_workouts_data_in_sql['workout_id']
+    last_workout_id_from_sql = workout_ids_from_sql.iloc[-1]
+    print(f"Last workout on SQL: {workout_ids_from_sql.iloc[-1]}")
+
+    workout_ids_check_bool = last_non_new_workout_on_peloton == last_workout_id_from_sql
+    print(f"Are they the same?  {workout_ids_check_bool}")
+
+    if last_non_new_workout_on_peloton == last_workout_id_from_sql:
+        df_scrubbed = workouts_from_peloton.drop(index=workouts_from_peloton.index[-1])
+        return df_scrubbed
+    else:
+        print("There was a problem with data ingestion: workout IDs did not match.")
+        exit()
+        
+
+def pull_new_raw_metrics_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, workouts_df: pd.DataFrame) -> pd.DataFrame:
+    workout_ids_list = [x for x in workouts_df['workout_id'].tolist()]
+    workout_metrics_list = [py_conn.GetWorkoutMetricsById(workout_id) for workout_id in workout_ids_list]
+    workout_metrics_df = pd.DataFrame(workout_metrics_list)
+    workout_metrics_df["id"] = [x for x in workout_ids_list]
+    workout_metrics_df["workout_id"] = [x for x in workout_ids_list]
+
+    return workout_metrics_df
+
+
 def combine_workout_dataframes(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
     return pd.concat([df1, df2], axis="columns")
 

@@ -1,3 +1,5 @@
+import pandas as pd
+import sqlalchemy as db
 from pylotoncycle import pylotoncycle
 
 import peloton.constants as const
@@ -19,7 +21,9 @@ def main():
     new_workouts_num = func.calculate_new_workouts_num(py_conn, df_raw_workouts_data_in_sql)
     
     if new_workouts_num > 0:
-        (df_raw_workout_data_new, df_raw_workout_metrics_data_new) = func.pull_new_raw_data_from_peloton(py_conn, new_workouts_num)
+        df_raw_workout_data_new = func.pull_new_raw_workouts_data_from_peloton(py_conn, df_raw_workouts_data_in_sql, new_workouts_num)
+
+        df_raw_workout_metrics_data_new = func.pull_new_raw_metrics_data_from_peloton(py_conn, df_raw_workout_data_new)
 
         # Write the new raw data to MariaDB
         func.export_raw_workout_data_to_sql(df_raw_workout_data_new, sql_engine)
