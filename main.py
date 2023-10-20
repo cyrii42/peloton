@@ -53,6 +53,10 @@ def main():
     print("      GRAND TOTALS")
     print(totals_table.round(2))
 
+    year_table.to_csv(f"{const.PELOTON_CSV_DIR}/year_table.csv")
+    month_table.to_csv(f"{const.PELOTON_CSV_DIR}/month_table.csv")
+    totals_table.to_csv(f"{const.PELOTON_CSV_DIR}/totals_table.csv")
+
        
 if __name__ == "__main__":
     main()
