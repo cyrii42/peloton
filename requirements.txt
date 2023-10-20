@@ -34,7 +34,6 @@ oauthlib==3.2.2
 openpyxl==3.1.2
 packaging==23.2
 pandas==2.1.1
--e git+https://github.com/cyrii42/peloton.git@fab7c5b27ab9342014797ddfffe865572e6dfd31#egg=peloton
 Pillow==10.0.1
 plotly==5.17.0
 pyasn1==0.5.0
