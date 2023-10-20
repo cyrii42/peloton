@@ -162,7 +162,5 @@ cython_debug/
 ._.DS_Store
 .DS_Store
 .vscode/
-2023-*.csv
-.*.csv
-peloton*.csv
-workout*.csv
+*.csv
+**/csv_files
