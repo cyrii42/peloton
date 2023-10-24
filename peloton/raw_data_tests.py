@@ -42,10 +42,10 @@ def pull_new_raw_workouts_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, 
     workouts_from_peloton = pd.DataFrame(py_conn.GetRecentWorkouts(new_workouts + 1))
     workouts_from_peloton['workout_id'] = [x for x in workouts_from_peloton['id'].tolist()]
     workout_ids_from_peloton = workouts_from_peloton['workout_id']
-
     last_non_new_workout_on_peloton = workout_ids_from_peloton.iloc[-1]
     print(f"Last non-new workout on Peloton: {workout_ids_from_peloton.iloc[-1]}")  # "-1" gets the final entry; the list is in reverse-chron, so the last row is the least recent
 
+    df_raw_workouts_data_in_sql = df_raw_workouts_data_in_sql.sort_values(by=['start_time'])
     workout_ids_from_sql = df_raw_workouts_data_in_sql['workout_id']
     last_workout_id_from_sql = workout_ids_from_sql.iloc[-1]
     print(f"Last workout on SQL: {workout_ids_from_sql.iloc[-1]}")
@@ -58,6 +58,10 @@ def pull_new_raw_workouts_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, 
         return df_scrubbed
     else:
         print("There was a problem with data ingestion: workout IDs did not match.")
+        print("Peloton Workout IDs:\n")
+        print(workout_ids_from_peloton)
+        print("SQL Workout IDs:\n")
+        print(workout_ids_from_sql)
         exit()
         
 
