@@ -56,6 +56,7 @@ def main():
     year_table.to_csv(f"{const.PELOTON_CSV_DIR}/year_table.csv")
     month_table.to_csv(f"{const.PELOTON_CSV_DIR}/month_table.csv")
     totals_table.to_csv(f"{const.PELOTON_CSV_DIR}/totals_table.csv")
+    df_processed_workouts_data_in_sql.to_csv(f"{const.PELOTON_CSV_DIR}/all_data.csv")
 
        
 if __name__ == "__main__":
