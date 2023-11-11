@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import pandas as pd
 import sqlalchemy as db
 from pylotoncycle import pylotoncycle
@@ -37,7 +39,9 @@ def main():
 
     # Whether or not there are new workouts, pull the full processed dataset from MariaDB and print to terminal
     df_processed_workouts_data_in_sql = func.ingest_processed_data_from_sql(sql_engine)
-    print(df_processed_workouts_data_in_sql)
+    df_processed_workouts_data_in_sql['start_time_strf'] = [datetime.fromisoformat(x).strftime('%a %h %d %I:%M %p') for x in df_processed_workouts_data_in_sql['start_time_iso'].tolist()]
+    print("")
+    print(df_processed_workouts_data_in_sql[['start_time_strf', 'ride_title', 'instructor_name', 'total_output', 'distance', 'calories', 'heart_rate_avg', 'strive_score']].tail(15))
 
     # Print pivot tables
     df_pivots = pivots.get_sql_data_for_pivots(sql_engine)  
@@ -46,12 +50,12 @@ def main():
     totals_table = pivots.get_grand_totals_table(year_table)
     
     print("")
+    print("                             GRAND TOTALS")
+    print(totals_table)
+    print("")
     print(year_table)
     print("")
     print(month_table)
-    print("")
-    print("      GRAND TOTALS")
-    print(totals_table.round(2))
 
     year_table.to_csv(f"{const.PELOTON_CSV_DIR}/year_table.csv")
     month_table.to_csv(f"{const.PELOTON_CSV_DIR}/month_table.csv")
