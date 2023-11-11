@@ -72,17 +72,6 @@ def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFra
     })
     # Change the column order
     year_table = year_table.reindex(columns=['year', 'rides', 'days', 'total_hours', 'total_miles', 'avg_calories', 'avg_difficulty', 'avg_output/min'])
-
-    # totals_list_sum_cols = ['rides', 'days', 'total_hours', 'total_distance']
-    # totals_list_mean_cols = ['avg_calories', 'avg_difficulty', 'output/min']
-
-    # totals_dict_sum = {x: year_table[x].sum() for x in totals_list_sum_cols}
-    # totals_dict_mean = {x: year_table[x].mean() for x in totals_list_mean_cols}
-    # totals_dict = totals_dict_sum | totals_dict_mean
-    # totals_df = pd.DataFrame([totals_dict])
-
-    # concat_df = pd.concat([year_table, totals_df], ignore_index=True)
-    # concat_df['year'][concat_df.shape[0]-1] = "TOTALS"
     
     return year_table
 
@@ -93,11 +82,9 @@ def get_grand_totals_table(year_table: pd.DataFrame) -> pd.DataFrame:
     sum_cols = year_table[['rides', 'total_hours', 'total_miles']].sum()
     avg_cols = year_table[['avg_calories', 'avg_difficulty', 'avg_output/min']].mean()
 
-    totals_table = pd.concat([sum_cols, avg_cols])
-
-    return totals_table
-
+    totals_table = pd.concat([sum_cols, avg_cols]).round(2).to_frame().transpose()
     
+    return totals_table
 
 
 def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFrame():
@@ -157,20 +144,14 @@ def main():
     # # print(year_table[['title', 'unique_days', 'duration_min', 'distance', 'calories', 'difficulty', 'output_per_min']].round(2).to_string())  
     # # print(month_table[['title', 'unique_days', 'duration_min', 'distance', 'calories', 'difficulty', 'output_per_min']].round(2).to_string())  
 
-
-
+    print("                             GRAND TOTALS")
+    print(totals_table)
     print("")
     print(year_table)
     print("")
     print(month_table)
-    print("")
-    print("      GRAND TOTALS")
-    print(totals_table.round(2))
-    # print(totals_table.format(formatter))
 
-    # print(df['monthly_periods'].nunique())
 
-    # table.to_excel('test2.xlsx', sheet_name='peloton_pivot', index=True, float_format='%.2f')
 
 
 if __name__ == "__main__":
