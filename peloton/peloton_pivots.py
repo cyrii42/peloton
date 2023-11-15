@@ -78,11 +78,14 @@ def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFra
 
 def get_grand_totals_table(year_table: pd.DataFrame) -> pd.DataFrame:
     """Takes an annual pivot table and returns a DataFrame with the grand totals (or averages)"""
- 
+  
     sum_cols = year_table[['rides', 'total_hours', 'total_miles']].sum()
-    avg_cols = year_table[['avg_calories', 'avg_difficulty', 'avg_output/min']].mean()
+    avg_cols = year_table[['avg_calories', 'avg_difficulty', 'avg_output/min']].mean().round(2)
 
-    totals_table = pd.concat([sum_cols, avg_cols]).round(2).to_frame().transpose()
+    col_list = ['rides', 'total_hours', 'total_miles', 'avg_calories', 'avg_difficulty', 'avg_output/min']
+    dtypes_dict = {col: ('int64' if col == 'rides' else 'float64') for col in col_list}
+
+    totals_table = pd.concat([sum_cols, avg_cols]).to_frame().transpose().astype(dtypes_dict)
     
     return totals_table
 
@@ -92,7 +95,7 @@ def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFr
     month_table = df.pivot_table( 
         values=[
             'title', 
-            'days',
+            # 'days',
             'hours',
             'calories',
             'distance',
@@ -106,7 +109,7 @@ def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFr
             ], 
         aggfunc= {
             'title': 'count', 
-            'days': pd.Series.nunique, 
+            # 'days': pd.Series.nunique, 
             'hours': 'sum', 
             'calories': 'mean', 
             'distance': 'sum', 
@@ -126,7 +129,7 @@ def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFr
         'output/min': "avg_output/min",
     })
     # Change the column order
-    month_table = month_table.reindex(columns=['month', 'rides', 'days', 'total_hours', 'total_miles', 'avg_calories', 'avg_difficulty', 'avg_output/min'])
+    month_table = month_table.reindex(columns=['month', 'rides', 'total_hours', 'total_miles', 'avg_calories', 'avg_difficulty', 'avg_output/min'])  # 'days', 
     
     return month_table
    
