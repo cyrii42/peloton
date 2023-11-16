@@ -95,7 +95,7 @@ def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFr
     month_table = df.pivot_table( 
         values=[
             'title', 
-            # 'days',
+            # 'days',      ## removed 11/15/23; need to figure out how to count days in local timezone, not UTC
             'hours',
             'calories',
             'distance',
