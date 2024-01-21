@@ -1,6 +1,7 @@
 import pandas as pd
 import sqlalchemy as db
 
+from peloton.constants import EASTERN_TIME
 from peloton.helpers import create_mariadb_engine
 
 
@@ -10,25 +11,26 @@ def get_sql_data_for_pivots(engine: db.Engine) -> pd.DataFrame():
     with engine.connect() as conn:
         df = pd.read_sql_table("peloton", conn)
 
-    df['start_time_iso'] = pd.to_datetime(df['start_time_iso'], utc=True)    
-    df_dti = pd.DatetimeIndex(df['start_time_iso']).tz_localize(tz=None)
+    df['start_time_iso'] = pd.to_datetime(df['start_time_iso'], utc=True)
+    df_dti = pd.DatetimeIndex(df['start_time_iso']).tz_convert(tz=None)
+    df_dti_localized = pd.DatetimeIndex(df['start_time_iso']).tz_convert(tz=EASTERN_TIME)
 
     df['annual_periods'] = [x.to_period(freq='Y') for x in df_dti]
     df['monthly_periods'] = [x.to_period(freq='M') for x in df_dti]
-    df['month'] = [x.month_name() + " " + str(x.year) for x in df_dti]
-    df['year'] = [x.year for x in df_dti]
-    # df['weekly_periods'] = [x.to_period(freq='W') for x in df_dti]
+    df['weekly_periods'] = [x.to_period(freq='W') for x in df_dti]
+    df['month'] = [x.month_name() + " " + str(x.year) for x in df_dti_localized]
+    df['year'] = [x.year for x in df_dti_localized]
+    df['days'] = [x.day for x in df_dti_localized]
+    df['date'] = [f"{str(x.year)}-{str(x.month)}-{str(x.day)}" for x in df_dti_localized]
 
     output_list = df['total_output'].tolist()
     duration_list = df['ride_duration'].tolist()
     df['output_per_min'] = [(x[0] / (x[1] / 60)) for x in zip(output_list, duration_list) if x[1] != 0]
     df['duration_hrs'] = [round((x / 3600), 2) for x in duration_list if x != 0]
-    df['unique_days'] = [x.date() for x in df['start_time_iso'].tolist()]
 
     df = df.rename(columns={
         'ride_title': 'title',
         'duration_hrs': 'hours', 
-        'unique_days': 'days',
         'ride_difficulty_estimate': 'difficulty',
         'output_per_min': 'output/min',
         })
@@ -41,7 +43,7 @@ def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFra
     year_table = df.pivot_table(
         values=[
             'title', 
-            'days',
+            'date',
             'hours',
             'calories',
             'distance',
@@ -51,7 +53,7 @@ def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFra
         index=['annual_periods', 'year'],
         aggfunc= {
             'title': 'count', 
-            'days': pd.Series.nunique, 
+            'date': pd.Series.nunique, 
             'hours': 'sum', 
             'calories': 'mean', 
             'distance': 'sum', 
@@ -63,15 +65,16 @@ def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFra
     year_table = year_table.sort_values(by=['annual_periods'], ascending=ascending)
     year_table = year_table.reset_index().drop(columns=['annual_periods']).round(2)
     year_table = year_table.rename(columns={
+        'date': 'days',
         'title': 'rides',
         'calories': 'avg_calories',
-        'difficulty': 'avg_difficulty',
+        # 'difficulty': 'avg_difficulty',
         'hours': 'total_hours',
         'distance': 'total_miles',
         'output/min': "avg_output/min",
     })
     # Change the column order
-    year_table = year_table.reindex(columns=['year', 'rides', 'days', 'total_hours', 'total_miles', 'avg_calories', 'avg_difficulty', 'avg_output/min'])
+    year_table = year_table.reindex(columns=['year', 'rides', 'days', 'total_hours', 'total_miles', 'avg_calories', 'avg_output/min']) # 'avg_difficulty', 
     
     return year_table
 
@@ -80,9 +83,9 @@ def get_grand_totals_table(year_table: pd.DataFrame) -> pd.DataFrame:
     """Takes an annual pivot table and returns a DataFrame with the grand totals (or averages)"""
   
     sum_cols = year_table[['rides', 'total_hours', 'total_miles']].sum()
-    avg_cols = year_table[['avg_calories', 'avg_difficulty', 'avg_output/min']].mean().round(2)
+    avg_cols = year_table[['avg_calories', 'avg_output/min']].mean().round(2) # 'avg_difficulty', 
 
-    col_list = ['rides', 'total_hours', 'total_miles', 'avg_calories', 'avg_difficulty', 'avg_output/min']
+    col_list = ['rides', 'total_hours', 'total_miles', 'avg_calories', 'avg_output/min'] #'avg_difficulty', 
     dtypes_dict = {col: ('int64' if col == 'rides' else 'float64') for col in col_list}
 
     totals_table = pd.concat([sum_cols, avg_cols]).to_frame().transpose().astype(dtypes_dict)
@@ -95,7 +98,7 @@ def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFr
     month_table = df.pivot_table( 
         values=[
             'title', 
-            # 'days',      ## removed 11/15/23; need to figure out how to count days in local timezone, not UTC
+            'date',
             'hours',
             'calories',
             'distance',
@@ -109,7 +112,7 @@ def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFr
             ], 
         aggfunc= {
             'title': 'count', 
-            # 'days': pd.Series.nunique, 
+            'date': pd.Series.nunique, 
             'hours': 'sum', 
             'calories': 'mean', 
             'distance': 'sum', 
@@ -121,15 +124,16 @@ def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFr
     month_table = month_table.sort_values(by=['monthly_periods'], ascending=ascending)
     month_table = month_table.reset_index().drop(columns=['annual_periods', 'monthly_periods']).round(2)
     month_table = month_table.rename(columns={
+        'date': 'days',
         'title': 'rides',
         'calories': 'avg_calories',
-        'difficulty': 'avg_difficulty',
+        # 'difficulty': 'avg_difficulty',
         'hours': 'total_hours',
         'distance': 'total_miles',
         'output/min': "avg_output/min",
     })
     # Change the column order
-    month_table = month_table.reindex(columns=['month', 'rides', 'total_hours', 'total_miles', 'avg_calories', 'avg_difficulty', 'avg_output/min'])  # 'days', 
+    month_table = month_table.reindex(columns=['month', 'rides', 'days', 'total_hours', 'total_miles', 'avg_calories', 'avg_output/min'])  # 'avg_difficulty', 
     
     return month_table
    
