@@ -9,11 +9,12 @@ import peloton.functions as func
 import peloton.helpers as helpers
 import peloton.peloton_pivots as pivots
 
+DATABASE = "peloton_testing"
 
 def main():
     py_conn = pylotoncycle.PylotonCycle(const.PELOTON_USERNAME, const.PELOTON_PASSWORD) 
         
-    sql_engine = helpers.create_mariadb_engine(database=const.MARIADB_DATABASE)
+    sql_engine = helpers.create_mariadb_engine(database=DATABASE)
 
     # Pull raw workout data from MariaDB and use it to calculate the number of new Peloton workouts
     df_raw_workouts_data_in_sql = func.ingest_raw_workout_data_from_sql(sql_engine)
@@ -53,10 +54,10 @@ def main():
     print(f"\n{month_table}")
 
     if new_workouts_num > 0:
-        year_table.to_csv(f"{const.PELOTON_CSV_DIR}/year_table.csv")
-        month_table.to_csv(f"{const.PELOTON_CSV_DIR}/month_table.csv")
-        totals_table.to_csv(f"{const.PELOTON_CSV_DIR}/totals_table.csv")
-        df_processed_workouts_data_in_sql.to_csv(f"{const.PELOTON_CSV_DIR}/all_data.csv")
+        year_table.to_csv(f"./data/year_table.csv")
+        month_table.to_csv(f"./data/month_table.csv")
+        totals_table.to_csv(f"./data/totals_table.csv")
+        df_processed_workouts_data_in_sql.to_csv(f"./data/all_data.csv")
 
        
 if __name__ == "__main__":
