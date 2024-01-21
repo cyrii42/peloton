@@ -9,11 +9,12 @@ import peloton.functions as func
 import peloton.helpers as helpers
 import peloton.peloton_pivots as pivots
 
+DATABASE = const.MARIADB_DATABASE
 
 def main():
     py_conn = pylotoncycle.PylotonCycle(const.PELOTON_USERNAME, const.PELOTON_PASSWORD) 
         
-    sql_engine = helpers.create_mariadb_engine(database=const.MARIADB_DATABASE)
+    sql_engine = helpers.create_mariadb_engine(database=DATABASE)
 
     # Pull raw workout data from MariaDB and use it to calculate the number of new Peloton workouts
     df_raw_workouts_data_in_sql = func.ingest_raw_workout_data_from_sql(sql_engine)
