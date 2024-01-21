@@ -5,7 +5,7 @@ from peloton.constants import EASTERN_TIME
 from peloton.helpers import create_mariadb_engine
 
 
-def get_sql_data_for_pivots(engine: db.Engine) -> pd.DataFrame():
+def get_sql_data_for_pivots(engine: db.Engine) -> pd.DataFrame:
     """ Fetches Peloton workout data from SQL server and performs
         transformations necessary to generate pivot tables """
     with engine.connect() as conn:
@@ -38,7 +38,7 @@ def get_sql_data_for_pivots(engine: db.Engine) -> pd.DataFrame():
     return df.reset_index()
 
 
-def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFrame():
+def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFrame:
     """ Generates a uear-by-year pivot table from Peloton data """
     year_table = df.pivot_table(
         values=[
@@ -93,7 +93,7 @@ def get_grand_totals_table(year_table: pd.DataFrame) -> pd.DataFrame:
     return totals_table
 
 
-def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFrame():
+def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFrame:
     """ Generates a month-by-month pivot table from Peloton data """
     month_table = df.pivot_table( 
         values=[
