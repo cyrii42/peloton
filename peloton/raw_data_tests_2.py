@@ -5,7 +5,7 @@ import pandas as pd
 import pylotoncycle
 import sqlalchemy as db
 
-import peloton.raw_data_tests as rdt
+import peloton.functions as rdt
 from peloton.classes import PelotonRide, PelotonRideGroup
 from peloton.constants import PELOTON_PASSWORD, PELOTON_USERNAME
 from peloton.copy_tables_to_test_db import (
