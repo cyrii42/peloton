@@ -19,7 +19,7 @@ def calculate_new_workouts_num(py_conn: pylotoncycle.PylotonCycle, df_input: pd.
     print(f"Workouts in Database: {existing_workouts}")
     print(f"New Workouts to Write: {new_workouts}")
 
-    return new_workouts
+    return new_workouts 
 
 
 def pull_new_raw_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, workouts_num: int) -> (pd.DataFrame, pd.DataFrame):
