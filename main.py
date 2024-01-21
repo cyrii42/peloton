@@ -36,8 +36,10 @@ def main():
 
     # Whether or not there are new workouts, pull the full processed dataset from MariaDB and print to terminal
     df_processed_workouts_data_in_sql = func.ingest_processed_data_from_sql(sql_engine)
-    df_processed_workouts_data_in_sql['start_time_strf'] = [datetime.fromisoformat(x).strftime('%a %h %d %I:%M %p') for x in df_processed_workouts_data_in_sql['start_time_iso'].tolist()]
-    print(f"\n{df_processed_workouts_data_in_sql[['start_time_strf', 'ride_title', 'instructor_name', 'total_output', 'distance', 'calories', 'heart_rate_avg', 'strive_score']].tail(15)}")
+    df_processed_workouts_data_in_sql['start_time_strf'] = [datetime.fromisoformat(x).strftime('%a %h %d %I:%M %p') 
+                                                            for x in df_processed_workouts_data_in_sql['start_time_iso'].tolist()]
+    print(df_processed_workouts_data_in_sql[['start_time_strf', 'ride_title', 'instructor_name', 'total_output', 
+                                             'distance', 'calories', 'heart_rate_avg', 'strive_score']].tail(15))
 
     # Print pivot tables
     df_pivots = pivots.get_sql_data_for_pivots(sql_engine)  
