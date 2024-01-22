@@ -12,11 +12,11 @@ def main():
 
     sql_engine = helpers.create_mariadb_engine(SQL_DB)
 
-    df = func.ingest_processed_data_from_sql(sql_engine)
+    df = helpers.ingest_processed_data_from_sql(sql_engine)
 
-    spread = Spread('1d2UJyCXFPq_1Wf03fYeJ3fFcYG8q8ClASkRyYvNH0zQ')
+    spread = Spread('XXXXXXXXXXXXXXXXXXXXXXX')
 
-    spread.open_sheet("Weight Log Data")
+    spread.open_sheet("XXXXXXXXXXXXXXX")
 
     df = spread.sheet_to_df(index=None)
 
