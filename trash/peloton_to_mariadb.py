@@ -1,8 +1,8 @@
 from datetime import datetime
 
-import helpers as helpers
+import peloton.helpers as helpers
 import pandas as pd
-import peloton_pivots as pivots
+import peloton.peloton_pivots as pivots
 import sqlalchemy as db
 from pylotoncycle import pylotoncycle
 
