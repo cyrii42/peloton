@@ -19,7 +19,7 @@ def main():
     sql_engine = db.create_engine(SQLITE_FILENAME)
 
     # Pull raw workout data from MariaDB and use it to calculate the number of new Peloton workouts
-    df_raw_workouts_data_in_sql = func.ingest_raw_workout_data_from_sql(sql_engine)
+    df_raw_workouts_data_in_sql = helpers.ingest_raw_workout_data_from_sql(sql_engine)
     new_workouts_num = func.calculate_new_workouts_num(py_conn, df_raw_workouts_data_in_sql)
     
     if new_workouts_num > 0:
@@ -28,17 +28,17 @@ def main():
         df_raw_workout_metrics_data_new = func.pull_new_raw_metrics_data_from_peloton(py_conn, df_raw_workout_data_new)
 
         # Write the new raw data to MariaDB
-        func.export_raw_workout_data_to_sql(df_raw_workout_data_new, sql_engine)
-        func.export_raw_metrics_data_to_sql(df_raw_workout_metrics_data_new, sql_engine)
+        helpers.export_raw_workout_data_to_sql(df_raw_workout_data_new, sql_engine)
+        helpers.export_raw_metrics_data_to_sql(df_raw_workout_metrics_data_new, sql_engine)
         
         # Process the new raw data
         df_processed = func.process_workouts_from_raw_data(df_raw_workout_data_new, df_raw_workout_metrics_data_new)
 
         # Write the new processed data to MariaDB
-        func.export_processed_data_to_sql(df_processed, sql_engine)
+        helpers.export_processed_data_to_sql(df_processed, sql_engine)
 
     # Whether or not there are new workouts, pull the full processed dataset from MariaDB and print to terminal
-    df_processed_workouts_data_in_sql = func.ingest_processed_data_from_sql(sql_engine)
+    df_processed_workouts_data_in_sql = helpers.ingest_processed_data_from_sql(sql_engine)
     df_processed_workouts_data_in_sql['start_time_strf'] = [datetime.fromisoformat(x).strftime('%a %h %d %I:%M %p') 
                                                             for x in df_processed_workouts_data_in_sql['start_time_iso'].tolist()]
     print(df_processed_workouts_data_in_sql[['start_time_strf', 'ride_title', 'instructor_name', 'total_output', 
