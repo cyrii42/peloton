@@ -22,22 +22,10 @@ def calculate_new_workouts_num(py_conn: pylotoncycle.PylotonCycle, df_input: pd.
     return new_workouts 
 
 
-def pull_new_raw_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, workouts_num: int) -> (pd.DataFrame, pd.DataFrame):
-    workouts_list = py_conn.GetRecentWorkouts(workouts_num)  ## defaults to all workouts if nothing passed
-    workouts_df = pd.DataFrame(workouts_list)
-    workouts_df["workout_id"] = [x for x in workouts_df['id'].tolist()]
-
-    workout_ids_list = [w["id"] for w in workouts_list]
-    workout_metrics_list = [py_conn.GetWorkoutMetricsById(workout_id) for workout_id in workout_ids_list]
-    workout_metrics_df = pd.DataFrame(workout_metrics_list)
-    workout_metrics_df["id"] = [x for x in workout_ids_list]
-    workout_metrics_df["workout_id"] = [x for x in workout_ids_list]
-
-    return (workouts_df, workout_metrics_df)
-
 
 def pull_new_raw_workouts_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, df_raw_workouts_data_in_sql: pd.DataFrame, new_workouts: int) -> pd.DataFrame:
-    """ NOT YET FULLY IMPLEMENTED: a function for double-checking the count returned by calculate_new_workouts_num() """
+    """ Double-checks the count returned by `calculate_new_workouts_num()` and, if it's correct, pulls the raw workouts data for
+    the corresponding number of workouts. """
     
     workouts_from_peloton = pd.DataFrame(py_conn.GetRecentWorkouts(new_workouts + 1))
     workouts_from_peloton['workout_id'] = [x for x in workouts_from_peloton['id'].tolist()]
@@ -77,47 +65,6 @@ def pull_new_raw_metrics_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, w
 
 def combine_workout_dataframes(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
     return pd.concat([df1, df2], axis="columns")
-
-
-def export_raw_workout_data_to_sql(input_df: pd.DataFrame, engine: db.Engine):
-    # Convert all datatypes (other than int64/float64) to strings for subsequent SQL export
-    for column in input_df.select_dtypes(exclude=['int64', 'float64', 'bool']).columns:
-        input_df[column] = input_df[column].astype("string")
-
-    with engine.connect() as conn:
-        input_df.to_sql("raw_data_workouts", conn, if_exists="append", index=False)
-
-
-def export_raw_metrics_data_to_sql(input_df: pd.DataFrame, engine: db.Engine):
-    # Convert all datatypes (other than int64/float64) to strings for subsequent SQL export
-    for column in input_df.select_dtypes(exclude=['int64', 'float64', 'bool']).columns:
-        input_df[column] = input_df[column].astype("string")
-        
-    with engine.connect() as conn:
-        input_df.to_sql("raw_data_metrics", conn, if_exists="append", index=False)
-
-
-def export_processed_data_to_sql(input_df: pd.DataFrame, engine: db.Engine):
-    with engine.connect() as conn:
-        input_df.to_sql("peloton", conn, if_exists="append", index=False)
-
-
-def ingest_raw_workout_data_from_sql(engine: db.Engine) -> pd.DataFrame:
-    with engine.connect() as conn:
-        df = pd.read_sql("SELECT * from raw_data_workouts", conn)
-    return df
-
-
-def ingest_raw_metrics_data_from_sql(engine: db.Engine) -> pd.DataFrame:
-    with engine.connect() as conn:
-        df = pd.read_sql("SELECT * from raw_data_metrics", conn)
-    return df
-
-
-def ingest_processed_data_from_sql(engine: db.Engine) -> pd.DataFrame:
-    with engine.connect() as conn:
-        df = pd.read_sql("SELECT * from peloton", conn)
-    return df
 
 
 def process_workouts_from_raw_data(df_workouts: pd.DataFrame, df_workout_metrics: pd.DataFrame) -> pd.DataFrame:
@@ -267,30 +214,8 @@ def pull_all_raw_metrics_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, w
 
 
 def main():
- 
-    py_conn = pylotoncycle.PylotonCycle(PELOTON_USERNAME, PELOTON_PASSWORD)
-    sql_engine = create_mariadb_engine(database=SQL_DB)
-
-    df_processed_data_in_sql = ingest_processed_data_from_sql(sql_engine)
-    df_raw_workouts_data_in_sql = ingest_raw_workout_data_from_sql(sql_engine)
-    df_raw_metrics_data_in_sql = ingest_raw_metrics_data_from_sql(sql_engine)
-
-    new_workouts_num = calculate_new_workouts_num(py_conn, df_raw_workouts_data_in_sql)
-    if new_workouts_num > 0:
-        (df_raw_workout_data_new, df_raw_workout_metrics_data_new) = pull_new_raw_data_from_peloton(py_conn, new_workouts_num)
-
-        # Write the new raw data to MariaDB
-        export_raw_workout_data_to_sql(df_raw_workout_data_new, sql_engine)
-        export_raw_metrics_data_to_sql(df_raw_workout_metrics_data_new, sql_engine)
-
-        df_processed = process_workouts_from_raw_data(df_raw_workout_data_new, df_raw_workout_metrics_data_new)
-
-        # Write the new processed data to MariaDB
-        export_processed_data_to_sql(df_processed, sql_engine)
-
-        print(df_processed)
-    else:
-        print(df_processed_data_in_sql)
+    print("This is a module, not a script.")
+    exit()
 
 
     # ########## TO WRITE/REPLACE RAW DATA TO MARIA DB FOR ALL 170 WORKOKUTS ######################
