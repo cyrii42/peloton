@@ -10,7 +10,7 @@ DATABASE = const.MARIADB_DATABASE
 
 def main():
     sql_engine = helpers.create_mariadb_engine(database=DATABASE)
-    sqlite_engine = db.create_engine("sqlite:///data/peloton.db")
+    sqlite_engine = db.create_engine("sqlite://../data/peloton.db")
 
     df_raw_workouts_data_in_sql = func.ingest_raw_workout_data_from_sql(sql_engine)
     func.export_raw_workout_data_to_sql(df_raw_workouts_data_in_sql, sqlite_engine)
