@@ -2,30 +2,19 @@ import pandas as pd
 import sqlalchemy as db
 
 from peloton.constants import EASTERN_TIME
+from peloton.helpers import create_mariadb_engine
 
 
-class PelotonPivots():
-    def __init__(self, df_processed_workouts_data_in_sql: pd.DataFrame):
-        self.df_processed_workouts_data_in_sql = df_processed_workouts_data_in_sql
-        self.df_pivots= self.create_df_for_pivots()
-        self.year_table = self.create_year_table()
-        self.month_table = self.create_month_table()
-        self.totals_table = self.create_totals_table()
+def get_sql_data_for_pivots(engine: db.Engine) -> pd.DataFrame:
+    """ Fetches Peloton workout data from SQL server and performs 
+    transformations necessary to generate pivot tables. """
+    
+    with engine.connect() as conn:
+        df = pd.read_sql_table("peloton", conn)
 
-    def print_pivot_tables(self) -> None:
-        print("                             GRAND TOTALS")
-        print(self.totals_table)
-        print("")
-        print(self.year_table)
-        print("")
-        print(self.month_table)
-
-    def create_df_for_pivots(self) -> pd.DataFrame:
-        df = self.df_processed_workouts_data_in_sql
-        
-        df['start_time_iso'] = pd.to_datetime(df['start_time_iso'], utc=True)
-        df_dti = pd.DatetimeIndex(df['start_time_iso']).tz_convert(tz=None)
-        df_dti_localized = pd.DatetimeIndex(df['start_time_iso']).tz_convert(tz=EASTERN_TIME)
+    df['start_time_iso'] = pd.to_datetime(df['start_time_iso'], utc=True)
+    df_dti = pd.DatetimeIndex(df['start_time_iso']).tz_convert(tz=None)
+    df_dti_localized = pd.DatetimeIndex(df['start_time_iso']).tz_convert(tz=EASTERN_TIME)
 
         df['annual_periods'] = [x.to_period(freq='Y') for x in df_dti]
         df['monthly_periods'] = [x.to_period(freq='M') for x in df_dti]
@@ -40,116 +29,128 @@ class PelotonPivots():
         df['output_per_min'] = [(x[0] / (x[1] / 60)) for x in zip(output_list, duration_list) if x[1] != 0]
         df['duration_hrs'] = [round((x / 3600), 2) for x in duration_list if x != 0]
 
-        df = df.rename(columns={
-            'ride_title': 'title',
-            'duration_hrs': 'hours', 
-            'output_per_min': 'output/min',
-            })
-        
-        return df.reset_index()
-
-    def create_year_table(self, ascending: bool = True) -> pd.DataFrame:
-        """ Generates a year-by-year pivot table from Peloton data """
-        
-        year_table = self.df_pivots.pivot_table(
-            values=[
-                'title', 
-                'date',
-                'hours',
-                'calories',
-                'distance',
-                'output/min',
-                ], 
-            index=['annual_periods', 'year'],
-            aggfunc= {
-                'title': 'count', 
-                'date': pd.Series.nunique, 
-                'hours': 'sum', 
-                'calories': 'mean', 
-                'distance': 'sum', 
-                'output/min': 'mean',
-                }
-            )
-
-        year_table = year_table.sort_values(by=['annual_periods'], ascending=ascending)
-        year_table = year_table.reset_index().drop(columns=['annual_periods']).round(2)
-        year_table = year_table.rename(columns={
-            'date': 'days',
-            'title': 'rides',
-            'calories': 'avg_calories',
-            'hours': 'total_hours',
-            'distance': 'total_miles',
-            'output/min': "avg_output/min",
+    df = df.rename(columns={
+        'ride_title': 'title',
+        'duration_hrs': 'hours', 
+        'output_per_min': 'output/min',
         })
-        # Change the column order
-        year_table = year_table.reindex(columns=['year', 'rides', 'days', 'total_hours', 
-                                                'total_miles', 'avg_calories', 'avg_output/min'])
-        
-        return year_table
-
-
-    def create_month_table(self, ascending: bool = True) -> pd.DataFrame:
-        """ Generates a month-by-month pivot table from Peloton data """
-        
-        month_table = self.df_pivots.pivot_table( 
-            values=[
-                'title', 
-                'date',
-                'hours',
-                'calories',
-                'distance',
-                'output/min',
-                ], 
-            index=[
-                'annual_periods', 
-                'monthly_periods', 
-                'month',
-                ], 
-            aggfunc= {
-                'title': 'count', 
-                'date': pd.Series.nunique, 
-                'hours': 'sum', 
-                'calories': 'mean', 
-                'distance': 'sum', 
-                'output/min': 'mean',
-                }
-            )
-
-        month_table = month_table.sort_values(by=['monthly_periods'], ascending=ascending)
-        month_table = month_table.reset_index().drop(columns=['annual_periods', 'monthly_periods']).round(2)
-        month_table = month_table.rename(columns={
-            'date': 'days',
-            'title': 'rides',
-            'calories': 'avg_calories',
-            'hours': 'total_hours',
-            'distance': 'total_miles',
-            'output/min': "avg_output/min",
-        })
-        # Change the column order
-        month_table = month_table.reindex(columns=['month', 'rides', 'days', 'total_hours', 
-                                                'total_miles', 'avg_calories', 'avg_output/min'])
-        
-        return month_table
-
-    def create_totals_table(self) -> pd.DataFrame:
-        """Takes an annual pivot table and returns a DataFrame with the grand totals (or averages)"""
     
-        sum_cols = self.year_table[['rides', 'total_hours', 'total_miles']].sum()
-        avg_cols = self.year_table[['avg_calories', 'avg_output/min']].mean().round(2)
-
-        col_list = ['rides', 'total_hours', 'total_miles', 'avg_calories', 'avg_output/min']
-        dtypes_dict = {col: ('int64' if col == 'rides' else 'float64') for col in col_list}
-
-        totals_table = pd.concat([sum_cols, avg_cols]).to_frame().transpose().astype(dtypes_dict)
-        
-        return totals_table
+    return df.reset_index()
 
 
+def get_pivot_table_year(df: pd.DataFrame, ascending: bool = True) -> pd.DataFrame:
+    """ Generates a year-by-year pivot table from Peloton data """
+    
+    year_table = df.pivot_table(
+        values=[
+            'title', 
+            'date',
+            'hours',
+            'calories',
+            'distance',
+            'output/min',
+            ], 
+        index=['annual_periods', 'year'],
+        aggfunc= {
+            'title': 'count', 
+            'date': pd.Series.nunique, 
+            'hours': 'sum', 
+            'calories': 'mean', 
+            'distance': 'sum', 
+            'output/min': 'mean',
+            }
+        )
+
+    year_table = year_table.sort_values(by=['annual_periods'], ascending=ascending)
+    year_table = year_table.reset_index().drop(columns=['annual_periods']).round(2)
+    year_table = year_table.rename(columns={
+        'date': 'days',
+        'title': 'rides',
+        'calories': 'avg_calories',
+        'hours': 'total_hours',
+        'distance': 'total_miles',
+        'output/min': "avg_output/min",
+    })
+    # Change the column order
+    year_table = year_table.reindex(columns=['year', 'rides', 'days', 'total_hours', 
+                                             'total_miles', 'avg_calories', 'avg_output/min'])
+    
+    return year_table
+
+
+def get_grand_totals_table(year_table: pd.DataFrame) -> pd.DataFrame:
+    """Takes an annual pivot table and returns a DataFrame with the grand totals (or averages)"""
+  
+    sum_cols = year_table[['rides', 'total_hours', 'total_miles']].sum()
+    avg_cols = year_table[['avg_calories', 'avg_output/min']].mean().round(2)
+
+    col_list = ['rides', 'total_hours', 'total_miles', 'avg_calories', 'avg_output/min']
+    dtypes_dict = {col: ('int64' if col == 'rides' else 'float64') for col in col_list}
+
+    totals_table = pd.concat([sum_cols, avg_cols]).to_frame().transpose().astype(dtypes_dict)
+    
+    return totals_table
+
+
+def get_pivot_table_month(df: pd.DataFrame, ascending: bool = True) -> pd.DataFrame:
+    """ Generates a month-by-month pivot table from Peloton data """
+    
+    month_table = df.pivot_table( 
+        values=[
+            'title', 
+            'date',
+            'hours',
+            'calories',
+            'distance',
+            'output/min',
+            ], 
+        index=[
+            'annual_periods', 
+            'monthly_periods', 
+            'month',
+            ], 
+        aggfunc= {
+            'title': 'count', 
+            'date': pd.Series.nunique, 
+            'hours': 'sum', 
+            'calories': 'mean', 
+            'distance': 'sum', 
+            'output/min': 'mean',
+            }
+        )
+
+    month_table = month_table.sort_values(by=['monthly_periods'], ascending=ascending)
+    month_table = month_table.reset_index().drop(columns=['annual_periods', 'monthly_periods']).round(2)
+    month_table = month_table.rename(columns={
+        'date': 'days',
+        'title': 'rides',
+        'calories': 'avg_calories',
+        'hours': 'total_hours',
+        'distance': 'total_miles',
+        'output/min': "avg_output/min",
+    })
+    # Change the column order
+    month_table = month_table.reindex(columns=['month', 'rides', 'days', 'total_hours', 
+                                               'total_miles', 'avg_calories', 'avg_output/min'])
+    
+    return month_table
    
 
 def main():
-    print("This is a module, not a script.")
+    mariadb_engine = create_mariadb_engine(database="peloton")
+    
+    df = get_sql_data_for_pivots(mariadb_engine)
+    
+    year_table = get_pivot_table_year(df)
+    month_table = get_pivot_table_month(df)
+    totals_table = get_grand_totals_table(year_table) 
 
+    print("                             GRAND TOTALS")
+    print(totals_table)
+    print("")
+    print(year_table)
+    print("")
+    print(month_table)
 
 
 
