@@ -8,14 +8,38 @@ import sqlalchemy as db
 import peloton.functions as rdt
 from peloton.classes import PelotonRide, PelotonRideGroup
 from peloton.constants import PELOTON_PASSWORD, PELOTON_USERNAME
-from peloton.copy_tables_to_test_db import (
-    copy_df_to_new_table_in_testing_database, copy_tables_to_testing_database)
 from peloton.helpers import create_mariadb_engine
 
     # df_metrics_raw = rdt.ingest_raw_metrics_data_from_sql(SQL_ENGINE_TEST)
     # df_processed = rdt.ingest_processed_data_from_sql(SQL_ENGINE_TEST)    
     # df_workouts_raw = rdt.ingest_raw_workout_data_from_sql(SQL_ENGINE_TEST)
 
+
+def copy_tables_to_testing_database():
+    engine_main = create_mariadb_engine("peloton")
+    engine_test = create_mariadb_engine("peloton_test")
+
+    with engine_main.connect() as conn:
+        df_workouts_raw = pd.read_sql("SELECT * from raw_data_workouts", conn)
+        df_metrics_raw  = pd.read_sql("SELECT * from raw_data_metrics", conn)
+        df_processed = pd.read_sql("SELECT * from peloton", conn)
+
+    with engine_test.connect() as conn:
+        df_workouts_raw.to_sql("raw_data_workouts", conn, if_exists="replace", index=False)
+        df_metrics_raw.to_sql("raw_data_metrics", conn, if_exists="replace", index=False)
+        df_processed.to_sql("peloton", conn, if_exists="replace", index=False)
+
+
+def copy_df_to_new_table_in_testing_database(input_df: pd.DataFrame, table: str, convert_dtypes: bool = False):
+    if convert_dtypes:
+        # Convert all datatypes (other than int64/float64/bool) to strings
+        for column in input_df.select_dtypes(exclude=['int64', 'float64', 'bool']).columns:
+            input_df[column] = input_df[column].astype("string")
+        
+    engine_test = create_mariadb_engine("peloton_test")
+    with engine_test.connect() as conn:
+        input_df.to_sql(table, conn, if_exists="replace", index=False)
+        
 
 def get_full_list_of_workout_ids_from_peloton(py_conn, num_workouts, limit: int = 25):
     workouts_list = py_conn.GetRecentWorkouts()
