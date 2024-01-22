@@ -80,47 +80,99 @@ def combine_workout_dataframes(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataF
 
 
 def export_raw_workout_data_to_sql(input_df: pd.DataFrame, engine: db.Engine):
-    #### Convert all datatypes (other than int64/float64) to strings for subsequent SQL export#########
+    # Convert all datatypes (other than int64/float64) to strings for subsequent SQL export
     for column in input_df.select_dtypes(exclude=['int64', 'float64', 'bool']).columns:
         input_df[column] = input_df[column].astype("string")
 
     with engine.connect() as conn:
-        # input_df.to_sql("raw_data_workouts", conn, if_exists="append", index=True, index_label='id')  ## index=True means "write DF index as a column"
         input_df.to_sql("raw_data_workouts", conn, if_exists="append", index=False)
 
 
 def export_raw_metrics_data_to_sql(input_df: pd.DataFrame, engine: db.Engine):
-    #### Convert all datatypes (other than int64/float64) to strings for subsequent SQL export#########
+    # Convert all datatypes (other than int64/float64) to strings for subsequent SQL export
     for column in input_df.select_dtypes(exclude=['int64', 'float64', 'bool']).columns:
         input_df[column] = input_df[column].astype("string")
         
     with engine.connect() as conn:
-        # input_df.to_sql("raw_data_metrics", conn, if_exists="append", index=True, index_label='id')   ## index=True means "write DF index as a column"
         input_df.to_sql("raw_data_metrics", conn, if_exists="append", index=False)
 
 
 def export_processed_data_to_sql(input_df: pd.DataFrame, engine: db.Engine):
     with engine.connect() as conn:
-        # input_df.to_sql("peloton", conn, if_exists="append", index=True, index_label='id')   ## index=True means "write DF index as a column"
         input_df.to_sql("peloton", conn, if_exists="append", index=False)
 
 
 def ingest_raw_workout_data_from_sql(engine: db.Engine) -> pd.DataFrame:
     with engine.connect() as conn:
-        df = pd.read_sql("SELECT * from raw_data_workouts", conn)  # removed index_col="id"
+        df = pd.read_sql("SELECT * from raw_data_workouts", conn)
     return df
 
 
 def ingest_raw_metrics_data_from_sql(engine: db.Engine) -> pd.DataFrame:
     with engine.connect() as conn:
-        df = pd.read_sql("SELECT * from raw_data_metrics", conn)  # removed index_col="id"
+        df = pd.read_sql("SELECT * from raw_data_metrics", conn)
     return df
 
 
 def ingest_processed_data_from_sql(engine: db.Engine) -> pd.DataFrame:
     with engine.connect() as conn:
-        df = pd.read_sql("SELECT * from peloton", conn)  # removed index_col="id"
+        df = pd.read_sql("SELECT * from peloton", conn)
     return df
+
+
+def process_workouts_from_raw_data(df_workouts: pd.DataFrame, df_workout_metrics: pd.DataFrame) -> pd.DataFrame:
+    df_workouts = df_workouts.set_index("id")
+    df_workout_metrics = df_workout_metrics.set_index("id")
+
+    ride_group_list = []
+
+    for index, workout_series in df_workouts.iterrows():
+        df_workout_ride = pd.json_normalize(ast.literal_eval(workout_series["ride"]))
+        workout_id = workout_series['workout_id']
+        ride_attributes_dict = {}
+        # workout_id = index
+        # ride_attributes_dict = {"workout_id": workout_id}
+
+        # Loop through the regular columns in df_workout and then the "ride" columns
+        ride_attributes_dict.update({ label: data for label, data in workout_series.items() })
+        ride_attributes_dict.update({ f"ride_{column}": df_workout_ride[column][0] for column in df_workout_ride.columns })
+
+        # Pull the corresponding row of the Metrics DataFrame and put it into a Series
+        workout_metrics_series = df_workout_metrics.loc[workout_id] 
+
+        # Loop through summaries (total_output, distance, calories)
+        df_summaries = pd.json_normalize(ast.literal_eval(workout_metrics_series["summaries"]))
+        ride_attributes_dict.update({ df_summaries["slug"][index]: df_summaries["value"][index] for index, row in df_summaries.iterrows() })
+
+        # Loop through average & max values (output, cadence, resistance, speed, HR)
+        df_metrics = pd.json_normalize(ast.literal_eval(workout_metrics_series["metrics"]))
+        df_average_values = df_metrics.set_index("slug")["average_value"]
+        df_max_values = df_metrics.set_index("slug")["max_value"]
+        ride_attributes_dict.update({ f"{index}_avg": value for index, value in df_average_values.items() })
+        ride_attributes_dict.update({ f"{index}_max": value for index, value in df_max_values.items() })
+
+        # Set "Strive Score" attribute & loop through HR Zone Duration columns
+        if workout_metrics_series.notna()["effort_zones"]:
+            df_effort_zones = pd.json_normalize(ast.literal_eval(workout_metrics_series["effort_zones"]))
+
+            ride_attributes_dict.update({ "strive_score": df_effort_zones["total_effort_points"][0] })
+            for x in range(4):
+                zone_num = x + 1
+                column_name = f"heart_rate_zone_durations.heart_rate_z{zone_num}_duration"
+                ride_attributes_dict.update({ column_name: df_effort_zones[column_name][0] })
+
+        # Create the PelotonRide object from the "ride_attributes_dict" dictionary you just created
+        ride_object = PelotonRide.from_dict(ride_attributes_dict)
+
+        # Add newly created ride object to the running list (which will be used after the loop to make a PelotonRideGroup object)
+        ride_group_list.append(ride_object)
+        print(f"Pulled and processed {ride_object.start_time_iso}")
+
+    # After the loop, create a PelotonRideGroup object from the list of PelotonRide objects
+    ride_group = PelotonRideGroup(ride_group_list)
+
+    # Return a DataFrame of the Peloton rides using the create_dataframe() method in the PelotonRideGroup object
+    return ride_group.create_dataframe()
 
 
 #####################################################################################
@@ -212,59 +264,6 @@ def pull_all_raw_metrics_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, w
     return workout_metrics_df
 
 
-def process_workouts_from_raw_data(df_workouts: pd.DataFrame, df_workout_metrics: pd.DataFrame) -> pd.DataFrame:
-    df_workouts = df_workouts.set_index("id")
-    df_workout_metrics = df_workout_metrics.set_index("id")
-
-    ride_group_list = []
-
-    for index, workout_series in df_workouts.iterrows():
-        df_workout_ride = pd.json_normalize(ast.literal_eval(workout_series["ride"]))
-        workout_id = workout_series['workout_id']
-        ride_attributes_dict = {}
-        # workout_id = index
-        # ride_attributes_dict = {"workout_id": workout_id}
-
-        # Loop through the regular columns in df_workout and then the "ride" columns
-        ride_attributes_dict.update({ label: data for label, data in workout_series.items() })
-        ride_attributes_dict.update({ f"ride_{column}": df_workout_ride[column][0] for column in df_workout_ride.columns })
-
-        # Pull the corresponding row of the Metrics DataFrame and put it into a Series
-        workout_metrics_series = df_workout_metrics.loc[workout_id] 
-
-        # Loop through summaries (total_output, distance, calories)
-        df_summaries = pd.json_normalize(ast.literal_eval(workout_metrics_series["summaries"]))
-        ride_attributes_dict.update({ df_summaries["slug"][index]: df_summaries["value"][index] for index, row in df_summaries.iterrows() })
-
-        # Loop through average & max values (output, cadence, resistance, speed, HR)
-        df_metrics = pd.json_normalize(ast.literal_eval(workout_metrics_series["metrics"]))
-        df_average_values = df_metrics.set_index("slug")["average_value"]
-        df_max_values = df_metrics.set_index("slug")["max_value"]
-        ride_attributes_dict.update({ f"{index}_avg": value for index, value in df_average_values.items() })
-        ride_attributes_dict.update({ f"{index}_max": value for index, value in df_max_values.items() })
-
-        # Set "Strive Score" attribute & loop through HR Zone Duration columns
-        if workout_metrics_series.notna()["effort_zones"]:
-            df_effort_zones = pd.json_normalize(ast.literal_eval(workout_metrics_series["effort_zones"]))
-
-            ride_attributes_dict.update({ "strive_score": df_effort_zones["total_effort_points"][0] })
-            for x in range(4):
-                zone_num = x + 1
-                column_name = f"heart_rate_zone_durations.heart_rate_z{zone_num}_duration"
-                ride_attributes_dict.update({ column_name: df_effort_zones[column_name][0] })
-
-        # Create the PelotonRide object from the "ride_attributes_dict" dictionary you just created
-        ride_object = PelotonRide.from_dict(ride_attributes_dict)
-
-        # Add newly created ride object to the running list (which will be used after the loop to make a PelotonRideGroup object)
-        ride_group_list.append(ride_object)
-        print(f"Pulled and processed {ride_object.start_time_iso}")
-
-    # After the loop, create a PelotonRideGroup object from the list of PelotonRide objects
-    ride_group = PelotonRideGroup(ride_group_list)
-
-    # Return a DataFrame of the Peloton rides using the create_dataframe() method in the PelotonRideGroup object
-    return ride_group.create_dataframe()
 
 
 def main():
