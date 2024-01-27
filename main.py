@@ -1,104 +1,113 @@
 from datetime import datetime
+import argparse
+from dataclasses import dataclass, field
 
 import pandas as pd
 import sqlalchemy as db
-from pylotoncycle import pylotoncycle
+from pylotoncycle import PylotonCycle
 
 import peloton.constants as const
 import peloton.functions as func
 import peloton.helpers as helpers
-import peloton.peloton_pivots as pivots
+from peloton.peloton_pivots import PelotonPivots
 
 DATABASE = const.MARIADB_DATABASE
 
-def main():
-    py_conn = pylotoncycle.PylotonCycle(const.PELOTON_USERNAME, const.PELOTON_PASSWORD) 
-        
-    sql_engine = helpers.create_mariadb_engine(database=DATABASE)
 
-    # Pull raw workout data from MariaDB and use it to calculate the number of new Peloton workouts
-    df_raw_workouts_data_in_sql = func.ingest_raw_workout_data_from_sql(sql_engine)
-    new_workouts_num = func.calculate_new_workouts_num(py_conn, df_raw_workouts_data_in_sql)
+def create_pyltotoncycle_conn() -> PylotonCycle:
+    return PylotonCycle(const.PELOTON_USERNAME, const.PELOTON_PASSWORD) 
+
+
+@dataclass
+class PelotonProcessor():
+    sql_engine: db.Engine
+    py_conn: PylotonCycle = field(default_factory=create_pyltotoncycle_conn)
+    new_workouts: bool = False
+    df_raw_workouts_data_in_sql: pd.DataFrame = field(init=False)
+    new_workouts_num: int = field(init=False, default=0)
+    df_raw_workout_data_new: pd.DataFrame = field(init=False)
+    df_raw_workout_metrics_data_new: pd.DataFrame = field(init=False)
+    df_processed: pd.DataFrame = field(init=False)
+
+    def __post_init__(self) -> None:
+        # Pull raw workout data from MariaDB and use it to calculate the number of new Peloton workouts
+        self.df_raw_workouts_data_in_sql = helpers.ingest_raw_workout_data_from_sql(self.sql_engine)
+        self.new_workouts_num = func.calculate_new_workouts_num(self.py_conn, self.df_raw_workouts_data_in_sql)
+        self.new_workouts = True if self.new_workouts_num > 0 else False
     
-    if new_workouts_num > 0:
-        df_raw_workout_data_new = func.pull_new_raw_workouts_data_from_peloton(py_conn, df_raw_workouts_data_in_sql, new_workouts_num)
+    def pull_from_peloton_and_write_to_sql(self) -> None:
+        if self.new_workouts:
+            # Pull new workout data from Peloton
+            print(f"Pulling data for {self.new_workouts_num} new workouts from Peleton...\n")
+            self.df_raw_workout_data_new = func.pull_new_raw_workouts_data_from_peloton(self.py_conn, self.new_workouts_num)
+            self.df_raw_workout_metrics_data_new = func.pull_new_raw_metrics_data_from_peloton(self.py_conn, self.df_raw_workout_data_new)
 
-        df_raw_workout_metrics_data_new = func.pull_new_raw_metrics_data_from_peloton(py_conn, df_raw_workout_data_new)
+            # Write the new raw data to SQL
+            helpers.export_raw_workout_data_to_sql(self.df_raw_workout_data_new, self.sql_engine)
+            helpers.export_raw_metrics_data_to_sql(self.df_raw_workout_metrics_data_new, self.sql_engine)
+            
+            # Process the new raw data
+            self.df_processed = func.process_workouts_from_raw_data(self.df_raw_workout_data_new, self.df_raw_workout_metrics_data_new)
 
-        # Write the new raw data to MariaDB
-        func.export_raw_workout_data_to_sql(df_raw_workout_data_new, sql_engine)
-        func.export_raw_metrics_data_to_sql(df_raw_workout_metrics_data_new, sql_engine)
-        
-        # Process the new raw data
-        df_processed = func.process_workouts_from_raw_data(df_raw_workout_data_new, df_raw_workout_metrics_data_new)
+            # Write the new processed data to SQL
+            helpers.export_processed_data_to_sql(self.df_processed, self.sql_engine)
 
-        # Write the new processed data to MariaDB
-        func.export_processed_data_to_sql(df_processed, sql_engine)
+@dataclass
+class PivotCSVWriter():
+    pivots: PelotonPivots
+    peloton_processor: PelotonProcessor
+
+    def write_csv_files(self) -> None:
+        if self.peloton_processor.new_workouts:
+            self.pivots.year_table.to_csv(f"{const.PELOTON_CSV_DIR}/year_table.csv")
+            self.pivots.month_table.to_csv(f"{const.PELOTON_CSV_DIR}/month_table.csv")
+            self.pivots.totals_table.to_csv(f"{const.PELOTON_CSV_DIR}/totals_table.csv")
+            self.peloton_processor.df_processed.to_csv(f"{const.PELOTON_CSV_DIR}/all_data.csv")
+
+def check_for_peloton_processor(peloton_processor: PelotonProcessor):
+    try:
+        val = peloton_processor
+    except UnboundLocalError:
+        return None
+    else:
+        return val
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-n', dest='CHECK_FOR_NEW_WORKOUTS', action='store_const',
+                        const=False, default=True,
+                        help='do not check for new workouts on remote Peloton database')
+    args = parser.parse_args()
+
+    sql_engine = helpers.create_mariadb_engine(database=DATABASE)
+    # sql_engine = db.create_engine(SQLITE_FILENAME)
+
+    if args.CHECK_FOR_NEW_WORKOUTS:
+        peloton_processor = PelotonProcessor(sql_engine)
+        peloton_processor.pull_from_peloton_and_write_to_sql()
 
     # Whether or not there are new workouts, pull the full processed dataset from MariaDB and print to terminal
-    df_processed_workouts_data_in_sql = func.ingest_processed_data_from_sql(sql_engine)
+    df_processed_workouts_data_in_sql = helpers.ingest_processed_data_from_sql(sql_engine)
     df_processed_workouts_data_in_sql['start_time_strf'] = [datetime.fromisoformat(x).strftime('%a %h %d %I:%M %p') 
                                                             for x in df_processed_workouts_data_in_sql['start_time_iso'].tolist()]
     print(df_processed_workouts_data_in_sql[['start_time_strf', 'ride_title', 'instructor_name', 'total_output', 
                                              'distance', 'calories', 'heart_rate_avg', 'strive_score']].tail(15))
 
     # Print pivot tables
-    df_pivots = pivots.get_sql_data_for_pivots(sql_engine)  
-    year_table = pivots.get_pivot_table_year(df_pivots)
-    month_table = pivots.get_pivot_table_month(df_pivots)
-    totals_table = pivots.get_grand_totals_table(year_table)
-    
-    print(f"\n                             GRAND TOTALS")
-    print(f"{totals_table}")
-    print(f"\n{year_table}")
-    print(f"\n{month_table}")
+    pivots = PelotonPivots(df_processed_workouts_data_in_sql)
+    pivots.print_pivot_tables()
 
-    if new_workouts_num > 0:
-        year_table.to_csv(f"{const.PELOTON_CSV_DIR}/year_table.csv")
-        month_table.to_csv(f"{const.PELOTON_CSV_DIR}/month_table.csv")
-        totals_table.to_csv(f"{const.PELOTON_CSV_DIR}/totals_table.csv")
-        df_processed_workouts_data_in_sql.to_csv(f"{const.PELOTON_CSV_DIR}/all_data.csv")
+    # If there are new workouts, write pivot tables to CSV
+    try:
+        if peloton_processor is not None:
+            pivot_csv_writer = PivotCSVWriter(pivots, peloton_processor)
+            pivot_csv_writer.write_csv_files()
+    except UnboundLocalError:
+        pass
+    
+    
+    
 
        
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-    
-    # mariadb_df = get_peloton_data_from_sql(sql_engine)
-
-         
-    # df_sql = select_all_from_table(sql_engine, SQL_TABLE, index_col=None, parse_dates=None)
-
-    # print(df_sql)
-    
-    # If there are new workouts: retrieve the data, write to MariaDB, 
-    #   re-pull from MariaDB, calculate new metrics, and write to Excel
-    # new_workouts_num = calculate_new_workouts_num(py_conn, df_sql)
-    
-    # if new_workouts_num > 0:
-    #     new_workouts_df = process_workouts(py_conn, new_workouts_num)
-        
-    #     export_peloton_data_to_sql(new_workouts_df, sql_engine)
-            
-    #     all_workouts_df = select_all_from_table(sql_engine, SQL_TABLE, index_col=None, parse_dates=None)
-
-    #     # excel_df = calculate_excel_metrics(all_entries)
-
-    #     # with pd.ExcelWriter(EXCEL_FILE, mode='a', if_sheet_exists='replace') as writer:
-    #     #     excel_df.to_excel(writer, sheet_name='peloton_workouts', index=False, float_format='%.2f') 
-            
-    #     print("New workout data:")
-    #     print(all_workouts_df)
-    
-
-    # df = zmv_peloton.process_workouts(py_conn, workouts_num=2)  ## might need to pull data in batches to avoid API timeout
-    # print(df)    
-    # df.to_csv(f"/mnt/home-ds920/asdf-{datetime.now().strftime('%Y-%m-%d %H-%M-%s')}.csv")
-    
-    # zmv_peloton.export_peloton_data_to_sql(df, sql_engine, "test")
