@@ -74,9 +74,9 @@ def check_for_peloton_processor(peloton_processor: PelotonProcessor):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-n', dest='CHECK_FOR_NEW_WORKOUTS', action='store_const',
-                        const=False, default=True,
-                        help='do not check for new workouts on remote Peloton database')
+    parser.add_argument('-c', '--check-new-workouts', dest='CHECK_FOR_NEW_WORKOUTS', action='store_const',
+                        const=True, default=False,
+                        help='check for new workouts on remote Peloton database')
     args = parser.parse_args()
 
     sql_engine = helpers.create_mariadb_engine(database=DATABASE)
