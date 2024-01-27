@@ -1,13 +1,7 @@
 import pandas as pd
 import pylotoncycle
 
-from peloton.raw_data_tests import (export_processed_data_to_sql,
-                                    export_raw_metrics_data_to_sql,
-                                    export_raw_workout_data_to_sql,
-                                    ingest_processed_data_from_sql,
-                                    ingest_raw_metrics_data_from_sql,
-                                    ingest_raw_workout_data_from_sql,
-                                    process_workouts_from_raw_data,
+from peloton.raw_data_tests import (process_workouts_from_raw_data,
                                     pull_new_raw_data_from_peloton,
                                     pull_new_raw_metrics_data_from_peloton,
                                     pull_new_raw_workouts_data_from_peloton)
