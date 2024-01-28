@@ -1,7 +1,7 @@
 import pandas as pd
 import sqlalchemy as db
 
-import peloton.constants as const
+import constants as const
 
 DATABASE = const.MARIADB_DATABASE
 
@@ -60,7 +60,7 @@ def ingest_processed_data_from_sql(engine: db.Engine) -> pd.DataFrame:
 
 def main():
     sql_engine = create_mariadb_engine(database=DATABASE)
-    sqlite_engine = db.create_engine("sqlite://../data/peloton.db")
+    sqlite_engine = db.create_engine("sqlite:///../data/peloton.db")
 
     df_raw_workouts_data_in_sql = ingest_raw_workout_data_from_sql(sql_engine)
     export_raw_workout_data_to_sql(df_raw_workouts_data_in_sql, sqlite_engine)
