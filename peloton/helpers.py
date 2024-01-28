@@ -20,12 +20,15 @@ def create_mariadb_engine(database: str) -> db.Engine:
     return db.create_engine(mariadb_url)
 
 
-def select_all_from_table(
-    engine: db.Engine, table: str, index_col: str = None, parse_dates: list[str] = None
-) -> pd.DataFrame:
+def select_all_from_table(engine: db.Engine, table: str, 
+                          index_col: str = None, parse_dates: list[str] = None
+                          ) -> pd.DataFrame:
     with engine.connect() as conn:
         df = pd.read_sql(
-            f"SELECT * from {table}", conn, index_col=index_col, parse_dates=parse_dates
+            f"SELECT * from {table}", 
+            conn, 
+            index_col=index_col, 
+            parse_dates=parse_dates
         )
     return df
 
@@ -95,3 +98,10 @@ def check_dir(subdir: str) -> bool:
         else:
             print("Couldn't find the 'python' directory.  Bailing out.")
             return False
+
+
+def main():
+    print("This is a module, not a script.")
+
+if __name__ == '__main__':
+    main
