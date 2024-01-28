@@ -1,19 +1,27 @@
 import pandas as pd
+import sqlalchemy as db
 from gspread_pandas import Client, Spread
 
 import peloton.constants as const
-import peloton.functions as func
-import peloton.helpers as helpers
-import peloton.peloton_pivots as pivots
+from peloton.peloton_pivots import PelotonPivots
+from peloton.peloton_processor import PelotonProcessor
+from peloton.peloton_ride import PelotonRide, PelotonRideGroup
+
+DATABASE = const.MARIADB_DATABASE
+SQLITE_FILENAME = "sqlite:///data/peloton.db"
 
 
 def main():
-    SQL_DB = "peloton"
+    sql_engine = db.create_engine(SQLITE_FILENAME)   # create_mariadb_engine(database=DATABASE)
+    peloton_processor = PelotonProcessor(sql_engine)
+    
+    df_full = peloton_processor.df_processed
 
-    sql_engine = helpers.create_mariadb_engine(SQL_DB)
-
-    df = helpers.ingest_processed_data_from_sql(sql_engine)
-
+    peloton_pivots = PelotonPivots(df_full)
+    df_year_table = peloton_pivots.year_table
+    df_month_table = peloton_pivots.month_table
+    df_totals_table = peloton_pivots.totals_table
+    
     spread = Spread('XXXXXXXXXXXXXXXXXXXXXXX')
 
     spread.open_sheet("XXXXXXXXXXXXXXX")
