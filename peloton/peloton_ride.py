@@ -112,3 +112,8 @@ class PelotonRideGroup:
         return pd.concat(rides_list, ignore_index=True)  # if set_index('id') above, set ignore_index=False 
 
 
+def main():
+    print("This is a module, not a script.")
+
+if __name__ == '__main__':
+    main()
