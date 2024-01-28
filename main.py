@@ -10,11 +10,13 @@ from peloton.peloton_processor import PelotonProcessor
 
 DATABASE = const.MARIADB_DATABASE
 SQLITE_FILENAME = "sqlite:///data/peloton.db"
+
 parser = argparse.ArgumentParser()
 parser.add_argument('-c', '--check-new-workouts', dest='CHECK_FOR_NEW_WORKOUTS', action='store_const',
                     const=True, default=False,
                     help='check for new workouts on remote Peloton database')
 args = parser.parse_args()
+
 
 def main():
     # sql_engine = create_mariadb_engine(database=DATABASE)
