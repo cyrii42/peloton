@@ -1,33 +1,27 @@
 import ast
 
 import pandas as pd
-import pylotoncycle
+from pylotoncycle import PylotonCycle
 
-from peloton.classes import PelotonRide, PelotonRideGroup
+from peloton.peloton_ride import PelotonRide, PelotonRideGroup
 
 
-def calculate_new_workouts_num(py_conn: pylotoncycle.PylotonCycle, df_input: pd.DataFrame) -> int:
+def calculate_new_workouts_num(py_conn: PylotonCycle, df_raw_workouts_data_in_sql: pd.DataFrame) -> int:
+    ''' Calculates the number of new workouts on the Peloton servers, doublechecks that number, and then returns it. '''
+    
     total_workouts = py_conn.GetMe()["total_workouts"]
-    existing_workouts = df_input.shape[0]
+    existing_workouts = df_raw_workouts_data_in_sql.shape[0]
     new_workouts = total_workouts - existing_workouts
 
     print(f"Total Workouts: {total_workouts}")
     print(f"Workouts in Database: {existing_workouts}")
     print(f"New Workouts to Write: {new_workouts}")
 
-    return new_workouts 
-
-
-
-def pull_new_raw_workouts_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, df_raw_workouts_data_in_sql: pd.DataFrame, new_workouts: int) -> pd.DataFrame:
-    """ Double-checks the count returned by `calculate_new_workouts_num()` and, if it's correct, pulls the raw workouts data for
-    the corresponding number of workouts. """
-    
-    workouts_from_peloton = pd.DataFrame(py_conn.GetRecentWorkouts(new_workouts + 1))
+    workouts_from_peloton = pd.DataFrame(py_conn.GetRecentWorkouts(new_workouts + 1))  # returns a list of dicts
     workouts_from_peloton['workout_id'] = [x for x in workouts_from_peloton['id'].tolist()]
     workout_ids_from_peloton = workouts_from_peloton['workout_id']
     last_non_new_workout_on_peloton = workout_ids_from_peloton.iloc[-1]
-    print(f"Last non-new workout on Peloton: {workout_ids_from_peloton.iloc[-1]}")  # "-1" gets the final entry; the list is in reverse-chron, so the last row is the least recent
+    print(f"Last non-new workout on Peloton: {workout_ids_from_peloton.iloc[-1]}")
 
     df_raw_workouts_data_in_sql = df_raw_workouts_data_in_sql.sort_values(by=['start_time'])
     workout_ids_from_sql = df_raw_workouts_data_in_sql['workout_id']
@@ -37,9 +31,8 @@ def pull_new_raw_workouts_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, 
     workout_ids_check_bool = last_non_new_workout_on_peloton == last_workout_id_from_sql
     print(f"Are they the same?  {workout_ids_check_bool}")
 
-    if last_non_new_workout_on_peloton == last_workout_id_from_sql:
-        df_scrubbed = workouts_from_peloton.drop(index=workouts_from_peloton.index[-1])
-        return df_scrubbed
+    if workout_ids_check_bool:
+        return new_workouts
     else:
         print("There was a problem with data ingestion: workout IDs did not match.")
         print("Peloton Workout IDs:\n")
@@ -47,9 +40,15 @@ def pull_new_raw_workouts_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, 
         print("SQL Workout IDs:\n")
         print(workout_ids_from_sql)
         exit()
+
+
+def pull_new_raw_workouts_data_from_peloton(py_conn: PylotonCycle, new_workouts: int) -> pd.DataFrame:
+    """ Pulls the raw workout data from Peloton for the corresponding number of workouts. """
+    
+    return pd.DataFrame(py_conn.GetRecentWorkouts(new_workouts))
         
 
-def pull_new_raw_metrics_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, workouts_df: pd.DataFrame) -> pd.DataFrame:
+def pull_new_raw_metrics_data_from_peloton(py_conn: PylotonCycle, workouts_df: pd.DataFrame) -> pd.DataFrame:
     workout_ids_list = [x for x in workouts_df['workout_id'].tolist()]
     workout_metrics_list = [py_conn.GetWorkoutMetricsById(workout_id) for workout_id in workout_ids_list]
     workout_metrics_df = pd.DataFrame(workout_metrics_list)
@@ -58,6 +57,12 @@ def pull_new_raw_metrics_data_from_peloton(py_conn: pylotoncycle.PylotonCycle, w
 
     return workout_metrics_df
 
+
+def REFACTORED_process_workouts_from_raw_data(df_workouts: pd.DataFrame, df_workout_metrics: pd.DataFrame) -> pd.DataFrame:
+    df_workouts = df_workouts.set_index("id")
+    df_workout_metrics = df_workout_metrics.set_index("id")
+
+    #  
 
 def process_workouts_from_raw_data(df_workouts: pd.DataFrame, df_workout_metrics: pd.DataFrame) -> pd.DataFrame:
     df_workouts = df_workouts.set_index("id")

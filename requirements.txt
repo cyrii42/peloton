@@ -1,3 +1,4 @@
+annotated-types==0.6.0
 ansi2html==1.8.0
 build==1.0.3
 cachetools==5.3.1
@@ -38,6 +39,8 @@ Pillow==10.0.1
 plotly==5.17.0
 pyasn1==0.5.0
 pyasn1-modules==0.3.0
+pydantic==2.5.3
+pydantic_core==2.14.6
 pylotoncycle==0.6.0
 PyMySQL==1.1.0
 pyparsing==3.1.1
