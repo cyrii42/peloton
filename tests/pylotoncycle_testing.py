@@ -1,7 +1,7 @@
 from datetime import datetime
 from pprint import pprint
 
-import constants as const
+import peloton.constants as const
 import pandas as pd
 from pylotoncycle import pylotoncycle
 
