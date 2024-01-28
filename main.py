@@ -13,21 +13,34 @@ from peloton.peloton_pivots import PelotonPivots
 
 DATABASE = const.MARIADB_DATABASE
 
-DATABASE = const.MARIADB_DATABASE
 
-def main():
-    py_conn = pylotoncycle.PylotonCycle(const.PELOTON_USERNAME, const.PELOTON_PASSWORD) 
-        
-    sql_engine = helpers.create_mariadb_engine(database=DATABASE)
+def create_pyltotoncycle_conn() -> PylotonCycle:
+    return PylotonCycle(const.PELOTON_USERNAME, const.PELOTON_PASSWORD) 
 
-    # Pull raw workout data from MariaDB and use it to calculate the number of new Peloton workouts
-    df_raw_workouts_data_in_sql = func.ingest_raw_workout_data_from_sql(sql_engine)
-    new_workouts_num = func.calculate_new_workouts_num(py_conn, df_raw_workouts_data_in_sql)
+
+@dataclass
+class PelotonProcessor():
+    sql_engine: db.Engine
+    py_conn: PylotonCycle = field(default_factory=create_pyltotoncycle_conn)
+    new_workouts: bool = False
+    df_raw_workouts_data_in_sql: pd.DataFrame = field(init=False)
+    new_workouts_num: int = field(init=False, default=0)
+    df_raw_workout_data_new: pd.DataFrame = field(init=False)
+    df_raw_workout_metrics_data_new: pd.DataFrame = field(init=False)
+    df_processed: pd.DataFrame = field(init=False)
+
+    def __post_init__(self) -> None:
+        # Pull raw workout data from MariaDB and use it to calculate the number of new Peloton workouts
+        self.df_raw_workouts_data_in_sql = helpers.ingest_raw_workout_data_from_sql(self.sql_engine)
+        self.new_workouts_num = func.calculate_new_workouts_num(self.py_conn, self.df_raw_workouts_data_in_sql)
+        self.new_workouts = True if self.new_workouts_num > 0 else False
     
-    if new_workouts_num > 0:
-        df_raw_workout_data_new = func.pull_new_raw_workouts_data_from_peloton(py_conn, df_raw_workouts_data_in_sql, new_workouts_num)
-
-        df_raw_workout_metrics_data_new = func.pull_new_raw_metrics_data_from_peloton(py_conn, df_raw_workout_data_new)
+    def pull_from_peloton_and_write_to_sql(self) -> None:
+        if self.new_workouts:
+            # Pull new workout data from Peloton
+            print(f"Pulling data for {self.new_workouts_num} new workouts from Peleton...\n")
+            self.df_raw_workout_data_new = func.pull_new_raw_workouts_data_from_peloton(self.py_conn, self.new_workouts_num)
+            self.df_raw_workout_metrics_data_new = func.pull_new_raw_metrics_data_from_peloton(self.py_conn, self.df_raw_workout_data_new)
 
             # Write the new raw data to SQL
             helpers.export_raw_workout_data_to_sql(self.df_raw_workout_data_new, self.sql_engine)
