@@ -5,15 +5,17 @@ from peloton.peloton_processor import PelotonProcessor
 
 
 class PelotonPivots():
-    def __init__(self, df_processed_workouts_data_in_sql: pd.DataFrame):
-        self.df_processed_workouts_data_in_sql = df_processed_workouts_data_in_sql
+    ''' Object for creating, printing, and saving pivot tables from Peloton data.'''
+    
+    def __init__(self, df_processed_workout_data: pd.DataFrame):
+        self.df_processed_workout_data = df_processed_workout_data
         self.df_pivots = self.create_df_for_pivots()
         self.year_table = self.create_year_table()
         self.month_table = self.create_month_table()
         self.totals_table = self.create_totals_table()
 
     def create_df_for_pivots(self) -> pd.DataFrame:
-        df = self.df_processed_workouts_data_in_sql
+        df = self.df_processed_workout_data
         
         df['start_time_iso'] = pd.to_datetime(df['start_time_iso'], utc=True)
         df_dti = pd.DatetimeIndex(df['start_time_iso']).tz_convert(tz=None)
@@ -156,18 +158,11 @@ class PelotonPivots():
         print("")
         print(self.month_table)
 
-
-class PivotCSVWriter():
-    def __init__(self, pivots: PelotonPivots, peloton_processor: PelotonProcessor):
-        self.pivots = pivots
-        self.peloton_processor = peloton_processor
-
     def write_csv_files(self) -> None:
-        if self.peloton_processor.new_workouts:
-            self.pivots.year_table.to_csv(f"{const.PELOTON_CSV_DIR}/year_table.csv")
-            self.pivots.month_table.to_csv(f"{const.PELOTON_CSV_DIR}/month_table.csv")
-            self.pivots.totals_table.to_csv(f"{const.PELOTON_CSV_DIR}/totals_table.csv")
-            self.peloton_processor.df_processed.to_csv(f"{const.PELOTON_CSV_DIR}/all_data.csv")
+        self.year_table.to_csv(f"{const.PELOTON_CSV_DIR}/year_table.csv")
+        self.month_table.to_csv(f"{const.PELOTON_CSV_DIR}/month_table.csv")
+        self.totals_table.to_csv(f"{const.PELOTON_CSV_DIR}/totals_table.csv")
+        self.df_processed_workout_data.to_csv(f"{const.PELOTON_CSV_DIR}/all_data.csv")
    
 
 def main():
