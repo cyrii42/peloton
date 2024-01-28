@@ -9,11 +9,13 @@ import peloton.constants as const
 from peloton.peloton_ride import PelotonRide, PelotonRideGroup
 
 class PelotonProcessor():   
+    ''' Object for pulling new data from Peloton, processing it, and exporting to SQL. '''
+    
     def __init__(self, sql_engine: db.Engine):
         self.sql_engine = sql_engine
         self.new_workouts = False
         self.new_workouts_num = 0
-        self.df_processed_workouts_data_in_sql = self.ingest_processed_data_from_sql()
+        self.df_processed = self.ingest_processed_data_from_sql()
 
 
     def check_for_new_workouts(self) -> None:
@@ -64,14 +66,17 @@ class PelotonProcessor():
             self.df_raw_workout_metrics_data_new = self.pull_new_raw_metrics_data_from_peloton()
 
             # Write the new raw data to SQL
-            self.export_raw_workout_data_to_sql()
-            self.export_raw_metrics_data_to_sql()
+            self.export_new_raw_workout_data_to_sql()
+            self.export_new_raw_metrics_data_to_sql()
             
             # Process the new raw data
-            self.df_processed = self.process_workouts_from_raw_data()
+            df_processed_new = self.process_workouts_from_new_raw_data()
 
             # Write the new processed data to SQL
-            self.export_processed_data_to_sql()
+            self.export_new_processed_data_to_sql(df_processed_new)
+
+            # Update the `df_processed` attribute from SQL again
+            self.df_processed = self.ingest_processed_data_from_sql()
 
 
     # DEPRECATED
@@ -92,7 +97,7 @@ class PelotonProcessor():
         return workout_metrics_df
 
 
-    def export_raw_workout_data_to_sql(self):
+    def export_new_raw_workout_data_to_sql(self):
         # Start by converting all datatypes (other than int64/float64) to strings for subsequent SQL export
         input_df = self.df_raw_workout_data_new
         for column in input_df.select_dtypes(exclude=['int64', 'float64', 'bool']).columns:
@@ -102,7 +107,7 @@ class PelotonProcessor():
             input_df.to_sql("raw_data_workouts", conn, if_exists="append", index=False)
 
 
-    def export_raw_metrics_data_to_sql(self):
+    def export_new_raw_metrics_data_to_sql(self):
         # Start by converting all datatypes (other than int64/float64) to strings for subsequent SQL export
         input_df = self.df_raw_workout_metrics_data_new
         for column in input_df.select_dtypes(exclude=['int64', 'float64', 'bool']).columns:
@@ -112,9 +117,9 @@ class PelotonProcessor():
             input_df.to_sql("raw_data_metrics", conn, if_exists="append", index=False)
 
 
-    def export_processed_data_to_sql(self):
+    def export_new_processed_data_to_sql(self, df_processed_new: pd.DataFrame):
         with self.sql_engine.connect() as conn:
-            self.df_processed.to_sql("peloton", conn, if_exists="append", index=False)
+            df_processed_new.to_sql("peloton", conn, if_exists="append", index=False)
 
 
     def ingest_raw_workout_data_from_sql(self) -> pd.DataFrame:
@@ -136,14 +141,14 @@ class PelotonProcessor():
 
 
     def print_processed_data_to_stdout(self) -> None:
-        df = self.df_processed_workouts_data_in_sql
+        df = self.df_processed
         df['start_time_strf'] = [datetime.fromisoformat(x).strftime('%a %h %d %I:%M %p') 
                                                                 for x in df['start_time_iso'].tolist()]
         print(df[['start_time_strf', 'ride_title', 'instructor_name', 'total_output', 
                                                 'distance', 'calories', 'heart_rate_avg', 'strive_score']].tail(15))
 
 
-    def process_workouts_from_raw_data(self) -> pd.DataFrame:
+    def process_workouts_from_new_raw_data(self) -> pd.DataFrame:
         df_workouts = self.df_raw_workout_data_new.set_index("id")
         df_workout_metrics = self.df_raw_workout_metrics_data_new.set_index("id")
 
@@ -195,3 +200,10 @@ class PelotonProcessor():
         # Return a DataFrame of the Peloton rides using the create_dataframe() method in the PelotonRideGroup object
         output_df = ride_group.create_dataframe()
         return output_df
+
+
+def main():
+    print("This is a module, not a script.")
+
+if __name__ == '__main__':
+    main()
