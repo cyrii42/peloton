@@ -147,15 +147,13 @@ class PelotonProcessor():
 
         ride_group_list = []
 
-        for index, workout_series in df_workouts.iterrows():
-            df_workout_ride = pd.json_normalize(ast.literal_eval(workout_series["ride"]))
-            workout_id = workout_series['workout_id']
+        for row in df_workouts.itertuples():
+            df_workout_ride = pd.json_normalize(ast.literal_eval(row.ride))
+            workout_id = row.workout_id
             ride_attributes_dict = {}
-            # workout_id = index
-            # ride_attributes_dict = {"workout_id": workout_id}
 
             # Loop through the regular columns in df_workout and then the "ride" columns
-            ride_attributes_dict.update({ label: data for label, data in workout_series.items() })
+            ride_attributes_dict.update({ label: data for label, data in row._asdict().items() })
             ride_attributes_dict.update({ f"ride_{column}": df_workout_ride[column][0] for column in df_workout_ride.columns })
 
             # Pull the corresponding row of the Metrics DataFrame and put it into a Series
