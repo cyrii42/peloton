@@ -15,6 +15,7 @@ class PelotonProcessor():
         self.new_workouts_num = 0
         self.df_processed_workouts_data_in_sql = self.ingest_processed_data_from_sql()
 
+
     def check_for_new_workouts(self) -> None:
         ''' Pulls raw workout data from SQL and uses it to calculate the number of new Peloton workouts.
         If there are new workouts, writes the new raw DataFrames to SQL, processes the raw DataFrames, and 
@@ -71,6 +72,7 @@ class PelotonProcessor():
 
             # Write the new processed data to SQL
             self.export_processed_data_to_sql()
+
 
     # DEPRECATED
     def __pull_new_raw_workouts_data_from_peloton(self) -> pd.DataFrame:  
