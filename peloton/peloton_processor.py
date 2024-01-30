@@ -32,7 +32,7 @@ class PelotonProcessor():
 
         print(f"Total Workouts: {total_workouts}")
         print(f"Workouts in Database: {existing_workouts}")
-        print(f"New Workouts to Write: {self.new_workouts_num}\n")
+        print(f"New Workouts to Write: {self.new_workouts_num}")
 
         if self.new_workouts_num > 0:
             self.new_workouts = True
