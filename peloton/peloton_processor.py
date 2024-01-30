@@ -61,7 +61,7 @@ class PelotonProcessor():
                 exit()
      
             # Pull new workout data from Peloton
-            print(f"Pulling data for {self.new_workouts_num} new workouts from Peloton...\n")
+            print(f"Pulling data for {self.new_workouts_num} new workout(s) from Peloton...")
             self.df_raw_workout_data_new = workouts_from_peloton.drop(index=workouts_from_peloton.index[-1])
             self.df_raw_workout_metrics_data_new = self.pull_new_raw_metrics_data_from_peloton()
 
@@ -144,6 +144,7 @@ class PelotonProcessor():
         df = self.df_processed
         df['start_time_strf'] = [datetime.fromisoformat(x).strftime('%a %h %d %I:%M %p') 
                                                                 for x in df['start_time_iso'].tolist()]
+        print("")
         print(df[['start_time_strf', 'ride_title', 'instructor_name', 'total_output', 
                                                 'distance', 'calories', 'heart_rate_avg', 'strive_score']].tail(15))
 
