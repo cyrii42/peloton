@@ -5,7 +5,6 @@ from datetime import datetime
 
 import pandas as pd
 import sqlalchemy as db
-from pylotoncycle import PylotonCycle
 
 import peloton.constants as const
 
@@ -14,9 +13,6 @@ import peloton.constants as const
 def create_mariadb_engine(database: str) -> db.Engine:
     mariadb_url = db.URL.create(
         drivername="mysql+pymysql",
-        username=const.MARIADB_USER,
-        password=const.MARIADB_PASS,
-        host=const.MARIADB_SERVER,
         username=const.MARIADB_USER,
         password=const.MARIADB_PASS,
         host=const.MARIADB_SERVER,
