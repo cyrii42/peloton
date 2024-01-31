@@ -162,6 +162,3 @@ cython_debug/
 ._.DS_Store
 .DS_Store
 .vscode/
-*.csv
-**/csv_files
-*.sh
