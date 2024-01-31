@@ -34,34 +34,34 @@ class PelotonProcessor():
         print(f"Workouts in Database: {existing_workouts}")
         print(f"New Workouts to Write: {self.new_workouts_num}")
 
+        # Double-check that `new_workout_num` is correct
+        workouts_from_peloton = pd.DataFrame(self.py_conn.GetRecentWorkouts(self.new_workouts_num + 1))  # returns a list of dicts
+        workouts_from_peloton['workout_id'] = [x for x in workouts_from_peloton['id'].tolist()]
+        workout_ids_from_peloton = workouts_from_peloton['workout_id']
+        last_non_new_workout_on_peloton = workout_ids_from_peloton.iloc[-1]
+        print(f"Last non-new workout on Peloton: {workout_ids_from_peloton.iloc[-1]}")
+
+        df_raw_workouts_data_sorted = self.df_raw_workouts_data_in_sql.sort_values(by=['start_time'])
+        workout_ids_from_sql = df_raw_workouts_data_sorted['workout_id']
+        last_workout_id_from_sql = workout_ids_from_sql.iloc[-1]
+        print(f"Last workout on SQL: {workout_ids_from_sql.iloc[-1]}")
+
+        workout_ids_check_bool = last_non_new_workout_on_peloton == last_workout_id_from_sql
+        print(f"Are they the same?  {workout_ids_check_bool}")
+
+        if not workout_ids_check_bool:
+            print("There was a problem with data ingestion: workout IDs did not match.")
+            print("Peloton Workout IDs:\n")
+            print(workout_ids_from_peloton)
+            print("SQL Workout IDs:\n")
+            print(workout_ids_from_sql)
+            exit()
+
         if self.new_workouts_num > 0:
             self.new_workouts = True
 
-            # Double-check that `new_workout_num` is correct
-            workouts_from_peloton = pd.DataFrame(self.py_conn.GetRecentWorkouts(self.new_workouts_num + 1))  # returns a list of dicts
-            workouts_from_peloton['workout_id'] = [x for x in workouts_from_peloton['id'].tolist()]
-            workout_ids_from_peloton = workouts_from_peloton['workout_id']
-            last_non_new_workout_on_peloton = workout_ids_from_peloton.iloc[-1]
-            print(f"Last non-new workout on Peloton: {workout_ids_from_peloton.iloc[-1]}")
-
-            df_raw_workouts_data_sorted = self.df_raw_workouts_data_in_sql.sort_values(by=['start_time'])
-            workout_ids_from_sql = df_raw_workouts_data_sorted['workout_id']
-            last_workout_id_from_sql = workout_ids_from_sql.iloc[-1]
-            print(f"Last workout on SQL: {workout_ids_from_sql.iloc[-1]}")
-
-            workout_ids_check_bool = last_non_new_workout_on_peloton == last_workout_id_from_sql
-            print(f"Are they the same?  {workout_ids_check_bool}\n")
-
-            if not workout_ids_check_bool:
-                print("There was a problem with data ingestion: workout IDs did not match.")
-                print("Peloton Workout IDs:\n")
-                print(workout_ids_from_peloton)
-                print("SQL Workout IDs:\n")
-                print(workout_ids_from_sql)
-                exit()
-     
             # Pull new workout data from Peloton
-            print(f"Pulling data for {self.new_workouts_num} new workout(s) from Peloton...")
+            print(f"\nPulling data for {self.new_workouts_num} new workout(s) from Peloton...")
             self.df_raw_workout_data_new = workouts_from_peloton.drop(index=workouts_from_peloton.index[-1])
             self.df_raw_workout_metrics_data_new = self.pull_new_raw_metrics_data_from_peloton()
 

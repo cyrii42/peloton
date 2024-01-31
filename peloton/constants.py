@@ -9,8 +9,8 @@ load_dotenv()
 EASTERN_TIME = ZoneInfo("America/New_York")
 
 # InfluxDB setup
-INFLUX_URL = "http://mac-mini.box:8086"
-INFLUX_ORG = "ZMV"
+INFLUX_URL = os.getenv("INFLUX_URL") 
+INFLUX_ORG = os.getenv("INFLUX_ORG")
 INFLUX_TOKEN_HASS = os.getenv("INFLUX_TOKEN_HASS") # Home Assistant read-only
 INFLUX_TOKEN_CONED = os.getenv("INFLUX_TOKEN_CONED") # Con Edison token
 
