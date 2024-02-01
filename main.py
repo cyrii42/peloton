@@ -25,7 +25,7 @@ def main():
 
     peloton_processor.print_processed_data_to_stdout()
 
-    pivots = PelotonPivots(peloton_processor.df_processed)
+    pivots = PelotonPivots(peloton_processor)
     pivots.print_pivot_tables()
     if peloton_processor.new_workouts:
         pivots.write_csv_files()

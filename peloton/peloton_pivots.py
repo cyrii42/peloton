@@ -7,8 +7,11 @@ from peloton.peloton_processor import PelotonProcessor
 class PelotonPivots():
     ''' Object for creating, printing, and saving pivot tables from Peloton data.'''
     
-    def __init__(self, df_processed_workout_data: pd.DataFrame):
-        self.df_processed_workout_data = df_processed_workout_data
+    def __init__(self, peloton_processor: PelotonProcessor):
+        self.peloton_processor = peloton_processor
+        self.df_processed_workout_data = self.peloton_processor.ingest_processed_data_from_sql()
+        self.df_raw_workouts_data = self.peloton_processor.ingest_raw_workout_data_from_sql()
+        self.df_raw_metrics_data = self.peloton_processor.ingest_raw_metrics_data_from_sql()
         self.df_pivots = self.create_df_for_pivots()
         self.year_table = self.create_year_table()
         self.month_table = self.create_month_table()
@@ -162,7 +165,9 @@ class PelotonPivots():
         self.year_table.to_csv(f"{const.PELOTON_CSV_DIR}/year_table.csv")
         self.month_table.to_csv(f"{const.PELOTON_CSV_DIR}/month_table.csv")
         self.totals_table.to_csv(f"{const.PELOTON_CSV_DIR}/totals_table.csv")
-        self.df_processed_workout_data.to_csv(f"{const.PELOTON_CSV_DIR}/all_data.csv")
+        self.df_processed_workout_data.to_csv(f"{const.PELOTON_CSV_DIR}/processed_workouts_data.csv")
+        self.df_raw_workouts_data.to_csv(f"{const.PELOTON_CSV_DIR}/raw_workouts_data.csv")
+        self.df_raw_metrics_data.to_csv(f"{const.PELOTON_CSV_DIR}/raw_metrics_data.csv")
    
 
 def main():
