@@ -6,16 +6,21 @@ from datetime import datetime
 import pandas as pd
 import sqlalchemy as db
 
-import peloton.constants as const
+from peloton.constants import MARIADB_USER, MARIADB_PASS, MARIADB_SERVER
 
 
 # SQL database functions
-def create_mariadb_engine(database: str) -> db.Engine:
+def create_mariadb_engine(database: str,
+                          username: str = MARIADB_USER,
+                          password: str = MARIADB_PASS,
+                          host:str = MARIADB_SERVER) -> db.Engine:
+    ''' Creates a SQLAlchemy engine for a locally hosted MariaDB server.'''
+    
     mariadb_url = db.URL.create(
         drivername="mysql+pymysql",
-        username=const.MARIADB_USER,
-        password=const.MARIADB_PASS,
-        host=const.MARIADB_SERVER,
+        username=username,
+        password=password,
+        host=host,
         database=database,
     )
     return db.create_engine(mariadb_url)
