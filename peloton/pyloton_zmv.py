@@ -140,7 +140,9 @@ class PylotonZMV():
             resp = self.session.get(url, timeout=10)
             resp.raise_for_status()
             
-        return resp.json()
+        output_dict = resp.json()
+        output_dict.update({'workout_id': workout_id}) 
+        return output_dict
 
     def get_workout_metrics_by_id(self, workout_id: str, frequency: int = 60):
         url = f"{BASE_URL}/api/workout/{workout_id}/performance_graph?every_n={frequency}"
@@ -152,7 +154,9 @@ class PylotonZMV():
             resp = self.session.get(url, timeout=10)
             resp.raise_for_status()
             
-        return resp.json()
+        output_dict = resp.json()
+        output_dict.update({'workout_id': workout_id}) 
+        return output_dict
 
 
 

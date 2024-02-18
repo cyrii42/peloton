@@ -6,6 +6,7 @@ from pprint import pprint
 from zoneinfo import ZoneInfo
 
 import pandas as pd
+import pyloton_models as models
 import sqlalchemy as db
 from constants import PELOTON_PASSWORD, PELOTON_USERNAME
 from pyloton_zmv import PylotonZMV
@@ -27,7 +28,7 @@ class WorkoutMismatchError(Exception):
 
 class PelotonTxtFiles():
     def __init__(self):
-        # self.pyloton = PylotonZMV(PELOTON_USERNAME, PELOTON_PASSWORD) 
+        self.pyloton = PylotonZMV(PELOTON_USERNAME, PELOTON_PASSWORD) 
         try:
             self.total_workouts_on_disk = self.count_workouts()
         except FileNotFoundError or WorkoutMismatchError:
@@ -35,9 +36,23 @@ class PelotonTxtFiles():
             self.total_workouts_on_disk = 0
             
         if self.total_workouts_on_disk > 0:
-            self.get_data_from_txt_files()
+            self.workout_ids = self.get_workout_ids_from_txt()
+            self.workout_summaries = self.get_workout_summaries_from_txt()
+            self.workout_metrics = self.get_workout_metrics_from_txt()
         else:
             self.workout_ids = self.workout_summaries = self.workout_metrics = None
+
+
+    def populate_models_from_txt(self):
+        for test_metric in self.workout_metrics:
+            test_metric = models.PelotonMetrics.model_validate(test_metric)
+            print(test_metric)
+        # for test_summary in self.workout_summaries:
+        #     test_summary = models.PelotonSummary.model_validate(test_summary)
+        #     print(test_summary)
+        
+
+
 
     def count_workouts(self) -> int:
         with open('../data/workout_ids.txt', 'r') as f:
@@ -52,11 +67,6 @@ class PelotonTxtFiles():
         else:
             raise WorkoutMismatchError
 
-    def get_data_from_txt_files(self) -> None:
-        self.workout_ids = self.get_workout_ids_from_txt()
-        self.workout_summaries = self.get_workout_summaries_from_txt()
-        self.workout_metrics = self.get_workout_metrics_from_txt()
-        
     def get_workout_ids_from_txt(self) -> list[str]:
         ''' Retrives workout IDs from TXT file and returns them in reverse-chron order. '''
         with open('../data/workout_ids.txt', 'r') as f:
@@ -169,10 +179,13 @@ class PelotonTxtFiles():
 def main():
     pass
     object = PelotonTxtFiles()
-    print(object.total_workouts_on_disk)
+    object.populate_models_from_txt()
+
+    
+    # print(object.total_workouts_on_disk)
     # print(pd.json_normalize(object.workout_metrics[0]['average_summaries']).set_index('slug'))
-    rides = pd.DataFrame(object.get_workout_summary_rides_from_txt())
-    rides.to_csv('asdsdfsadf.csv')
+    # rides = pd.DataFrame(object.get_workout_summary_rides_from_txt())
+    # rides.to_csv('asdsdfsadf.csv')
     # try:
     #     print(f"Workouts in TXT files: {object.count_workouts()}")
     # except FileNotFoundError as e:
