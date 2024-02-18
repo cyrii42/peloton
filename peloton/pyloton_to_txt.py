@@ -1,15 +1,17 @@
 import ast
 import json
-from pathlib import Path
 from datetime import datetime
-from zoneinfo import ZoneInfo
+from pathlib import Path
 from pprint import pprint
+from zoneinfo import ZoneInfo
 
 import pandas as pd
 import sqlalchemy as db
-from pylotoncycle import PylotonCycle
-
 from constants import PELOTON_PASSWORD, PELOTON_USERNAME
+from pyloton_zmv import PylotonZMV
+
+# from pylotoncycle import PylotonCycle
+
 
 EASTERN_TIME = ZoneInfo('America/New_York')
 TXT_DIR = Path('../data/raw_txt').resolve()
@@ -20,70 +22,91 @@ CSV_DIR = Path('../data/raw_csv').resolve()
         # self.workout_ids_list = [x for x in self.raw_workout_data['workout_id'].tolist()]
         # self.workout_metrics_list = [self.py_conn.GetWorkoutMetricsById(workout_id) for workout_id in self.workout_ids_list]
 
+class WorkoutMismatchError(Exception):
+    pass
 
 class PelotonTxtFiles():
     def __init__(self):
-        self.py_conn = PylotonCycle(PELOTON_USERNAME, PELOTON_PASSWORD) 
-        
+        # self.pyloton = PylotonZMV(PELOTON_USERNAME, PELOTON_PASSWORD) 
+        try:
+            self.total_workouts_on_disk = self.count_workouts()
+        except FileNotFoundError or WorkoutMismatchError:
+            print('ERROR: re-starting at 0 workouts...')
+            self.total_workouts_on_disk = 0
+            
+        if self.total_workouts_on_disk > 0:
+            self.get_data_from_txt_files()
+        else:
+            self.workout_ids = self.workout_summaries = self.workout_metrics = None
 
-    def get_data_from_peloton(self) -> None:
-        # now_str = datetime.now(tz=EASTERN_TIME).strftime('%Y-%m-%d_%H-%M')
-        
-        self.workout_list = self.get_workout_list()
-        # self.dump_workout_list_to_txt(now_str)
-        
-        self.workout_ids = self.get_workout_ids()
-        # self.dump_workout_ids_to_txt(now_str)
-        
-        self.workouts_by_id = self.get_workouts_by_id()
-        # self.dump_workouts_by_id_to_txt(now_str)
-        
-        self.workout_summaries = self.get_workout_summaries()
-        # self.dump_workout_summaries_to_txt(now_str)
-        
-        self.workout_metrics = self.get_workout_metrics()
-        # self.dump_workout_metrics_to_txt(now_str)
-        
+    def count_workouts(self) -> int:
+        with open('../data/workout_ids.txt', 'r') as f:
+            num_ids = len(f.readlines())
+        with open('../data/workout_summaries.txt', 'r') as f:
+            num_summaries = len(f.readlines())
+        with open('../data/workout_metrics.txt', 'r') as f:
+            num_metrics = len(f.readlines())
 
-    def get_workout_list(self) -> list[dict]:
-        print('Getting workout list...')
-        return self.py_conn.GetWorkoutList()
+        if num_ids == num_summaries and num_ids == num_metrics:
+            return num_ids
+        else:
+            raise WorkoutMismatchError
 
-    def get_workout_ids(self) -> list[str]:
+    def get_data_from_txt_files(self) -> None:
+        self.workout_ids = self.get_workout_ids_from_txt()
+        self.workout_summaries = self.get_workout_summaries_from_txt()
+        self.workout_metrics = self.get_workout_metrics_from_txt()
+        
+    def get_workout_ids_from_txt(self) -> list[str]:
+        ''' Retrives workout IDs from TXT file and returns them in reverse-chron order. '''
+        with open('../data/workout_ids.txt', 'r') as f:
+            line_list = f.readlines()
+        return [line.rstrip('\n') for line in line_list]
+
+    def get_workout_summaries_from_txt(self) -> list[dict]:
+        ''' Retrives workout summaries from TXT file and returns them in reverse-chron order. '''
+        with open('../data/workout_summaries.txt', 'r') as f:
+            line_list = f.readlines()
+        return [ast.literal_eval(line) for line in line_list]
+
+    def get_workout_summary_rides_from_txt(self) -> list[dict]:
+        ''' Retrives the "RIDE" workout-summary column from TXT file and returns them in reverse-chron order. '''
+        with open('../data/workout_summaries.txt', 'r') as f:
+            line_list = f.readlines()
+        return [ast.literal_eval(line)['ride'] for line in line_list]
+
+    def get_workout_metrics_from_txt(self) -> list[dict]:
+        ''' Retrives workout metrics from TXT file and returns them in reverse-chron order. '''
+        with open('../data/workout_metrics.txt', 'r') as f:
+            line_list = f.readlines()
+        return [ast.literal_eval(line) for line in line_list]
+
+    
+
+    def get_data_from_peloton(self) -> None:        
+        self.workout_ids = self.get_workout_ids_from_peloton()        
+        self.workout_summaries = self.get_workout_summaries_from_peloton()        
+        self.workout_metrics = self.get_workout_metrics_from_peloton()
+                
+    def get_workout_ids_from_peloton(self) -> list[str]:
         print('Getting workout IDs...')
-        return [workout['id'] for workout in self.workout_list]
+        return self.pyloton.get_workout_ids()
 
-    def get_workouts_by_id(self) -> list[dict]:
-        print('Getting workouts by ID...')
-        return [self.py_conn.GetWorkoutById(workout_id) for workout_id in self.workout_ids]
-
-    def get_workout_summaries(self) -> list[dict]:
+    def get_workout_summaries_from_peloton(self) -> list[dict]:
         print('Getting workout summaries...')
-        return [self.py_conn.GetWorkoutSummaryById(workout_id) for workout_id in self.workout_ids]
+        return [self.pyloton.get_workout_summary_by_id(workout_id) for workout_id in self.workout_ids]
 
-    def get_workout_metrics(self) -> list[dict]:
+    def get_workout_metrics_from_peloton(self) -> list[dict]:
         print('Getting workout metrics...')
-        return [self.py_conn.GetWorkoutMetricsById(workout_id) for workout_id in self.workout_ids]
+        return [self.pyloton.get_workout_metrics_by_id(workout_id) for workout_id in self.workout_ids]
 
     
 
     def create_txt_files(self) -> None:
         now_str = datetime.now(tz=EASTERN_TIME).strftime('%Y-%m-%d_%H-%M')
-        self.dump_workout_list_to_txt(now_str)
         self.dump_workout_ids_to_txt(now_str)
-        self.dump_workouts_by_id_to_txt(now_str)
         self.dump_workout_summaries_to_txt(now_str)
         self.dump_workout_metrics_to_txt(now_str)
-
-    def dump_workout_list_to_txt(self, now_str: str) -> None:
-        print('Dumping workout list to TXT...')
-        filename = TXT_DIR.joinpath(f"{now_str}_workout_list.txt")
-        with open(filename, 'w') as f:
-            for i, workout in enumerate(self.workout_list):
-                if i == 0:
-                    f.write(str(workout))
-                else:
-                    f.write('\n' + str(workout))
 
     def dump_workout_ids_to_txt(self, now_str: str) -> None:
         print('Dumping workout IDs to TXT...')
@@ -94,18 +117,6 @@ class PelotonTxtFiles():
                     f.write(str(workout_id))
                 else:
                     f.write('\n' + str(workout_id))
-
-    def dump_workouts_by_id_to_txt(self, now_str: str) -> None:
-        print('Dumping workouts by ID to TXT...')
-        filename = TXT_DIR.joinpath(f"{now_str}_workouts_by_id.txt")
-        with open(filename, 'w') as f:
-            # for workout_by_id in self.workouts_by_id:
-            #     f.write(str(workout_by_id) + '\n')
-            for i, workout_by_id in enumerate(self.workouts_by_id):
-                if i == 0:
-                    f.write(str(workout_by_id))
-                else:
-                    f.write('\n' + str(workout_by_id))
             
     def dump_workout_summaries_to_txt(self, now_str: str) -> None:
         print('Dumping workout summaries to TXT...')
@@ -135,24 +146,14 @@ class PelotonTxtFiles():
     def create_csv_files(self) -> None:
         now_str = datetime.now(tz=EASTERN_TIME).strftime('%Y-%m-%d_%H-%M')
         print('Creating CSV files...')
-        self.write_workout_list_to_csv(now_str)
         self.write_workout_ids_to_csv(now_str)
-        self.write_workouts_by_id_to_csv(now_str)
         self.write_workout_summaries_to_csv(now_str)
         self.write_workout_metrics_to_csv(now_str)
-
-    def write_workout_list_to_csv(self, now_str: str) -> None:
-        df = pd.DataFrame(self.workout_list)
-        df.to_csv(CSV_DIR.joinpath(f"{now_str}_workout_list.csv"))
-        
+       
     def write_workout_ids_to_csv(self, now_str: str) -> None:
         df = pd.DataFrame(self.workout_ids)
         df.to_csv(CSV_DIR.joinpath(f"{now_str}_workout_ids.csv"))
-        
-    def write_workouts_by_id_to_csv(self, now_str: str) -> None:
-        df = pd.DataFrame(self.workouts_by_id)
-        df.to_csv(CSV_DIR.joinpath(f"{now_str}_workouts_by_id.csv"))
-        
+       
     def write_workout_summaries_to_csv(self, now_str: str) -> None:
         df = pd.DataFrame(self.workout_summaries)
         df.to_csv(CSV_DIR.joinpath(f"{now_str}_workout_summaries.csv"))
@@ -168,10 +169,25 @@ class PelotonTxtFiles():
 def main():
     pass
     object = PelotonTxtFiles()
-    object.get_data_from_peloton()
-    object.create_txt_files()
-    object.create_csv_files()
-    print('Done')
+    print(object.total_workouts_on_disk)
+    # print(pd.json_normalize(object.workout_metrics[0]['average_summaries']).set_index('slug'))
+    rides = pd.DataFrame(object.get_workout_summary_rides_from_txt())
+    rides.to_csv('asdsdfsadf.csv')
+    # try:
+    #     print(f"Workouts in TXT files: {object.count_workouts()}")
+    # except FileNotFoundError as e:
+    #     print(f"File not found: {e}")
+    # except WorkoutMismatchError:
+    #     print('WorkoutMismatchError:  Number of workouts in TXT files do not match!')
+
+    # metrics = object.get_workout_metrics_from_txt()
+    # print(metrics)
+    # print(type(metrics[0]))
+    
+    # object.get_data_from_peloton()
+    # object.create_txt_files()
+    # object.create_csv_files()
+    # print('Done')
 
 
 if __name__ == '__main__':

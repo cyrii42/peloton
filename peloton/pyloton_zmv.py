@@ -60,7 +60,9 @@ class PelotonSessionIDToken():
 
 
 class PylotonZMV():
-    def __init__(self, username: str, password: str):
+    def __init__(self, 
+                 username: str = PELOTON_USERNAME, 
+                 password: str = PELOTON_PASSWORD) -> None:
         self.username = username
         self.password = password
         self.session = requests.Session()
@@ -89,9 +91,15 @@ class PylotonZMV():
         self.session.cookies.set('peloton_session_id', self.login_token.session_id)
 
     def get_user_id(self) -> str:
-        resp = self.session.get(f"{BASE_URL}/api/me", timeout=10)
-        resp.raise_for_status()
-        return resp.json()["id"]
+        try:
+            resp = self.session.get(f"{BASE_URL}/api/me", timeout=10)
+            resp.raise_for_status()
+            return resp.json()["id"]
+        except requests.HTTPError:
+            self.get_new_login_token()
+            resp = self.session.get(f"{BASE_URL}/api/me", timeout=10)
+            resp.raise_for_status()
+            return resp.json()["id"]
 
     def get_total_workouts(self) -> int:
         try:
@@ -108,28 +116,15 @@ class PylotonZMV():
         if num_workouts is None:
             num_workouts = (self.get_total_workouts() if self.total_workouts is None 
                                                     else self.total_workouts)
-            
-        limit = 100 if num_workouts > 100 else num_workouts
-        pages = num_workouts // limit
-        remainder = num_workouts % limit
-        base_workout_url = f"{BASE_URL}/api/user/{self.login_token.user_id}/workouts?sort_by=-created"
 
+        limit = min(100, num_workouts)
+        pages = (1 if limit < 100 
+                   else ((num_workouts // limit) + min(1, (num_workouts % limit))))
+           
+        base_workout_url = f"{BASE_URL}/api/user/{self.login_token.user_id}/workouts?sort_by=-created"
         workout_id_list = []
         for page in range(pages):
             url = f"{base_workout_url}&page={page}&limit={limit}"
-            try:
-                resp = self.session.get(url, timeout=10)
-                resp.raise_for_status()
-            except requests.HTTPError:
-                self.get_new_login_token()
-                resp = self.session.get(url, timeout=10)
-                resp.raise_for_status()
-                
-            for dataset in resp.json()['data']:
-                workout_id_list.append(dataset['id'])
-
-        if remainder > 0:
-            url = f"{base_workout_url}&page={pages}&limit={limit}"
             try:
                 resp = self.session.get(url, timeout=10)
                 resp.raise_for_status()
@@ -155,7 +150,7 @@ class PylotonZMV():
             
         return resp.json()
 
-    def get_workout_metrics_by_id(self, workout_id: str, frequency: int = 50):
+    def get_workout_metrics_by_id(self, workout_id: str, frequency: int = 60):
         url = f"{BASE_URL}/api/workout/{workout_id}/performance_graph?every_n={frequency}"
         try:
             resp = self.session.get(url, timeout=10)
@@ -174,30 +169,13 @@ def main():
     # token = PelotonSessionIDToken.read_session_id_from_json()#filename='asdfoihasf')
     # print(token)
     
-    pyloton = PylotonZMV(PELOTON_USERNAME, PELOTON_PASSWORD)
+    # pyloton = PylotonZMV(PELOTON_USERNAME, PELOTON_PASSWORD)
 
-    print(f"Total Workouts: {pyloton.get_total_workouts()}")
-    ids = pyloton.get_workout_ids()
-    print(f"There are {len(ids)} Workout IDs: {ids}")
-    # pprint(pyloton.get_workout_summary_by_id('725f387569f049f497c2d53adebc1443'))
+    # print(f"Total Workouts: {pyloton.get_total_workouts()}")
+    # # ids = pyloton.get_workout_ids(100)
+    # # print(f"There are {len(ids)} Workout IDs: {ids}")
+    # # pprint(pyloton.get_workout_summary_by_id('725f387569f049f497c2d53adebc1443'))
     # pprint(pyloton.get_workout_metrics_by_id('725f387569f049f497c2d53adebc1443'))
 
 if __name__ == '__main__':
     main()
-
-
-
-
-    # def login_old(self) -> requests.Response:
-    #     auth_login_url = f"{BASE_URL}/auth/login"
-    #     auth_payload = {'username_or_email': self.username, 'password': self.password}
-    #     headers = {'Content-Type': 'application/json', 'User-Agent': 'pyloton'}
-    #     resp = self.session.post(url=auth_login_url, 
-    #                                                 json=auth_payload, 
-    #                                                 headers=headers, 
-    #                                                 timeout=10)
-    #     resp.raise_for_status()
-    #     self.session_id = resp.json()['session_id']
-    #     self.user_id = resp.json()['user_id']
-    #     self.session.cookies.set('peloton_session_id', self.session_id)
-    #     return resp

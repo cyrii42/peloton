@@ -1,6 +1,9 @@
 **/data/raw_csv
 **/data/raw_txt
 **/session_id.json
+**/*.txt
+!requirements.txt
+**/*.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
