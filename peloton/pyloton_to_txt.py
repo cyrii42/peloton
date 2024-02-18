@@ -26,6 +26,22 @@ CSV_DIR = Path('../data/raw_csv').resolve()
 class WorkoutMismatchError(Exception):
     pass
 
+class PelotonJSONWriter():
+    def __init__(self):
+        self.pyloton = PylotonZMV(PELOTON_USERNAME, PELOTON_PASSWORD) 
+        try:
+            self.total_workouts_on_disk = self.count_workouts()
+        except FileNotFoundError or WorkoutMismatchError:
+            print('ERROR: re-starting at 0 workouts...')
+            self.total_workouts_on_disk = 0
+            
+        if self.total_workouts_on_disk > 0:
+            self.workout_ids = self.get_workout_ids_from_json()
+            self.workout_summaries = self.get_workout_summaries_from_json()
+            self.workout_metrics = self.get_workout_metrics_from_json()
+        else:
+            self.workout_ids = self.workout_summaries = self.workout_metrics = None
+
 class PelotonTxtFiles():
     def __init__(self):
         self.pyloton = PylotonZMV(PELOTON_USERNAME, PELOTON_PASSWORD) 
