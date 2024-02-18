@@ -36,39 +36,31 @@ class PelotonSessionIDToken():
         
         print(f"\nReading tokens from {filename}...\n")
 
-        try:
-            with open(filename, "r") as file:
-                tokens_dict = json.load(file)
-        except FileNotFoundError:
-            print(f"JSON file not found at {filename}.")
-            return None
+        with open(filename, "r") as file:
+            tokens_dict = json.load(file)
+        session_id = tokens_dict['session_id']
+        user_id = tokens_dict['user_id']
+        created_at = datetime.fromisoformat(tokens_dict['created_at']).astimezone(tz=EASTERN_TIME)
 
-        try:
-            session_id = tokens_dict['session_id']
-            user_id = tokens_dict['user_id']
-            created_at = datetime.fromisoformat(tokens_dict['created_at']).astimezone(tz=EASTERN_TIME)
-        except KeyError:
-            print("Key error in JSON file.")
-            return None
-
-        session_token = cls(
-            session_id=session_id, 
-            user_id=user_id, 
-            created_at=created_at,
-            )
+        session_token = cls(session_id=session_id, 
+                            user_id=user_id, 
+                            created_at=created_at)
         return session_token
 
 
 class PylotonZMV():
-    def __init__(self, 
-                 username: str = PELOTON_USERNAME, 
-                 password: str = PELOTON_PASSWORD) -> None:
+    def __init__(self, username: str = PELOTON_USERNAME, password: str = PELOTON_PASSWORD) -> None:
         self.username = username
         self.password = password
         self.session = requests.Session()
 
-        self.login_token = PelotonSessionIDToken.read_session_id_from_json()
-        if self.login_token is None:
+        try:
+            self.login_token = PelotonSessionIDToken.read_session_id_from_json()
+        except FileNotFoundError:
+            print("JSON file not found.  Getting new login token...")
+            self.get_new_login_token()
+        except KeyError:
+            print("Key error in JSON file.  Getting new login token...")
             self.get_new_login_token()
         else:
             self.session.cookies.set('peloton_session_id', self.login_token.session_id)
@@ -169,7 +161,7 @@ def main():
     # token = PelotonSessionIDToken.read_session_id_from_json()#filename='asdfoihasf')
     # print(token)
     
-    # pyloton = PylotonZMV(PELOTON_USERNAME, PELOTON_PASSWORD)
+    # pyloton = PylotonZMV()
 
     # print(f"Total Workouts: {pyloton.get_total_workouts()}")
     # # ids = pyloton.get_workout_ids(100)
