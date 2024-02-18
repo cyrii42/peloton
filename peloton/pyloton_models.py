@@ -2,10 +2,10 @@ from datetime import datetime, timedelta
 from typing import Union
 from uuid import UUID
 from zoneinfo import ZoneInfo
-from typing_extensions import Annotated, Optional, List
+from typing_extensions import Optional, List
 
 import sqlalchemy as db
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, computed_field, field_serializer
 from sqlalchemy.orm import declarative_base
 
 EASTERN_TIME = ZoneInfo('America/New_York')
@@ -24,6 +24,44 @@ class PelotonRawSummary(BaseModel):
     model_config = ConfigDict(frozen=True)
     data: dict
 
+class PelotonInstructor(BaseModel):
+    model_config = ConfigDict(frozen=True)
+    instructor_id: str = Field(alias='id')
+    first_name: str
+    last_name: str
+    about_image_url: str
+    background: str
+    bio: str
+    fitness_disciplines: List[str]
+    image_url: str
+    instagram_profile: str
+    instructor_hero_image_url: str
+    ios_instructor_list_display_image_url: str
+    jumbotron_url_dark: str
+    jumbotron_url_ios: str
+    life_style_image_url: str
+    ordered_q_and_as: List[List[str]]
+    quote: str
+    short_bio: str
+    spotify_playlist_uri: str
+    strava_profile: str
+    twitter_profile: str
+    username: str
+    web_instructor_list_display_image_url: str
+
+    @computed_field
+    def full_name(self) -> str:
+        return self.first_name + ' ' + self.last_name
+
+    # @field_serializer('instructor_id', when_used='json')
+    # def serialize_courses_in_order(instructor_id: UUID):
+    #     return str(instructor_id)
+
+class PelotonInstructorDict(BaseModel):
+    instructor_id: UUID
+    instructor: PelotonInstructor
+    
+
 class PelotonMetricsEffortZoneSummary (BaseModel):
     model_config = ConfigDict(frozen=True)
     display_name: str
@@ -41,7 +79,7 @@ class PelotonMetricsUnitSummary(BaseModel):
     max_value: Optional[Union[int, float]] = None
     slug: str
     values: Optional[List[Union[int, float]]] = None
-    zones: Optional[List[PelotonMetricsEffortZoneSummary]] = None#Annotated[list[dict], Field(default_factory=lambda x: PelotonMetricsEffortZoneSummary.model_validate(x))]
+    zones: Optional[List[PelotonMetricsEffortZoneSummary]] = None
 
 class PelotonMetricsTotals(BaseModel):
     model_config = ConfigDict(frozen=True)
@@ -52,21 +90,22 @@ class PelotonMetricsTotals(BaseModel):
 
 class PelotonRideColumn(BaseModel):
     model_config = ConfigDict(frozen=True)
-    description: str = Field(alias='ride_description')
-    difficulty_estimate: float = Field(alias='ride_difficulty_estimate')
-    duration: int = Field(alias='ride_duration')
-    fitness_discipline: str = Field(alias='ride_fitness_discipline')
-    id: UUID = Field(alias='ride_id')
-    image_url: str = Field(alias='ride_image_url')
-    instructor_id: str = Field(alias='ride_instructor_id')
-    length: int = Field(alias='ride_length')
-    title: str = Field(alias='ride_title')
+    ride_description: str = Field(alias='description', default=None)
+    ride_difficulty_estimate: float = Field(alias='difficulty_estimate', default=None)
+    ride_duration: int = Field(alias='duration')
+    ride_fitness_discipline: str = Field(alias='fitness_discipline', default=None)
+    ride_id: UUID = Field(alias='id')
+    ride_image_url: str = Field(alias='image_url', default=None)
+    ride_instructor: Optional[str] = Field(alias='instructor', default=None)
+    ride_instructor_id: Optional[str] = Field(alias='instructor_id', default=None)
+    ride_length: int = Field(alias='length', default=None)
+    ride_title: str = Field(alias='title')
 
 class PelotonMetrics(BaseModel):
     model_config = ConfigDict(frozen=True)
     workout_id: UUID
-    metrics: List[PelotonMetricsUnitSummary]#Annotated[list[dict], Field(default_factory=lambda x: PelotonMetricsUnitSummary.model_validate(x))]
-    summaries: List[PelotonMetricsTotals]#Annotated[list[dict], Field(default_factory=lambda x: PelotonMetricsTotals.model_validate(x))]
+    metrics: List[PelotonMetricsUnitSummary]
+    summaries: List[PelotonMetricsTotals]
 
 class PelotonSummary(BaseModel):
     model_config = ConfigDict(frozen=True)
@@ -82,8 +121,7 @@ class PelotonSummary(BaseModel):
     total_work: float
     user_id: UUID
     workout_type: str
-    ride: Annotated[dict, Field(default_factory=lambda x: PelotonRideColumn.model_validate(x))]
-
+    ride: PelotonRideColumn
 
 
 

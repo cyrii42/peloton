@@ -5,14 +5,17 @@ from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from pprint import pprint
+from pydantic import ValidationError
 
 import requests
 from constants import PELOTON_PASSWORD, PELOTON_USERNAME
 from typing_extensions import Self
+from pyloton_models import PelotonInstructor, PelotonInstructorDict
 
 BASE_URL = "https://api.onepeloton.com"
 EASTERN_TIME = ZoneInfo('America/New_York')
 SESSION_JSON = Path('..').resolve().joinpath('session_id.json')
+INSTRUCTORS_JSON = Path('..').resolve().joinpath('peloton_instructors.json')
 
 @dataclass
 class PelotonSessionIDToken():
@@ -53,6 +56,8 @@ class PylotonZMV():
         self.username = username
         self.password = password
         self.session = requests.Session()
+        self.total_workouts = None
+        self.instructors_dict = self.get_instructors_dict()
 
         try:
             self.login_token = PelotonSessionIDToken.read_session_id_from_json()
@@ -65,9 +70,7 @@ class PylotonZMV():
         else:
             self.session.cookies.set('peloton_session_id', self.login_token.session_id)
 
-        self.total_workouts = None
-        self.instructor_id_dict = {}  # Dictionary for caching Instructor IDs
-        self.tried_once_already = False
+        
 
     def get_new_login_token(self) -> None:
         print("Getting new session ID and resuming in 3 seconds...")
@@ -81,6 +84,37 @@ class PylotonZMV():
         self.login_token = PelotonSessionIDToken(resp.json()['session_id'], resp.json()['user_id'])
         self.login_token.write_session_id_json()
         self.session.cookies.set('peloton_session_id', self.login_token.session_id)
+
+    def get_instructors_dict(self) -> dict:
+        try:
+            with open(INSTRUCTORS_JSON, 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return dict()
+
+    def export_instructor_id_dict_to_json(self) -> None:
+        with open(INSTRUCTORS_JSON, 'w') as f:
+            json.dump(self.instructors_dict, f)
+
+    def get_instructor_full_name_by_id(self, instructor_id: str):
+        if instructor_id in self.instructors_dict.keys():
+            print(f"Found {self.instructors_dict[instructor_id]['full_name']} in dictionary!")
+            return self.instructors_dict[instructor_id]['full_name']
+
+        url = f"{BASE_URL}/api/instructor/{instructor_id}"
+        try:
+            resp = self.session.get(url, timeout=10)
+            resp.raise_for_status()
+        except requests.HTTPError:
+            self.get_new_login_token()
+            resp = self.session.get(url, timeout=10)
+            resp.raise_for_status()
+        finally:
+            output = PelotonInstructor.model_validate(resp.json()).model_dump()
+            self.instructors_dict.update({instructor_id: output})
+            self.export_instructor_id_dict_to_json()
+            return output['full_name']
+
 
     def get_user_id(self) -> str:
         try:
@@ -166,6 +200,16 @@ def main():
     # print(token)
     
     # pyloton = PylotonZMV()
+    
+    # print(pyloton.instructors_dict)
+    # print(pyloton.get_instructor_full_name_by_id('561f95c405734d8488ed8dcc8980d599'))
+    # print(pyloton.get_instructor_full_name_by_id('c0a9505d8135412d824cf3c97406179b'))
+    # print(pyloton.get_instructor_full_name_by_id('048f0ce00edb4427b2dced6cbeb107fd'))
+    # pyloton.export_instructor_id_dict_to_json()
+    # json_output = instructor1.model_dump_json(indent=2)
+    # with open('test.json', 'w') as f:
+    #     json.dump(pyloton.instructor_id_dict.model_dump_json(indent=2), f)
+    
 
     # print(f"Total Workouts: {pyloton.get_total_workouts()}")
     # # ids = pyloton.get_workout_ids(100)

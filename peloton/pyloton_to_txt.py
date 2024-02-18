@@ -6,7 +6,7 @@ from pprint import pprint
 from zoneinfo import ZoneInfo
 
 import pandas as pd
-import pyloton_models as models
+from pyloton_models import PelotonMetrics, PelotonSummary, PelotonWorkoutID
 import sqlalchemy as db
 from constants import PELOTON_PASSWORD, PELOTON_USERNAME
 from pyloton_zmv import PylotonZMV
@@ -45,13 +45,19 @@ class PelotonTxtFiles():
 
     def populate_models_from_txt(self):
         for test_metric in self.workout_metrics:
-            test_metric = models.PelotonMetrics.model_validate(test_metric)
+            test_metric = PelotonMetrics.model_validate(test_metric)
             print(test_metric)
-        # for test_summary in self.workout_summaries:
-        #     test_summary = models.PelotonSummary.model_validate(test_summary)
-        #     print(test_summary)
+        for test_summary in self.workout_summaries:
+            test_summary = PelotonSummary.model_validate(test_summary)
+            print(test_summary)
         
-
+    def test_json_dump(self):
+        test_metrics = self.workout_metrics[234]
+        model1 = PelotonMetrics.model_validate(test_metrics)
+        print(model1.model_dump_json(indent=2))
+        test_summary = self.workout_summaries[234]
+        model2 = PelotonSummary.model_validate(test_summary)
+        print(model2.model_dump_json(indent=2))
 
 
     def count_workouts(self) -> int:
@@ -179,7 +185,8 @@ class PelotonTxtFiles():
 def main():
     pass
     object = PelotonTxtFiles()
-    object.populate_models_from_txt()
+    # object.populate_models_from_txt()
+    object.test_json_dump()
 
     
     # print(object.total_workouts_on_disk)
