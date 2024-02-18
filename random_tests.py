@@ -1,4 +1,4 @@
-x = (9 if 5 == 55 
-       else 4)
+pages = 5
 
-print(x)
+for page in range(1, pages+1):
+    print(page)

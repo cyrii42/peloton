@@ -8,3 +8,4 @@ from peloton.peloton_printer import PelotonPrinter
 from peloton.peloton_processor import PelotonProcessor
 from peloton.peloton_ride import PelotonRide, PelotonRideGroup
 from peloton.peloton_sql import PelotonSQL
+from peloton.pyloton_zmv import PelotonSessionIDToken, PylotonZMV
