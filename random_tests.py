@@ -1,2 +1,6 @@
-if not(1 == 1 and 2 == 2):
-    print('x')
+from uuid import UUID
+
+zeroes = '00000000000000000000000000000000'
+
+print(f"Length of string:  {len(zeroes)}")
+print(f"Count zeroes:  {zeroes.count('0')}")

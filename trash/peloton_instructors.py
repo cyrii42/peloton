@@ -8,10 +8,10 @@ from pprint import pprint
 from pydantic import ValidationError
 
 import requests
-from constants import PELOTON_PASSWORD, PELOTON_USERNAME
+from peloton.constants import PELOTON_PASSWORD, PELOTON_USERNAME
 from typing_extensions import Self
-from pyloton_models import PelotonInstructor
-from pyloton_connector import PylotonZMVConnector
+from peloton.pyloton_models import PelotonInstructor
+from peloton.pyloton_connector import PylotonZMVConnector
 
 BASE_URL = "https://api.onepeloton.com"
 EASTERN_TIME = ZoneInfo('America/New_York')

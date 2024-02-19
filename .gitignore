@@ -1,5 +1,6 @@
 **/data/raw_csv
 **/data/raw_txt
+**/data/workouts
 **/session_id.json
 **/*.txt
 !requirements.txt

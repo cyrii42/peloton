@@ -21,48 +21,6 @@ class PylotonZMV():
     def __init__(self, username: str = PELOTON_USERNAME, password: str = PELOTON_PASSWORD) -> None:
         self.pyloton = PylotonZMVConnector(username, password)
         self.total_workouts = None
-        self.instructors_dict = self.get_instructors_dict()
-
-    def get_instructors_dict(self) -> dict:
-        try:
-            with open(INSTRUCTORS_JSON, 'r') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            return dict()
-
-    def export_instructor_id_dict_to_json(self) -> None:
-        with open(INSTRUCTORS_JSON, 'w') as f:
-            json.dump(self.instructors_dict, f)
-
-    def get_instructor_full_name_by_id(self, instructor_id: str):
-        if instructor_id in self.instructors_dict.keys():
-            print(f"Found {self.instructors_dict[instructor_id]['full_name']} in dictionary!")
-            return self.instructors_dict[instructor_id]['full_name']
-
-        url = f"{BASE_URL}/api/instructor/{instructor_id}"
-        try:
-            resp = self.pyloton.session.get(url, timeout=10)
-            resp.raise_for_status()
-        except requests.HTTPError:
-            self.pyloton.get_new_login_token()
-            resp = self.pyloton.session.get(url, timeout=10)
-            resp.raise_for_status()
-        finally:
-            output = PelotonInstructor.model_validate(resp.json()).model_dump()
-            self.instructors_dict.update({instructor_id: output})
-            self.export_instructor_id_dict_to_json()
-            return output['full_name']
-
-    def get_user_id(self) -> str:
-        try:
-            resp = self.pyloton.session.get(f"{BASE_URL}/api/me", timeout=10)
-            resp.raise_for_status()
-            return resp.json()["id"]
-        except requests.HTTPError:
-            self.pyloton.get_new_login_token()
-            resp = self.pyloton.session.get(f"{BASE_URL}/api/me", timeout=10)
-            resp.raise_for_status()
-            return resp.json()["id"]
 
     def get_total_workouts(self) -> int:
         try:
@@ -129,7 +87,16 @@ class PylotonZMV():
         output_dict.update({'workout_id': workout_id}) 
         return output_dict
 
-
+    def get_user_id(self) -> str:
+        try:
+            resp = self.pyloton.session.get(f"{BASE_URL}/api/me", timeout=10)
+            resp.raise_for_status()
+            return resp.json()["id"]
+        except requests.HTTPError:
+            self.pyloton.get_new_login_token()
+            resp = self.pyloton.session.get(f"{BASE_URL}/api/me", timeout=10)
+            resp.raise_for_status()
+            return resp.json()["id"]
 
 
 

@@ -9,7 +9,6 @@ from pprint import pprint
 import requests
 from constants import PELOTON_PASSWORD, PELOTON_USERNAME
 from typing_extensions import Self
-from pyloton_models import PelotonInstructor
 
 BASE_URL = "https://api.onepeloton.com"
 EASTERN_TIME = ZoneInfo('America/New_York')

@@ -123,6 +123,15 @@ class PelotonProcessor():
         return workout_metrics_df
 
     def process_new_workouts(self, df_workouts: pd.DataFrame, df_metrics: pd.DataFrame) -> pd.DataFrame:
+        '''
+        - From "Summary":
+            - Collects data in all of the "summary" columns
+            - Collects data in all of the "ride" columns
+        - From "Metrics":
+            - Collects total Output, Distance, and Calories from "Summaries"
+            - Collects avg & max values for Output, Cadence, Resistance, and Speed (creating "X_avg", "X_max" headers)
+            - Collects strive score and HR-zone durations from "effort_zones", if present
+        '''
         df_workout_data = df_workouts.copy().set_index("id")
         df_metrics_data = df_metrics.copy().set_index("id")
 
