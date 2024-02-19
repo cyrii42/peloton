@@ -7,8 +7,6 @@ from pprint import pprint
 
 import requests
 from constants import PELOTON_PASSWORD, PELOTON_USERNAME
-from typing_extensions import Self
-from pyloton_models import PelotonInstructor
 from pyloton_connector import PylotonZMVConnector
 
 BASE_URL = "https://api.onepeloton.com"

@@ -1,20 +1,17 @@
 import ast
 import json
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from pprint import pprint
 from typing import Union
-from uuid import UUID
 from zoneinfo import ZoneInfo
 
 import requests
 import pandas as pd
 import sqlalchemy as db
-# from peloton_instructors import PelotonInstructorFinder, PelotonInstructorNotFoundError
-from constants import PELOTON_PASSWORD, PELOTON_USERNAME
 from pydantic import (AliasChoices, BaseModel, ConfigDict, Field,
                       ValidationError, computed_field, field_serializer,
-                      field_validator, ValidationInfo)
+                      field_validator)
 from pyloton_connector import PylotonZMVConnector
 from sqlalchemy.orm import declarative_base
 from typing_extensions import List, Optional
@@ -202,7 +199,6 @@ class PelotonWorkoutData(BaseModel):
     metrics_raw: dict = Field(repr=False)
     summary: PelotonSummary
     metrics: PelotonMetrics
-    created_at: str = datetime.now(tz=EASTERN_TIME).isoformat(sep='T', timespec='seconds')
 
     @field_validator('workout_id')
     @classmethod
@@ -253,7 +249,7 @@ def get_instructor_by_id(instructor_id: str) -> PelotonHumanInstructor | None:
     except FileNotFoundError:
         instructors_dict = dict()
     if instructor_id in instructors_dict.keys():
-        print(f"Found {instructors_dict[instructor_id]['full_name']} in dictionary!")
+        # print(f"Found {instructors_dict[instructor_id]['full_name']} in dictionary!")
         return PelotonHumanInstructor.model_validate(instructors_dict[instructor_id])
     
     url = f"{BASE_URL}/api/instructor/{instructor_id}"
@@ -324,7 +320,7 @@ class WorkoutMismatchError(Exception):
 def main():
     workout = test_import()[186]
 
-    print(workout.full_df)
+    print(workout.full_df['start_time'].dtype)
 
 if __name__ == '__main__':
     main()
