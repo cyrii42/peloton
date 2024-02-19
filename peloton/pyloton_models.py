@@ -195,7 +195,7 @@ class PelotonMetrics(BaseModel):
 
 
 class PelotonWorkoutData(BaseModel):
-    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
+    model_config = ConfigDict(frozen=True)#, arbitrary_types_allowed=True)
     workout_id: str
     summary_raw: dict = Field(repr=False)
     metrics_raw: dict = Field(repr=False)
@@ -210,47 +210,32 @@ class PelotonWorkoutData(BaseModel):
         else:
             return workout_id
 
-    @computed_field
-    def summary_df(self) -> pd.DataFrame:
-        return pd.json_normalize(self.summary.model_dump())
+    def create_dataframe(self) -> pd.DataFrame:
+        summary_df = pd.json_normalize(self.summary.model_dump())
 
-    @computed_field
-    def metrics_summary_df(self) -> pd.DataFrame:
-        metrics_summaries = self.metrics.summaries
-        dict_list = [x.model_dump() for x in metrics_summaries]
-        dict_list = [{d['slug']: d['value']} for d in dict_list]
-        combined_dict = {key: value for d in dict_list for key, value in d.items()}
-        return pd.DataFrame([combined_dict])
+        metrics_summaries_dict_list = [x.model_dump() for x in self.metrics.summaries]
+        metrics_summaries_dict_list = [{d['slug']: d['value']} for d in metrics_summaries_dict_list]
+        combined_dict = {key: value for d in metrics_summaries_dict_list for key, value in d.items()}
+        metrics_summaries_df = pd.DataFrame([combined_dict])
 
-    @computed_field
-    def metrics_metrics_df(self) -> pd.DataFrame:
-        metrics_metrics = self.metrics.metrics
-        dict_list = [x.model_dump() for x in metrics_metrics]
-        dict_list = ([{f"avg_{d['slug']}": d['average_value']} for d in dict_list] 
-                       + [{f"max_{d['slug']}": d['max_value']} for d in dict_list])
-        combined_dict = {key: value for d in dict_list for key, value in d.items()}
-        return pd.DataFrame([combined_dict])
+        metrics_metrics_dict_list = [x.model_dump() for x in self.metrics.metrics]
+        metrics_metrics_dict_list = ([{f"avg_{d['slug']}": d['average_value']} for d in metrics_metrics_dict_list] 
+                                       + [{f"max_{d['slug']}": d['max_value']} for d in metrics_metrics_dict_list])
+        combined_dict = {key: value for d in metrics_metrics_dict_list for key, value in d.items()}
+        metrics_metrics_df = pd.DataFrame([combined_dict])
 
-    @computed_field
-    def metrics_hr_zones_df(self) -> pd.DataFrame:
-        metrics_metrics = self.metrics.metrics
-        dict_list = [x.model_dump() for x in metrics_metrics]
-        dict_list = [d['zones'] for d in dict_list if d['zones'] is not None]
-        if len(dict_list) == 0:
-            return pd.DataFrame()
+        metrics_hr_zones_dict_list = [x.model_dump() for x in self.metrics.metrics]
+        metrics_hr_zones_dict_list = [d['zones'] for d in metrics_hr_zones_dict_list if d['zones'] is not None]
+        if len(metrics_hr_zones_dict_list) == 0:
+            metrics_hr_zones_df = pd.DataFrame()
         else:
-            dict_list = [{f"hr_{d['slug']}": d['duration']} for d in dict_list[0]]
-            combined_dict = {key: value for d in dict_list for key, value in d.items()}
-            return pd.DataFrame([combined_dict])
+            metrics_hr_zones_dict_list = [{f"hr_{d['slug']}": d['duration']} for d in metrics_hr_zones_dict_list[0]]
+            combined_dict = {key: value for d in metrics_hr_zones_dict_list for key, value in d.items()}
+            metrics_hr_zones_df = pd.DataFrame([combined_dict])
 
-    @computed_field
-    def full_df(self) -> pd.DataFrame:
-        return pd.concat([self.summary_df, self.metrics_metrics_df,  
-                          self.metrics_summary_df,self.metrics_hr_zones_df], axis=1).dropna(axis='columns', how='all')
-
-
-
-
+        return (pd.concat([summary_df, metrics_metrics_df, 
+                           metrics_summaries_df, metrics_hr_zones_df],
+                        axis=1).dropna(axis='columns', how='all'))
 
 
 def get_instructor_by_id(instructor_id: str) -> PelotonHumanInstructor | None:
@@ -329,13 +314,14 @@ class WorkoutMismatchError(Exception):
 
 
 def main():
-    # workout = test_import()[186]
+    workout = test_import()[186]
 
-    # print(workout.full_df)
+    print(workout)
 
-    workout_list = [workout.full_df for workout in test_import()]
-    all_workouts = pd.concat(workout_list, ignore_index=True)
-    all_workouts.to_csv('all_workouts_test.csv')
+    # workout_list = [workout.create_dataframe() for workout in test_import()]
+    # all_workouts = pd.concat(workout_list, ignore_index=True)
+    # print(all_workouts.iloc[134].to_dict())
+    # all_workouts.to_csv('all_workouts_test.csv')
 
 if __name__ == '__main__':
     main()
