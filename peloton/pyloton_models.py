@@ -6,8 +6,8 @@ from pprint import pprint
 from typing import Union
 from zoneinfo import ZoneInfo
 
-import requests
 import pandas as pd
+import requests
 import sqlalchemy as db
 from pydantic import (AliasChoices, BaseModel, ConfigDict, Field,
                       ValidationError, computed_field, field_serializer,
@@ -124,6 +124,8 @@ class PelotonSummary(BaseModel):
     workout_type: str
     ride: PelotonRideColumn
 
+    #### CALCULATE LEADERBOARD PERCENTILE??? ####
+
     @field_validator('workout_id')
     @classmethod
     def workout_id_is_UUID_not_all_zeroes(cls, workout_id: str) -> str:
@@ -213,29 +215,38 @@ class PelotonWorkoutData(BaseModel):
         return pd.json_normalize(self.summary.model_dump())
 
     @computed_field
-    def metrics_metrics_df(self) -> pd.DataFrame:
-        metrics_metrics = self.metrics.metrics
-        dict_list = [x.model_dump() for x in metrics_metrics]
-        return pd.json_normalize(dict_list)
-
-    @computed_field
     def metrics_summary_df(self) -> pd.DataFrame:
         metrics_summaries = self.metrics.summaries
         dict_list = [x.model_dump() for x in metrics_summaries]
-        return pd.json_normalize(dict_list)
+        dict_list = [{d['slug']: d['value']} for d in dict_list]
+        combined_dict = {key: value for d in dict_list for key, value in d.items()}
+        return pd.DataFrame([combined_dict])
 
-    # @computed_field
-    # def metrics_hr_zones_df(self) -> pd.DataFrame:
-    #     metrics_metrics = self.metrics.metrics
-    #     metrics_zones = [x.zones for x in metrics_metrics]
-    #     metrics_zones = [x for x in metrics_zones if x is not None]
-    #     dict_list = [x.model_dump() for x in metrics_zones]
-    #     return pd.json_normalize(dict_list)
+    @computed_field
+    def metrics_metrics_df(self) -> pd.DataFrame:
+        metrics_metrics = self.metrics.metrics
+        dict_list = [x.model_dump() for x in metrics_metrics]
+        dict_list = ([{f"avg_{d['slug']}": d['average_value']} for d in dict_list] 
+                       + [{f"max_{d['slug']}": d['max_value']} for d in dict_list])
+        combined_dict = {key: value for d in dict_list for key, value in d.items()}
+        return pd.DataFrame([combined_dict])
+
+    @computed_field
+    def metrics_hr_zones_df(self) -> pd.DataFrame:
+        metrics_metrics = self.metrics.metrics
+        dict_list = [x.model_dump() for x in metrics_metrics]
+        dict_list = [d['zones'] for d in dict_list if d['zones'] is not None]
+        if len(dict_list) == 0:
+            return pd.DataFrame()
+        else:
+            dict_list = [{f"hr_{d['slug']}": d['duration']} for d in dict_list[0]]
+            combined_dict = {key: value for d in dict_list for key, value in d.items()}
+            return pd.DataFrame([combined_dict])
 
     @computed_field
     def full_df(self) -> pd.DataFrame:
-        return pd.concat([self.summary_df, self.metrics_metrics_df, 
-                          self.metrics_summary_df], ignore_index=True)#, self.metrics_hr_zones_df])
+        return pd.concat([self.summary_df, self.metrics_metrics_df,  
+                          self.metrics_summary_df,self.metrics_hr_zones_df], axis=1).dropna(axis='columns', how='all')
 
 
 
@@ -318,9 +329,13 @@ class WorkoutMismatchError(Exception):
 
 
 def main():
-    workout = test_import()[186]
+    # workout = test_import()[186]
 
-    print(workout.full_df['start_time'].dtype)
+    # print(workout.full_df)
+
+    workout_list = [workout.full_df for workout in test_import()]
+    all_workouts = pd.concat(workout_list, ignore_index=True)
+    all_workouts.to_csv('all_workouts_test.csv')
 
 if __name__ == '__main__':
     main()
