@@ -196,7 +196,7 @@ class PelotonMetrics(BaseModel):
 
 
 class PelotonWorkoutData(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
     workout_id: str
     summary_raw: dict = Field(repr=False)
     metrics_raw: dict = Field(repr=False)
@@ -211,13 +211,6 @@ class PelotonWorkoutData(BaseModel):
             raise ValueError("invalid Workout ID")
         else:
             return workout_id
-
-
-class PelotonDataFrames(BaseModel):
-    model_config = ConfigDict(frozen=True, arbitrary_types_allowed=True)
-    workout_id: str
-    summary: PelotonSummary
-    metrics: PelotonMetrics
 
     @computed_field
     def summary_df(self) -> pd.DataFrame:
@@ -247,6 +240,8 @@ class PelotonDataFrames(BaseModel):
     def full_df(self) -> pd.DataFrame:
         return pd.concat([self.summary_df, self.metrics_metrics_df, 
                           self.metrics_summary_df], ignore_index=True)#, self.metrics_hr_zones_df])
+
+
 
 
 
@@ -329,12 +324,7 @@ class WorkoutMismatchError(Exception):
 def main():
     workout = test_import()[186]
 
-    workout_dfs = PelotonDataFrames(
-        workout_id=workout.workout_id,
-        summary=workout.summary,
-        metrics=workout.metrics
-    )
-    print(workout_dfs.full_df)
+    print(workout.full_df)
 
 if __name__ == '__main__':
     main()
