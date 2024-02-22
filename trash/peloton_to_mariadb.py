@@ -2,7 +2,7 @@ from datetime import datetime
 
 import peloton.helpers as helpers
 import pandas as pd
-import peloton.peloton_pivots as pivots
+import trash.peloton_pivots as pivots
 import sqlalchemy as db
 from pylotoncycle import pylotoncycle
 

@@ -5,36 +5,118 @@ import sqlalchemy as db
 from pylotoncycle import PylotonCycle
 
 from peloton.constants import (PELOTON_CSV_DIR, PELOTON_PASSWORD,
-                               PELOTON_USERNAME)
-from peloton.peloton_pivots import PelotonPivots
-from peloton.peloton_printer import PelotonPrinter
-from peloton.peloton_ride import PelotonRide, PelotonRideGroup
-from peloton.peloton_sql import PelotonSQL
+                               PELOTON_USERNAME, DF_DTYPES_DICT)
+from peloton.pyloton_zmv import PylotonZMV
+from peloton.handlers import PelotonSQL, PelotonStdoutPrinter, PelotonJSONWriter, PelotonCSVWriter
+from peloton.schema import PelotonPivots, PelotonWorkoutData, PelotonSummary, PelotonMetrics
+from peloton.schema.peloton_ride import PelotonRide, PelotonRideGroup
+from peloton.exceptions import WorkoutMismatchError
 
-'''
-METHODS:
-check_for_new_workouts
-pull_new_raw_metrics_data_from_peloton
-export_new_raw_workout_data_to_sql
-export_new_raw_metrics_data_to_sql
-export_new_processed_data_to_sql
-ingest_raw_workout_data_from_sql
-ingest_raw_metrics_data_from_sql
-ingest_processed_data_from_sql
-print_processed_data_to_stdout
-process_workouts_from_new_raw_data
 
-INSTANCE VARIABLES:
-sql_engine (from __init__())
-new_workouts: bool (from __init__())
-new_workouts_num: int (from __init__())
-df_processed:  pd.DataFrame (from __init__())
+class PelotonProcessorNew():
+    ''' Object for pulling new data from Peloton, processing it, and exporting to SQL. '''
+    
+    def __init__(self, sql_engine: db.Engine, username: str = PELOTON_USERNAME, password: str = PELOTON_PASSWORD):
+        self.py_conn = PylotonZMV(username, password)
+        self.sql_writer = PelotonSQL(sql_engine)
+        self.json_writer = PelotonJSONWriter()
+        self.processed_df = self.ingest_data_from_json()
+        # self.pivots = PelotonPivots(self.processed_df)
 
-py_conn (created in check_for_new_workouts)
-df_raw_workouts_data_in_sql (created in check_for_new_workouts)
-df_raw_workout_data_new (created in check_for_new_workouts)
-df_raw_workout_metrics_data_new (created in check_for_new_workouts)
-'''
+    def check_for_new_workouts(self) -> None:
+        new_workout_ids = self._get_new_workout_ids()
+        if len(new_workout_ids) == 0:
+            return list()
+
+        print(f"New Workout IDs:  {new_workout_ids}")
+        new_workout_list: list[PelotonWorkoutData] = []
+        for workout_id in new_workout_ids:
+            summary_raw = self.py_conn.get_workout_summary_by_id(workout_id)
+            metrics_raw = self.py_conn.get_workout_metrics_by_id(workout_id)
+            workout_data = PelotonWorkoutData(
+                workout_id=workout_id,
+                summary_raw=summary_raw,
+                metrics_raw=metrics_raw,
+                summary=PelotonSummary.model_validate(summary_raw),
+                metrics=PelotonMetrics.model_validate(metrics_raw)
+                )
+            new_workout_list.append(workout_data)
+
+        for workout in new_workout_list:
+            self.json_writer.write_workout_to_json(workout)
+
+        self.json_writer.refresh_data()
+        self.processed_df = self.ingest_data_from_json()
+        # self.pivots.regenerate_tables(self.processed_df)
+       
+    def _get_new_workout_ids(self) -> list[str]:
+        self.json_writer.refresh_data()
+           
+        workouts_on_peloton_num = self.py_conn.get_total_workouts_num()
+        workouts_on_disk_num = self.json_writer.total_workouts_on_disk
+        new_workouts_num = workouts_on_peloton_num - workouts_on_disk_num
+        
+        workout_ids_on_peloton = self.py_conn.get_workout_ids()
+        workout_ids_on_disk = self.json_writer.get_workout_ids_from_json()
+        new_workout_ids = [workout_id for workout_id in workout_ids_on_peloton
+                            if workout_id not in workout_ids_on_disk]
+
+        if len(new_workout_ids) != new_workouts_num:
+                raise WorkoutMismatchError()
+
+        print(f"Total Workouts: {len(workout_ids_on_peloton)}")
+        print(f"Workouts in Database: {len(workout_ids_on_disk)}")
+        print(f"New Workouts to Write: {len(new_workout_ids)}")
+
+        return new_workout_ids
+
+    def _convert_workout_list_to_dataframe(self, workout_list: list[PelotonWorkoutData]) -> pd.DataFrame:
+        if len(workout_list) > 0:
+            output_df = (pd.concat([workout.create_dataframe() for workout in workout_list], ignore_index=True)
+                           .sort_values(by=['start_time'])
+                           .reset_index(drop=True))
+            return output_df.astype({key: value for key, value in DF_DTYPES_DICT.items()}, errors='ignore')
+                                #  if (key in output_df.columns) and (output_df[key].notna())})
+        else:
+            return pd.DataFrame()
+
+    def ingest_data_from_json(self) -> pd.DataFrame:
+        self.json_writer.refresh_data()
+        workout_list = [workout.create_dataframe() for workout in self.json_writer.all_workouts]
+        output_df = (pd.concat(workout_list, ignore_index=True)
+                       .sort_values(by='start_time')
+                       .reset_index(drop=True))
+        print(output_df.info())
+        return output_df.astype({key: value for key, value in DF_DTYPES_DICT.items()}, errors='ignore')
+                                #  if (key in output_df.columns) and (output_df[key].notna())})
+
+    # def get_full_dataframe(self) -> pd.DataFrame:
+    #     self.json_writer.refresh_data()
+
+    #     df_existing = self._convert_workout_list_to_dataframe(self.json_writer.get_workout_data_from_json())
+    #     df_new = self._convert_workout_list_to_dataframe(self.check_for_new_workouts())
+
+    #     return (pd.concat([df_existing, df_new], ignore_index=True)
+    #               .sort_values(by=['start_time'])
+    #               .reset_index(drop=True))
+
+    def export_new_processed_data_to_sql(self, df_processed_new: pd.DataFrame):
+        ...
+
+    def ingest_processed_data_from_sql(self) -> PelotonWorkoutData:
+        ...
+
+    def create_new_pivot_tables(self, df_processed: pd.DataFrame) -> None:
+        self.pivots.regenerate_tables(df_processed)
+
+    def print_processed_data_to_stdout(self) -> None:
+        ...
+
+    def print_pivot_tables_to_stdout(self) -> None:
+        ...
+
+    def write_csv_files(self) -> None:
+        ...
 
 class PelotonProcessor():   
     ''' Object for pulling new data from Peloton, processing it, and exporting to SQL. '''
@@ -209,11 +291,11 @@ class PelotonProcessor():
         self.pivots.regenerate_tables(df_processed)
 
     def print_processed_data_to_stdout(self) -> None:
-        peloton_printer = PelotonPrinter(self.ingest_processed_data_from_sql())
+        peloton_printer = PelotonStdoutPrinter(self.ingest_processed_data_from_sql())
         peloton_printer.print_processed_data()
 
     def print_pivot_tables_to_stdout(self) -> None:
-        peloton_printer = PelotonPrinter(self.ingest_processed_data_from_sql())
+        peloton_printer = PelotonStdoutPrinter(self.ingest_processed_data_from_sql())
         peloton_printer.print_pivot_tables()
 
     def write_csv_files(self) -> None:

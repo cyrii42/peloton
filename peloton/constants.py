@@ -1,5 +1,6 @@
 import os
 from zoneinfo import ZoneInfo
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -27,3 +28,46 @@ PELOTON_PASSWORD = os.getenv("PELOTON_PASSWORD")
 PELOTON_USER_ID = os.getenv("PELOTON_USER_ID")
 PELOTON_CSV_DIR = os.getenv("PELOTON_CSV_DIR")
 PELOTON_SPREADSHEET = os.getenv("PELOTON_SPREADSHEET")
+
+INSTRUCTORS_JSON = Path.home().joinpath('python', 'peloton', 'peloton_instructors.json')
+WORKOUTS_DIR = Path.home().joinpath('python', 'peloton', 'data', 'workouts')
+SESSION_JSON = Path.home().joinpath('python', 'peloton', 'session_id.json')
+BASE_URL = "https://api.onepeloton.com"
+SQLITE_FILENAME = f"sqlite:///{Path.home().joinpath('python', 'peloton', 'data', 'peloton.db').resolve()}"
+
+DF_DTYPES_DICT = {
+    'workout_id': 'string', 
+    'start_time': 'datetime64[ns, America/New_York]', 
+    'end_time': 'datetime64[ns, America/New_York]', 
+    'metrics_type': 'string', 
+    'workout_type': 'string', 
+    'leaderboard_rank': 'int64',
+    'total_leaderboard_users': 'int64', 
+    'average_effort_score': 'float64', 
+    'title': 'string', 
+    'description': 'string', 
+    'ride_duration': 'int64', 
+    'ride_length': 'int64', 
+    'image_url': 'string', 
+    'difficulty_estimate': 'float64',  
+    'instructor_id': 'string', 
+    'instructor_name': 'string', 
+    'avg_output': 'int64', 
+    'avg_cadence': 'int64', 
+    'avg_resistance': 'int64',  
+    'avg_speed': 'float64', 
+    'avg_heart_rate': 'int64',
+    'max_output': 'int64', 
+    'max_cadence': 'int64', 
+    'max_resistance': 'int64',  
+    'max_speed': 'float64', 
+    'max_heart_rate': 'int64', 
+    'total_output': 'int64', 
+    'distance': 'float64', 
+    'calories': 'int64',  
+    'hr_zone1': 'int64', 
+    'hr_zone2': 'int64', 
+    'hr_zone3': 'int64', 
+    'hr_zone4': 'int64', 
+    'hr_zone5': 'int64'
+}

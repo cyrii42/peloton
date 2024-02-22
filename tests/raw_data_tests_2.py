@@ -6,7 +6,7 @@ import pylotoncycle
 import sqlalchemy as db
 
 import peloton.functions as rdt
-from peloton.peloton_ride import PelotonRide, PelotonRideGroup
+from peloton.schema.peloton_ride import PelotonRide, PelotonRideGroup
 from peloton.constants import PELOTON_PASSWORD, PELOTON_USERNAME
 from peloton.helpers import create_mariadb_engine
 
