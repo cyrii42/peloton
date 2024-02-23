@@ -12,14 +12,14 @@ class PelotonJSONWriter():
         self.json_files = self.get_json_file_list()
         self.total_workouts_on_disk = len(self.json_files)
         self.workout_ids = self.get_workout_ids_from_json()
-        self.all_workouts = self.get_workout_data_from_json()
+        self.all_workouts = self.get_workouts_from_json()
         self.instructors_dict = self.get_instructors_dict_from_json()
 
     def refresh_data(self) -> None:
         self.json_files = self.get_json_file_list()
         self.total_workouts_on_disk = len(self.json_files)
         self.workout_ids = self.get_workout_ids_from_json()
-        self.all_workouts = self.get_workout_data_from_json()
+        self.all_workouts = self.get_workouts_from_json()
         self.instructors_dict = self.get_instructors_dict_from_json()
 
     def get_json_file_list(self) -> list[Path]:
@@ -34,15 +34,15 @@ class PelotonJSONWriter():
         except FileNotFoundError:
             return list()
 
-    def get_workout_from_json(self, workout_id: str) -> PelotonWorkoutData:
-        with open(WORKOUTS_DIR.joinpath(f"{workout_id}.json"), 'r') as f:
-            return PelotonWorkoutData.model_validate(json.load(f))
-
-    def get_workout_data_from_json(self) -> list[PelotonWorkoutData]:
+    def get_workouts_from_json(self) -> list[PelotonWorkoutData]:
         if self.total_workouts_on_disk == 0:
             return list()
         else:
-            return [self.get_workout_from_json(workout_id) for workout_id in self.workout_ids]
+            return [self._get_workout_from_json(workout_id) for workout_id in self.workout_ids]
+
+    def _get_workout_from_json(self, workout_id: str) -> PelotonWorkoutData:
+        with open(WORKOUTS_DIR.joinpath(f"{workout_id}.json"), 'r') as f:
+            return PelotonWorkoutData.model_validate(json.load(f))
 
     def write_workout_to_json(self, workout: PelotonWorkoutData) -> None:
         with open(WORKOUTS_DIR.joinpath(f"{workout.workout_id}.json"), 'w') as f:

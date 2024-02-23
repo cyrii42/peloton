@@ -1,7 +1,5 @@
-from zoneinfo import ZoneInfo
-
 import pandas as pd
-from peloton.constants import BASE_URL, EASTERN_TIME, INSTRUCTORS_JSON, WORKOUTS_DIR, SQLITE_FILENAME
+from peloton.constants import EASTERN_TIME
 
 '''
 METHODS
@@ -45,10 +43,11 @@ class PelotonPivots():
         self.totals_table = self.create_totals_table()
         
 
-    def create_df_for_pivots(self, df: pd.DataFrame) -> pd.DataFrame:       
+    def create_df_for_pivots(self, df: pd.DataFrame) -> pd.DataFrame:  
+        df = df.copy()     
         # df['start_time'] = pd.to_datetime(df['start_time'], utc=True)
         df_dti = pd.DatetimeIndex(df['start_time']).tz_convert(tz=None)
-        df_dti_localized = pd.DatetimeIndex(df['start_time']).tz_convert(tz=ZoneInfo("America/New_York"))
+        df_dti_localized = pd.DatetimeIndex(df['start_time']).tz_convert(tz=EASTERN_TIME)
 
         df['annual_periods'] = [x.to_period(freq='Y') for x in df_dti]
         df['monthly_periods'] = [x.to_period(freq='M') for x in df_dti]
@@ -58,11 +57,12 @@ class PelotonPivots():
         df['days'] = [x.day for x in df_dti_localized]
         df['date'] = [f"{str(x.year)}-{str(x.month)}-{str(x.day)}" for x in df_dti_localized]
 
-        output_list = df['total_output'].tolist()
-        duration_list = df['ride_duration'].tolist()
-        df['output_per_min'] = [(x[0] / (x[1] / 60)) for x in zip(output_list, duration_list) 
-                                if x[0] is not None and x[0] > 0 and x[1] is not None and x[1] > 0]
-        df['duration_hrs'] = [round((x / 3600), 2) for x in duration_list if x is not None and x > 0]
+        #### DEPRECATED: these fields are now calculated in the Pydantic model
+        # output_list = df['total_output'].tolist()
+        # duration_list = df['ride_duration'].tolist()
+        # df['output_per_min'] = [(x[0] / (x[1] / 60)) for x in zip(output_list, duration_list) 
+        #                         if x[0] is not None and x[0] > 0 and x[1] is not None and x[1] > 0]
+        # df['duration_hrs'] = [round((x / 3600), 2) for x in duration_list if x is not None and x > 0]
 
         df = df.rename(columns={
             'duration_hrs': 'hours', 

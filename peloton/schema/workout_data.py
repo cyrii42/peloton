@@ -2,13 +2,14 @@ import ast
 import json
 
 import pandas as pd
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import (BaseModel, ConfigDict, Field, computed_field,
+                      field_validator)
 
+from peloton.constants import DF_DTYPES_DICT, WORKOUTS_DIR
 from peloton.exceptions import WorkoutMismatchError
 
 from .metrics import PelotonMetrics
 from .summary import PelotonSummary
-from peloton.constants import WORKOUTS_DIR, DF_DTYPES_DICT
 
 
 class PelotonWorkoutData(BaseModel):
@@ -26,6 +27,33 @@ class PelotonWorkoutData(BaseModel):
             raise ValueError("invalid Workout ID")
         else:
             return workout_id
+
+    @computed_field
+    def output_per_min(self) -> float | None:
+        if (self.metrics.summaries is None 
+                or self.summary.ride.ride_duration is None
+                or self.summary.ride.ride_duration == 0):
+            return None
+
+        total_output = None
+        for unit in self.metrics.summaries:
+            if unit.slug == 'total_output':
+                total_output = unit.value
+        if total_output is None:
+            return None
+
+        ride_minutes = (self.summary.ride.ride_duration / 60)
+
+        return (total_output / ride_minutes)
+
+    @computed_field
+    def duration_hrs(self) -> float | None:
+        if self.summary.ride.ride_duration is None or self.summary.ride.ride_duration == 0:
+            return None
+
+        return (self.summary.ride.ride_duration / 3600)
+
+                
 
     def create_dataframe(self) -> pd.DataFrame:
         # summary_df = pd.json_normalize(self.summary.model_dump())
@@ -54,8 +82,15 @@ class PelotonWorkoutData(BaseModel):
             combined_dict = {key: value for d in metrics_hr_zones_dict_list for key, value in d.items()}
             metrics_hr_zones_df = pd.DataFrame([combined_dict])
 
-        return (pd.concat([summary_df, ride_df, metrics_metrics_df, 
-                           metrics_summaries_df, metrics_hr_zones_df],
+        metrics_effort_zones_df = pd.DataFrame([self.metrics.effort_zones.model_dump()]) if self.metrics.effort_zones is not None else None
+
+        other_df = pd.DataFrame([{
+            'output_per_min': self.output_per_min,
+            'duration_hrs': self.duration_hrs
+                }])
+
+        return (pd.concat([summary_df, ride_df, metrics_metrics_df, metrics_summaries_df, 
+                           metrics_hr_zones_df, metrics_effort_zones_df, other_df],
                         axis=1).dropna(axis='columns', how='all'))
 
 def test_import() -> list[PelotonWorkoutData]:
@@ -77,8 +112,8 @@ def test_import() -> list[PelotonWorkoutData]:
             workout_id=workout_id_list[i],
             summary_raw=summary_list[i],
             metrics_raw=metrics_list[i],
-            summary=PelotonSummary.model_validate(summary_list[i]),
-            metrics=PelotonMetrics.model_validate(metrics_list[i])
+            summary=PelotonSummary(**summary_list[i]),  # summary=PelotonSummary.model_validate(summary_raw)
+            metrics=PelotonMetrics(**metrics_list[i])   # metrics=PelotonMetrics.model_validate(metrics_raw)
         )
         output_list.append(workout_data)
 

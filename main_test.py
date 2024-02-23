@@ -5,11 +5,8 @@ from pprint import pprint
 
 import pandas as pd
 import sqlalchemy as db
-from pydantic import BaseModel
-from typing_extensions import Any
 
-from peloton import (BASE_URL, EASTERN_TIME, INSTRUCTORS_JSON, SESSION_JSON,
-                     SQLITE_FILENAME, WORKOUTS_DIR, PelotonProcessorNew)
+from peloton import SQLITE_FILENAME, PelotonProcessor
 
 # def test_import() -> list[PelotonWorkoutData]:
 #     with open('./data/workout_ids.txt', 'r') as f:
@@ -42,62 +39,25 @@ from peloton import (BASE_URL, EASTERN_TIME, INSTRUCTORS_JSON, SESSION_JSON,
 #         with open(WORKOUTS_DIR.joinpath(f"{workout.workout_id}.json"), 'w') as f:
 #             json.dump(workout.model_dump(), f, indent=4)
 
-# def create_dtypes_dict(input: BaseModel | list[BaseModel], output_dict: dict = dict()):
-#         output_dict = dict()
-
-#         if isinstance(input, BaseModel):
-#             for name, value in input:
-#                 if isinstance(value, BaseModel | list):
-#                     return create_dtypes_dict(value, output_dict=output_dict)
-#                 else:
-#                     output_dict.update({name: type(value)})
-
-#         elif isinstance(input, list):
-#             for item in input:
-#                 return create_dtypes_dict(value, output_dict=output_dict)
-                
-#         else: 
-#             output_dict.update({name: type(value)})
-                    
-#         return output_dict
 
 
 
 def main():
     sql_engine = db.create_engine(SQLITE_FILENAME)
-    processor = PelotonProcessorNew(sql_engine)
+    processor = PelotonProcessor(sql_engine)
     # processor.check_for_new_workouts()
-    # print(processor.json_writer.all_workouts[34])
-    df = processor.processed_df
-    print(df)
-    # print(df.info())
-    df.to_csv('testtesddddasdfasdfddddssdt.csv')
+    print(processor.processed_df)
+    print(processor.pivots.year_table)
+    print(processor.pivots.month_table)
+    print(processor.pivots.totals_table)
 
-    # m = processor.json_writer.all_workouts[42]
-    
-    # print(m.create_dataframe().info())
+    # df = processor.processed_df
+    # print(df)
+    # # print(df.info())
+    # df.to_csv('testtesddddasdfasdfddddssdt.csv')
 
-    
-    # print(processor.processed_df.info())
-    
-    # workouts = test_import()
-    # print(workouts)
-    # # print(workouts[175].create_dataframe())
 
-    # df = pd.concat([workout.create_dataframe() for workout in workouts], ignore_index=True)
-    # print(df.tail(40))
-    # print(df[df['duration'].isna() == False])
-
-    # sql_writer = PelotonSQL(db.create_engine(SQLITE_FILENAME))
-    # sql_writer.export_data_to_sql(df, 'peloton_test')
-
-    # write_workouts_to_disk(workouts)
-
-    # workout_list = [workout.create_dataframe() for workout in test_import()]
-    # all_workouts = pd.concat(workout_list, ignore_index=True)
-    # print(all_workouts.iloc[134].to_dict())
-    # all_workouts.to_csv('all_workouts_test.csv')
-
+    # processor.reprocess_json_data()
 
 if __name__ == '__main__':
     main()

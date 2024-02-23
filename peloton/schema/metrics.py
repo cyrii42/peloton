@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict, field_validator, Field
 from typing_extensions import List, Optional
 
 
-class PelotonMetricsEffortZoneSummary (BaseModel):
+class PelotonMetricsMetricsHeartRateZone (BaseModel):
     model_config = ConfigDict(frozen=True)
     display_name: str
     duration: int
@@ -12,7 +12,7 @@ class PelotonMetricsEffortZoneSummary (BaseModel):
     slug: str
 
 
-class PelotonMetricsUnitSummary(BaseModel):
+class PelotonMetricsMetrics(BaseModel):
     model_config = ConfigDict(frozen=True)
     average_value: Optional[int | float] = Field(default=None)
     display_name: str
@@ -20,22 +20,28 @@ class PelotonMetricsUnitSummary(BaseModel):
     max_value: Optional[int | float] = Field(default=None)
     slug: str
     values: Optional[List[int | float]] = None
-    zones: Optional[List[PelotonMetricsEffortZoneSummary]] = None
+    zones: Optional[List[PelotonMetricsMetricsHeartRateZone]] = None
 
 
-class PelotonMetricsTotals(BaseModel):
+class PelotonMetricsSummaries(BaseModel):
     model_config = ConfigDict(frozen=True)
     display_name: str
     display_unit: str
     slug: str
     value: Optional[int | float] = Field(default=None)
 
+class PelotonMetricsEffortZones(BaseModel):
+    model_config = ConfigDict(frozen=True)
+    effort_score: float = Field(alias='total_effort_points')
+    # heart_rate_zone_durations: dict
+
 
 class PelotonMetrics(BaseModel):
     model_config = ConfigDict(frozen=True)
     workout_id: str
-    metrics: List[PelotonMetricsUnitSummary]
-    summaries: List[PelotonMetricsTotals]
+    metrics: List[PelotonMetricsMetrics]
+    summaries: List[PelotonMetricsSummaries]
+    effort_zones: Optional[PelotonMetricsEffortZones] = None
 
 
     @field_validator('workout_id')

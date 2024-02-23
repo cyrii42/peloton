@@ -47,7 +47,7 @@ class PelotonRideColumn(BaseModel):
                     instructors_dict = json.load(f)
                 if self.instructor_id in instructors_dict.keys():
                     instructor_data = instructors_dict[self.instructor_id]
-                    instructor = PelotonHumanInstructor.model_validate(instructor_data)
+                    instructor = PelotonHumanInstructor(**instructor_data) # PelotonHumanInstructor.model_validate(instructor_data)
                     return instructor.full_name
             except FileNotFoundError:
                 print(f"File not found:  {INSTRUCTORS_JSON}")

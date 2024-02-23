@@ -27,6 +27,8 @@
 #                   .reset_index(drop=True))
 
 
-d1 = dict()
-d1.update({'fart': 3, 'boop': 44})
-print(d1)
+# d1 = dict()
+# d1.update({'fart': 3, 'boop': 44})
+# print(list(**d1))
+
+print(634 / 60)

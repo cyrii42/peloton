@@ -29,11 +29,15 @@ PELOTON_USER_ID = os.getenv("PELOTON_USER_ID")
 PELOTON_CSV_DIR = os.getenv("PELOTON_CSV_DIR")
 PELOTON_SPREADSHEET = os.getenv("PELOTON_SPREADSHEET")
 
-INSTRUCTORS_JSON = Path.home().joinpath('python', 'peloton', 'peloton_instructors.json')
-WORKOUTS_DIR = Path.home().joinpath('python', 'peloton', 'data', 'workouts')
-SESSION_JSON = Path.home().joinpath('python', 'peloton', 'session_id.json')
+# Path objects
+# ROOT_DIR = Path.home().joinpath('python', 'peloton')
+ROOT_DIR = Path.cwd()
+DATA_DIR = Path.cwd().joinpath('data')
+INSTRUCTORS_JSON = ROOT_DIR.joinpath('peloton_instructors.json')
+WORKOUTS_DIR = ROOT_DIR.joinpath('data', 'workouts')
+SESSION_JSON = ROOT_DIR.joinpath('session_id.json')
 BASE_URL = "https://api.onepeloton.com"
-SQLITE_FILENAME = f"sqlite:///{Path.home().joinpath('python', 'peloton', 'data', 'peloton.db').resolve()}"
+SQLITE_FILENAME = f"sqlite:///{ROOT_DIR.joinpath('data', 'peloton.db').resolve()}"
 
 DF_DTYPES_DICT = {
     'workout_id': 'string', 
