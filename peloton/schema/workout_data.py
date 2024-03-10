@@ -54,8 +54,6 @@ class PelotonWorkoutData(BaseModel):
 
         return (self.summary.ride.ride_duration / 3600)
 
-                
-
     def create_dataframe(self) -> pd.DataFrame:
         # print(f"Making dataframe for workout {self.workout_id} at {datetime.now(tz=EASTERN_TIME)}...")
         output_dict = {}
@@ -91,55 +89,9 @@ class PelotonWorkoutData(BaseModel):
 
         return pd.DataFrame([output_dict]).dropna(axis='columns', how='all')
 
-def test_import() -> list[PelotonWorkoutData]:
-    with open('../../data/workout_ids.txt', 'r') as f:
-        workout_id_list = [line.rstrip('\n') for line in f.readlines()]
-    with open('../../data/workout_summaries.txt', 'r') as f:
-        summary_list = [ast.literal_eval(line) for line in f.readlines()]
-    with open('../../data/workout_metrics.txt', 'r') as f:
-        metrics_list = [ast.literal_eval(line) for line in f.readlines()]
-
-    if len(workout_id_list) == len(summary_list) and len(workout_id_list) == len(metrics_list):
-        num_workouts = len(workout_id_list)
-    else:
-        raise WorkoutMismatchError('TXT files with workout IDs, summaries, and metrics are not all the same length!')
-
-    output_list=[]
-    for i in range(num_workouts):
-        workout_data = PelotonWorkoutData(
-            workout_id=workout_id_list[i],
-            summary_raw=summary_list[i],
-            metrics_raw=metrics_list[i],
-            summary=PelotonSummary(**summary_list[i]),
-            metrics=PelotonMetrics(**metrics_list[i])
-        )
-        output_list.append(workout_data)
-
-    return output_list
-
-def write_workouts_to_disk(workouts: list[PelotonWorkoutData]) -> None:
-    for workout in workouts:
-        with open(WORKOUTS_DIR.joinpath(f"{workout.workout_id}.json"), 'w') as f:
-            json.dump(workout.model_dump(), f, indent=4)
-
 
 def main():
-    workouts = test_import()
-    # print(workouts[175].create_dataframe())
-
-    df = pd.concat([workout.create_dataframe() for workout in workouts], ignore_index=True)
-    print(df.tail(40))
-    # print(df[df['duration'].isna() == False])
-
-    # sql_writer = PelotonSQL(db.create_engine(SQLITE_FILENAME))
-    # sql_writer.export_data_to_sql(df, 'peloton_test')
-
-    # write_workouts_to_disk(workouts)
-
-    # workout_list = [workout.create_dataframe() for workout in test_import()]
-    # all_workouts = pd.concat(workout_list, ignore_index=True)
-    # print(all_workouts.iloc[134].to_dict())
-    # all_workouts.to_csv('all_workouts_test.csv')
+    ...
 
 if __name__ == '__main__':
     main()
