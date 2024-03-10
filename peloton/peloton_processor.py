@@ -1,32 +1,42 @@
-import ast
-
 import pandas as pd
 import sqlalchemy as db
-from pylotoncycle import PylotonCycle
 
 from peloton.constants import (PELOTON_CSV_DIR, PELOTON_PASSWORD,
-                               PELOTON_USERNAME, DF_DTYPES_DICT)
+                               PELOTON_USERNAME, DF_DTYPES_DICT, WORKOUTS_DIR)
 from peloton.pyloton_zmv import PylotonZMV
-from peloton.handlers import PelotonSQL, PelotonStdoutPrinter, PelotonJSONWriter, PelotonCSVWriter
+from peloton.handlers import PelotonSQL, PelotonStdoutPrinter, PelotonJSONWriter, PelotonCSVWriter, PelotonChartMaker, PelotonMongoDB
 from peloton.schema import PelotonPivots, PelotonWorkoutData, PelotonSummary, PelotonMetrics
-from peloton.schema.peloton_ride import PelotonRide, PelotonRideGroup
 from peloton.exceptions import WorkoutMismatchError
 
 
 class PelotonProcessor():
-    ''' Object for pulling new data from Peloton, processing it, and exporting to SQL. '''
-    
-    def __init__(self, sql_engine: db.Engine, username: str = PELOTON_USERNAME, password: str = PELOTON_PASSWORD):
+    ''' 
+    Object for pulling new data from Peloton, processing it, and exporting to SQL. 
+
+    Parameters:
+    - `sql_engine` (`db.Engine`, optional): The SQL engine to use for exporting data. Defaults to `None`.
+    - `username` (`str`): The Peloton username. Defaults to `PELOTON_USERNAME`.
+    - `password` (`str`): The Peloton password. Defaults to `PELOTON_PASSWORD`.
+    '''
+
+    def __init__(self, sql_engine: db.Engine = None, username: str = PELOTON_USERNAME, password: str = PELOTON_PASSWORD):
         self.py_conn = PylotonZMV(username, password)
-        self.sql_writer = PelotonSQL(sql_engine)
-        self.json_writer = PelotonJSONWriter()
-        self.workouts = self.get_workouts_from_json()
-        self.processed_df = self.make_dataframe()
-        self.pivots = PelotonPivots(self.processed_df)
+        self.mongodb = PelotonMongoDB()
+        self.workouts = self.mongodb.ingest_workouts_from_mongodb()
+        self.new_workouts = False
+        if sql_engine is not None:
+            self.sql_writer = PelotonSQL(sql_engine)
+        self.processed_df = self.make_dataframe() if len(self.workouts) > 0 else None
+        self.pivots = PelotonPivots(self.processed_df) if self.processed_df is not None else None
+        self.chart_maker = PelotonChartMaker(self.workouts)
+
 
     def check_for_new_workouts(self) -> None:
+        ''' Check for new workouts on Peloton and update the internal state accordingly. '''
+        
         new_workout_ids = self._get_new_workout_ids()
         if len(new_workout_ids) == 0:
+            self.new_workouts = False
             return list()
 
         print(f"New Workout IDs:  {new_workout_ids}")
@@ -38,28 +48,49 @@ class PelotonProcessor():
                 workout_id=workout_id,
                 summary_raw=summary_raw,
                 metrics_raw=metrics_raw,
-                summary=PelotonSummary(**summary_raw),  # summary=PelotonSummary.model_validate(summary_raw)
-                metrics=PelotonMetrics(**metrics_raw)   # metrics=PelotonMetrics.model_validate(metrics_raw)
+                summary=PelotonSummary(**summary_raw),
+                metrics=PelotonMetrics(**metrics_raw)
                 )
             new_workout_list.append(workout_data)
 
         for workout in new_workout_list:
-            self.json_writer.write_workout_to_json(workout)
+            # self.json_writer.write_workout_to_json(workout)
+            self.mongodb.export_workout_to_mongodb(workout)
+            self.mongodb.write_workout_to_json(workout)
 
-        self.json_writer.refresh_data()
-        self.processed_df = self.ingest_data_from_json()
-        # self.pivots.regenerate_tables(self.processed_df)
-       
+        self.new_workouts = True
+        
+        # self.json_writer.refresh_data()
+        # self.workouts = self.get_workouts_from_json()
+        self.workouts = self.mongodb.ingest_workouts_from_mongodb()
+        
+        self.processed_df = self.make_dataframe()
+        if self.pivots is not None:
+            self.pivots.regenerate_tables(self.processed_df)
+
+    def get_workouts_from_mongodb(self) -> list[PelotonWorkoutData]:
+        ''' Get the list of workouts from the MongoDB database. '''
+        
+        return self.mongodb.ingest_workouts_from_mongodb()
+
+    def get_workouts_from_sql(self) -> list[PelotonWorkoutData]:
+        ''' Get the list of workouts from the SQL database. '''
+        
+        return self.sql_writer.ingest_workouts_from_sql()
+
     def get_workouts_from_json(self) -> list[PelotonWorkoutData]:
+        ''' Get the list of workouts from the JSON files. '''
+        
         self.json_writer.refresh_data()
 
         return self.json_writer.get_workouts_from_json()
 
-
     def reprocess_json_data(self) -> None:
+        ''' Reprocess the JSON data and update the internal state accordingly. '''
+        
         self.json_writer.refresh_data()
         self.workouts = self.get_workouts_from_json()
-        
+
         workout_list = []
         for workout in self.workouts:
             workout_id = workout.workout_id
@@ -69,32 +100,35 @@ class PelotonProcessor():
                 workout_id=workout_id,
                 summary_raw=summary_raw,
                 metrics_raw=metrics_raw,
-                summary=PelotonSummary(**summary_raw),  # summary=PelotonSummary.model_validate(summary_raw)
-                metrics=PelotonMetrics(**metrics_raw)   # metrics=PelotonMetrics.model_validate(metrics_raw)
+                summary=PelotonSummary(**summary_raw),
+                metrics=PelotonMetrics(**metrics_raw)
                 )
             workout_list.append(workout_data)
 
         self.workouts = workout_list
         self.processed_df = self.make_dataframe()
-        
+
         for workout in self.workouts:
             self.json_writer.write_workout_to_json(workout)
-        
 
     def _get_new_workout_ids(self) -> list[str]:
-        self.json_writer.refresh_data()
-           
-        workouts_on_peloton_num = self.py_conn.get_total_workouts_num()
-        workouts_on_disk_num = self.json_writer.total_workouts_on_disk
-        new_workouts_num = workouts_on_peloton_num - workouts_on_disk_num
+        ''' Get the IDs of new workouts on Peloton. '''
         
+        # self.json_writer.refresh_data()
+
+        workouts_on_peloton_num = self.py_conn.get_total_workouts_num()
+        # workouts_on_disk_num = self.json_writer.total_workouts_on_disk
+        workouts_on_disk_num = len(self.mongodb.get_workout_id_list_from_mongodb())
+        new_workouts_num = workouts_on_peloton_num - workouts_on_disk_num
+
         workout_ids_on_peloton = self.py_conn.get_workout_ids()
-        workout_ids_on_disk = self.json_writer.get_workout_ids_from_json()
+        # workout_ids_on_disk = self.json_writer.get_workout_ids_from_json()
+        workout_ids_on_disk = self.mongodb.get_workout_id_list_from_mongodb()
         new_workout_ids = [workout_id for workout_id in workout_ids_on_peloton
                             if workout_id not in workout_ids_on_disk]
 
         if len(new_workout_ids) != new_workouts_num:
-                raise WorkoutMismatchError()
+            raise WorkoutMismatchError()
 
         print(f"Total Workouts: {len(workout_ids_on_peloton)}")
         print(f"Workouts in Database: {len(workout_ids_on_disk)}")
@@ -114,6 +148,7 @@ class PelotonProcessor():
             return pd.DataFrame()
 
     def make_dataframe(self) -> pd.DataFrame:
+        print("Creating processed Dataframe...")
         workout_df_list = [workout.create_dataframe() for workout in self.workouts]
         output_df = (pd.concat(workout_df_list, ignore_index=True)
                        .sort_values(by='start_time')
@@ -122,6 +157,10 @@ class PelotonProcessor():
         return output_df
                                 #  if (key in output_df.columns) and (output_df[key].notna())})
 
+    def get_workout_object_from_id(self, workout_id: str) -> PelotonWorkoutData:
+        ''' Get the workout object from the workout ID. '''
+        return next((workout for workout in self.workouts if workout.workout_id == workout_id), None)
+    
     # def get_full_dataframe(self) -> pd.DataFrame:
     #     self.json_writer.refresh_data()
 
@@ -132,20 +171,16 @@ class PelotonProcessor():
     #               .sort_values(by=['start_time'])
     #               .reset_index(drop=True))
 
-    def export_new_processed_data_to_sql(self, df_processed_new: pd.DataFrame):
-        ...
-
-    def ingest_processed_data_from_sql(self) -> PelotonWorkoutData:
-        ...
-
     def create_new_pivot_tables(self, df_processed: pd.DataFrame) -> None:
         self.pivots.regenerate_tables(df_processed)
 
     def print_processed_data_to_stdout(self) -> None:
-        ...
+        peloton_printer = PelotonStdoutPrinter(self.processed_df)
+        peloton_printer.print_processed_data()
 
     def print_pivot_tables_to_stdout(self) -> None:
-        ...
+        peloton_printer = PelotonStdoutPrinter(self.processed_df)
+        peloton_printer.print_pivot_tables()
 
     def write_csv_files(self) -> None:
         ...

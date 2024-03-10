@@ -1,11 +1,12 @@
 import ast
 import json
+from datetime import datetime
 
 import pandas as pd
 from pydantic import (BaseModel, ConfigDict, Field, computed_field,
                       field_validator)
 
-from peloton.constants import DF_DTYPES_DICT, WORKOUTS_DIR
+from peloton.constants import DF_DTYPES_DICT, WORKOUTS_DIR, EASTERN_TIME
 from peloton.exceptions import WorkoutMismatchError
 
 from .metrics import PelotonMetrics
@@ -56,42 +57,39 @@ class PelotonWorkoutData(BaseModel):
                 
 
     def create_dataframe(self) -> pd.DataFrame:
-        # summary_df = pd.json_normalize(self.summary.model_dump())
+        # print(f"Making dataframe for workout {self.workout_id} at {datetime.now(tz=EASTERN_TIME)}...")
+        output_dict = {}
+        
         summary_dict = self.summary.model_dump()
         ride_dict = summary_dict.pop('ride')
-        summary_df = pd.DataFrame([summary_dict])
-        ride_df = pd.DataFrame([ride_dict])
+        output_dict.update(summary_dict)
+        output_dict.update(ride_dict)
 
         metrics_summaries_dict_list = [x.model_dump() for x in self.metrics.summaries]
         metrics_summaries_dict_list = [{d['slug']: d['value']} for d in metrics_summaries_dict_list]
         combined_dict = {key: value for d in metrics_summaries_dict_list for key, value in d.items()}
-        metrics_summaries_df = pd.DataFrame([combined_dict])
+        output_dict.update(combined_dict)
 
         metrics_metrics_dict_list = [x.model_dump() for x in self.metrics.metrics]
         metrics_metrics_dict_list = ([{f"avg_{d['slug']}": d['average_value']} for d in metrics_metrics_dict_list] 
                                        + [{f"max_{d['slug']}": d['max_value']} for d in metrics_metrics_dict_list])
         combined_dict = {key: value for d in metrics_metrics_dict_list for key, value in d.items()}
-        metrics_metrics_df = pd.DataFrame([combined_dict])
+        output_dict.update(combined_dict)
 
         metrics_hr_zones_dict_list = [x.model_dump() for x in self.metrics.metrics]
         metrics_hr_zones_dict_list = [d['zones'] for d in metrics_hr_zones_dict_list if d['zones'] is not None]
-        if len(metrics_hr_zones_dict_list) == 0:
-            metrics_hr_zones_df = pd.DataFrame()
-        else:
+        if len(metrics_hr_zones_dict_list) > 0:
             metrics_hr_zones_dict_list = [{f"hr_{d['slug']}": d['duration']} for d in metrics_hr_zones_dict_list[0]]
             combined_dict = {key: value for d in metrics_hr_zones_dict_list for key, value in d.items()}
-            metrics_hr_zones_df = pd.DataFrame([combined_dict])
+            output_dict.update(combined_dict)
+  
+        if self.metrics.effort_zones is not None:
+            metrics_effort_zones_dict = self.metrics.effort_zones.model_dump()
+            output_dict.update(metrics_effort_zones_dict)
 
-        metrics_effort_zones_df = pd.DataFrame([self.metrics.effort_zones.model_dump()]) if self.metrics.effort_zones is not None else None
+        output_dict.update({'output_per_min': self.output_per_min, 'duration_hrs': self.duration_hrs})
 
-        other_df = pd.DataFrame([{
-            'output_per_min': self.output_per_min,
-            'duration_hrs': self.duration_hrs
-                }])
-
-        return (pd.concat([summary_df, ride_df, metrics_metrics_df, metrics_summaries_df, 
-                           metrics_hr_zones_df, metrics_effort_zones_df, other_df],
-                        axis=1).dropna(axis='columns', how='all'))
+        return pd.DataFrame([output_dict]).dropna(axis='columns', how='all')
 
 def test_import() -> list[PelotonWorkoutData]:
     with open('../../data/workout_ids.txt', 'r') as f:
@@ -112,8 +110,8 @@ def test_import() -> list[PelotonWorkoutData]:
             workout_id=workout_id_list[i],
             summary_raw=summary_list[i],
             metrics_raw=metrics_list[i],
-            summary=PelotonSummary(**summary_list[i]),  # summary=PelotonSummary.model_validate(summary_raw)
-            metrics=PelotonMetrics(**metrics_list[i])   # metrics=PelotonMetrics.model_validate(metrics_raw)
+            summary=PelotonSummary(**summary_list[i]),
+            metrics=PelotonMetrics(**metrics_list[i])
         )
         output_list.append(workout_data)
 

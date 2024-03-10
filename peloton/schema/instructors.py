@@ -1,6 +1,6 @@
 from pydantic import (AliasChoices, BaseModel, ConfigDict, Field,
                       computed_field, field_validator)
-from typing_extensions import List
+from typing import List, Optional
 
 
 class PelotonHumanInstructor(BaseModel):
@@ -18,7 +18,7 @@ class PelotonHumanInstructor(BaseModel):
     ios_instructor_list_display_image_url: str
     jumbotron_url_dark: str
     jumbotron_url_ios: str
-    life_style_image_url: str
+    life_style_image_url: Optional[str] = None
     ordered_q_and_as: List[List[str]]
     quote: str
     short_bio: str

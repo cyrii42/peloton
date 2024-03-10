@@ -5,6 +5,7 @@
 **/*.txt
 !requirements.txt
 **/*.csv
+**/workouts_backup_feb23
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

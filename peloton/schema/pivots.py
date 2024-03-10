@@ -46,8 +46,9 @@ class PelotonPivots():
     def create_df_for_pivots(self, df: pd.DataFrame) -> pd.DataFrame:  
         df = df.copy()     
         # df['start_time'] = pd.to_datetime(df['start_time'], utc=True)
-        df_dti = pd.DatetimeIndex(df['start_time']).tz_convert(tz=None)
+        # df_dti = pd.DatetimeIndex(df['start_time']).tz_convert(tz=None)
         df_dti_localized = pd.DatetimeIndex(df['start_time']).tz_convert(tz=EASTERN_TIME)
+        df_dti = df_dti_localized.tz_localize(tz=None)
 
         df['annual_periods'] = [x.to_period(freq='Y') for x in df_dti]
         df['monthly_periods'] = [x.to_period(freq='M') for x in df_dti]

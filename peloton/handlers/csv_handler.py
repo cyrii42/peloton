@@ -1,6 +1,4 @@
 from dataclasses import dataclass
-from pathlib import Path
-from pprint import pprint
 
 from peloton.schema import PelotonWorkoutData
 

@@ -1,12 +1,53 @@
-import ast
-import json
-from pathlib import Path
-from pprint import pprint
-
-import pandas as pd
+import argparse
 import sqlalchemy as db
 
-from peloton import SQLITE_FILENAME, PelotonProcessor
+from peloton import PelotonProcessor
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-c', '--check-new-workouts', dest='CHECK_FOR_NEW_WORKOUTS',
+                    action='store_const', const=True, default=False,
+                    help='check for new workouts on remote Peloton database')
+args = parser.parse_args()
+
+
+def main():   
+    peloton_processor = PelotonProcessor()
+    
+    if args.CHECK_FOR_NEW_WORKOUTS:
+        peloton_processor.check_for_new_workouts()
+
+    peloton_processor.print_processed_data_to_stdout()
+    peloton_processor.print_pivot_tables_to_stdout()
+
+    if peloton_processor.new_workouts:
+        peloton_processor.write_csv_files()
+        peloton_processor.processed_df.to_csv('processed_df.csv')
+
+    
+
+# def main():
+#     sql_engine = db.create_engine(SQLITE_FILENAME)
+#     processor = PelotonProcessor(sql_engine)
+#     processor.check_for_new_workouts()
+#     print(processor.processed_df)
+#     print(processor.pivots.year_table)
+#     print(processor.pivots.month_table)
+#     print(processor.pivots.totals_table)
+
+    # df = processor.processed_df
+    # print(df)
+    # # print(df.info())
+    # df.to_csv('testtesddddasdfasdfddddssdt.csv')
+
+
+    # processor.reprocess_json_data()
+
+if __name__ == '__main__':
+    main()
+
+
+
 
 # def test_import() -> list[PelotonWorkoutData]:
 #     with open('./data/workout_ids.txt', 'r') as f:
@@ -38,26 +79,3 @@ from peloton import SQLITE_FILENAME, PelotonProcessor
 #     for workout in workouts:
 #         with open(WORKOUTS_DIR.joinpath(f"{workout.workout_id}.json"), 'w') as f:
 #             json.dump(workout.model_dump(), f, indent=4)
-
-
-
-
-def main():
-    sql_engine = db.create_engine(SQLITE_FILENAME)
-    processor = PelotonProcessor(sql_engine)
-    # processor.check_for_new_workouts()
-    print(processor.processed_df)
-    print(processor.pivots.year_table)
-    print(processor.pivots.month_table)
-    print(processor.pivots.totals_table)
-
-    # df = processor.processed_df
-    # print(df)
-    # # print(df.info())
-    # df.to_csv('testtesddddasdfasdfddddssdt.csv')
-
-
-    # processor.reprocess_json_data()
-
-if __name__ == '__main__':
-    main()

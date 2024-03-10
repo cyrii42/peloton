@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, field_validator, Field
+from pydantic import BaseModel, ConfigDict, field_validator, Field, AliasChoices
 from typing_extensions import List, Optional
 
 
@@ -32,9 +32,39 @@ class PelotonMetricsSummaries(BaseModel):
 
 class PelotonMetricsEffortZones(BaseModel):
     model_config = ConfigDict(frozen=True)
-    effort_score: float = Field(alias='total_effort_points')
+    effort_score: float = Field(alias=AliasChoices('total_effort_points', 'effort_score'))
     # heart_rate_zone_durations: dict
 
+class PelotonMetricsSplitMetricsMetricsData(BaseModel):
+    slug: str
+    value: Optional[float] = None
+    unit: str
+
+class PelotonMetricsSplitMetricsHeader(BaseModel):
+    slug: str
+    display_name: str
+
+class PelotonMetricsSplitMetricsMetrics(BaseModel):
+    is_best: bool
+    has_floor_segment: bool
+    data: list[PelotonMetricsSplitMetricsMetricsData]
+    
+class PelotonMetricsSplitMetrics(BaseModel):
+    header: Optional[list[PelotonMetricsSplitMetricsHeader]] = None
+    metrics: Optional[list[PelotonMetricsSplitMetricsMetrics]] = None
+
+class PelotonMetricsSplitsDataSplit(BaseModel):
+    distance_marker: float
+    order: int
+    seconds: float
+    elevation_change: Optional[float] = None
+    has_floor_segment: bool
+    is_best: bool
+
+class PelotonMetricsSplitsData(BaseModel):
+    distance_marker_display_unit: Optional[str] = None
+    elevation_change_display_unit: Optional[str] = None
+    splits: Optional[list[PelotonMetricsSplitsDataSplit]] = None
 
 class PelotonMetrics(BaseModel):
     model_config = ConfigDict(frozen=True)
@@ -42,6 +72,8 @@ class PelotonMetrics(BaseModel):
     metrics: List[PelotonMetricsMetrics]
     summaries: List[PelotonMetricsSummaries]
     effort_zones: Optional[PelotonMetricsEffortZones] = None
+    splits_data: Optional[PelotonMetricsSplitsData] = None
+    splits_metrics: Optional[PelotonMetricsSplitMetrics] = None
 
 
     @field_validator('workout_id')

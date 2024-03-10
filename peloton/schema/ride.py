@@ -1,11 +1,11 @@
-import json
+from typing import Any, Optional
 
 from pydantic import (AliasChoices, BaseModel, ConfigDict, Field,
-                      computed_field, field_validator, model_validator, ValidationInfo)
-from typing import Optional, Any
+                      ValidationInfo, computed_field, field_validator)
+
+from peloton.constants import INSTRUCTOR_NAMES_DICT
 
 from .instructors import PelotonHumanInstructor, PelotonNonHumanInstructor
-from peloton.constants import INSTRUCTORS_JSON
 
 
 class PelotonRideColumn(BaseModel):
@@ -18,7 +18,7 @@ class PelotonRideColumn(BaseModel):
     difficulty_estimate: Optional[float] = None
     fitness_discipline: Optional[str] = None
     ride_id: Optional[str] = Field(alias=AliasChoices('id', 'ride_id'), default=None)
-    instructor_json: Optional[PelotonNonHumanInstructor] = Field(alias='instructor', default=None)
+    instructor_json: Optional[PelotonNonHumanInstructor] = Field(alias=AliasChoices('instructor', 'instructor_json'), default=None)
     instructor_id: Optional[str] = Field(alias=AliasChoices('instructor_id'), default=None)
         
     @field_validator('instructor_id')
@@ -42,24 +42,15 @@ class PelotonRideColumn(BaseModel):
     @computed_field
     def instructor_name(self) -> str | None:
         if self.instructor_id is not None:
-            try:
-                with open(INSTRUCTORS_JSON, 'r') as f:
-                    instructors_dict = json.load(f)
-                if self.instructor_id in instructors_dict.keys():
-                    instructor_data = instructors_dict[self.instructor_id]
-                    instructor = PelotonHumanInstructor(**instructor_data) # PelotonHumanInstructor.model_validate(instructor_data)
-                    return instructor.full_name
-            except FileNotFoundError:
-                print(f"File not found:  {INSTRUCTORS_JSON}")
-                instructors_dict = dict()
-                return None
+            return INSTRUCTOR_NAMES_DICT.get(self.instructor_id, None)
         elif self.instructor_json is not None:
             return self.instructor_json.name
         else:
             return None
 
+
 def main():
-    print(INSTRUCTORS_JSON)
+    ...
 
 if __name__ == '__main__':
     main()
