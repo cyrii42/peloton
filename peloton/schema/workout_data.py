@@ -54,7 +54,7 @@ class PelotonWorkoutData(BaseModel):
 
         return (self.summary.ride.ride_duration / 3600)
 
-    def create_dataframe(self) -> pd.DataFrame:
+    def create_dictionary(self) -> dict:
         # print(f"Making dataframe for workout {self.workout_id} at {datetime.now(tz=EASTERN_TIME)}...")
         output_dict = {}
         
@@ -87,7 +87,11 @@ class PelotonWorkoutData(BaseModel):
 
         output_dict.update({'output_per_min': self.output_per_min, 'duration_hrs': self.duration_hrs})
 
-        return pd.DataFrame([output_dict]).dropna(axis='columns', how='all')
+        return output_dict
+
+    def create_dataframe(self) -> pd.DataFrame:
+        combined_dict = self.create_dictionary()
+        return pd.DataFrame([combined_dict]).dropna(axis='columns', how='all')
 
 
 def main():
