@@ -26,9 +26,7 @@ class PelotonChartMaker():
         output_list = []
         for x in range(len(workout.metrics.metrics)):
             if x == 4:
-                print(workout.metrics.metrics[x].values)
                 values = list(map(lambda x: max(100, x), workout.metrics.metrics[x].values))
-                print(values)
             else:
                 values = workout.metrics.metrics[x].values
             slug = workout.metrics.metrics[x].slug
@@ -37,8 +35,6 @@ class PelotonChartMaker():
                 index = [(workout.summary.start_time + timedelta(seconds=(x))) 
                          for x in range(0, (5 * len(workout.metrics.metrics[x].values)), 5)]
             )
-
-            # df.plot(figsize=(16, 4), ylabel=metrics[slug])
             output_list.append(df)
 
         return output_list
