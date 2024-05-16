@@ -61,7 +61,10 @@ DF_DTYPES_DICT = {
     'ride_duration': 'int64', 
     'ride_length': 'int64', 
     'image_url': 'string', 
-    'difficulty_estimate': 'float64',  
+    'difficulty_estimate': 'float64', 
+    'fitness_discipline': 'string',
+    'ride_id': 'string',
+    'instructor_json': 'string',
     'instructor_id': 'string', 
     'instructor_name': 'string', 
     'avg_output': 'int64', 
@@ -81,7 +84,9 @@ DF_DTYPES_DICT = {
     'hr_zone2': 'int64', 
     'hr_zone3': 'int64', 
     'hr_zone4': 'int64', 
-    'hr_zone5': 'int64'
+    'hr_zone5': 'int64',
+    'output_per_min': 'float64',
+    'duration_hrs': 'float64',
 }
 
 INSTRUCTOR_NAMES_DICT = {
