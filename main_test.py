@@ -1,5 +1,6 @@
 import argparse
 import sqlalchemy as db
+from pprint import pprint
 
 from peloton import PelotonProcessor
 
@@ -19,6 +20,11 @@ def main():
 
     peloton_processor.print_processed_data_to_stdout()
     peloton_processor.print_pivot_tables_to_stdout()
+    
+    # test_workouts = [workout for workout in peloton_processor.workouts if workout.workout_id in ['93a73f74643d4da0a208e99e26f66f8a', 'ce8632f72b084b49a8dd83457315284c']]
+    # for workout in test_workouts:
+    #     pprint(workout.create_dictionary())
+    # print(peloton_processor.processed_df.info())
 
     if peloton_processor.new_workouts:
         peloton_processor.write_csv_files()
