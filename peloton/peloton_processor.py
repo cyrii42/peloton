@@ -1,4 +1,5 @@
 import pandas as pd
+import polars as pl
 import sqlalchemy as db
 
 from peloton.constants import (PELOTON_CSV_DIR, PELOTON_PASSWORD,
@@ -65,6 +66,7 @@ class PelotonProcessor():
         self.workouts = self.mongodb.ingest_workouts_from_mongodb()
         
         self.processed_df = self.make_dataframe()
+        self.chart_maker = PelotonChartMaker(self.workouts)
         if self.pivots is not None:
             self.pivots.regenerate_tables(self.processed_df)
 
@@ -134,16 +136,17 @@ class PelotonProcessor():
 
     def make_dataframe(self) -> pd.DataFrame:
         print("Creating processed Dataframe...")
-        workout_df_list = [workout.create_dataframe() for workout in self.workouts]
-        output_df = (pd.concat(workout_df_list, ignore_index=True)
-                       .sort_values(by='start_time')
-                       .reset_index(drop=True))
+        workout_dict_list = [workout.create_dictionary() for workout in self.workouts]
+        output_df = (pd.DataFrame(workout_dict_list)
+                     .dropna(axis='columns', how='all')
+                     .drop(columns=['duration'])
+                     .sort_values(by='start_time')
+                     .reset_index(drop=True))
         output_df = output_df.astype({key: value for key, value in DF_DTYPES_DICT.items() if key in output_df.columns}, errors='ignore')               
         return output_df
-                                #  if (key in output_df.columns) and (output_df[key].notna())})
 
     def get_workout_object_from_id(self, workout_id: str) -> PelotonWorkoutData:
-        ''' Get the workout object from the workout ID. '''
+        ''' Get a `PelotonWorkoutData` object from its corresponding workout ID. '''
         return next((workout for workout in self.workouts if workout.workout_id == workout_id), None)
 
     def create_new_pivot_tables(self, df_processed: pd.DataFrame) -> None:
