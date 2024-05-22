@@ -1,23 +1,20 @@
-from dataclasses import dataclass
+import pandas as pd 
+from peloton.schema import PelotonWorkoutData, PelotonPivots
 
-from peloton.schema import PelotonWorkoutData
-
-from peloton.constants import PELOTON_CSV_DIR, EASTERN_TIME, WORKOUTS_DIR, INSTRUCTORS_JSON
-
-
+from peloton.constants import DATA_DIR
 
     
-@dataclass
 class PelotonCSVWriter():
-    peloton_data: PelotonWorkoutData
+    def __init__(self, df_processed: pd.DataFrame):
+        self.df_processed = df_processed
+        self.pivots = PelotonPivots(df_processed)
 
     def write_csv_files(self) -> None:
-        self.peloton_data.year_table.to_csv(f"{PELOTON_CSV_DIR}/year_table.csv")
-        self.peloton_data.month_table.to_csv(f"{PELOTON_CSV_DIR}/month_table.csv")
-        self.peloton_data.totals_table.to_csv(f"{PELOTON_CSV_DIR}/totals_table.csv")
-        self.peloton_data.df_processed_workout_data.to_csv(f"{PELOTON_CSV_DIR}/processed_workouts_data.csv")
-        self.peloton_data.df_raw_workouts_data.to_csv(f"{PELOTON_CSV_DIR}/raw_workouts_data.csv")
-        self.peloton_data.df_raw_metrics_data.to_csv(f"{PELOTON_CSV_DIR}/raw_metrics_data.csv")
+        self.df_processed.to_csv(DATA_DIR.joinpath('processed_workouts_data.csv'))
+        self.pivots.year_table.to_csv(DATA_DIR.joinpath('year_table.csv'))
+        self.pivots.month_table.to_csv(DATA_DIR.joinpath('month_table.csv'))
+        self.pivots.totals_table.to_csv(DATA_DIR.joinpath('totals_table.csv'))
+        
 
 
 def main():
