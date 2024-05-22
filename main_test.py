@@ -14,21 +14,22 @@ args = parser.parse_args()
 
 def main():   
     peloton_processor = PelotonProcessor()
+    # peloton_processor.write_csv_files()
     
-    if args.CHECK_FOR_NEW_WORKOUTS:
-        peloton_processor.check_for_new_workouts()
+    # if args.CHECK_FOR_NEW_WORKOUTS:
+    #     peloton_processor.check_for_new_workouts()
 
-    peloton_processor.print_processed_data_to_stdout()
-    peloton_processor.print_pivot_tables_to_stdout()
+    # peloton_processor.print_processed_data_to_stdout()
+    # peloton_processor.print_pivot_tables_to_stdout()
     
-    # test_workouts = [workout for workout in peloton_processor.workouts if workout.workout_id in ['93a73f74643d4da0a208e99e26f66f8a', 'ce8632f72b084b49a8dd83457315284c']]
-    # for workout in test_workouts:
-    #     pprint(workout.create_dictionary())
-    # print(peloton_processor.processed_df.info())
+    # # test_workouts = [workout for workout in peloton_processor.workouts if workout.workout_id in ['93a73f74643d4da0a208e99e26f66f8a', 'ce8632f72b084b49a8dd83457315284c']]
+    # # for workout in test_workouts:
+    # #     pprint(workout.create_dictionary())
+    # # print(peloton_processor.processed_df.info())
 
-    if peloton_processor.new_workouts:
-        peloton_processor.write_csv_files()
-        peloton_processor.processed_df.to_csv('processed_df.csv')
+    # if peloton_processor.new_workouts:
+    #     peloton_processor.write_csv_files()
+    #     peloton_processor.processed_df.to_csv('processed_df.csv')
 
     
 
