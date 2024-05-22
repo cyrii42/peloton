@@ -2,12 +2,16 @@ import pandas as pd
 import polars as pl
 import sqlalchemy as db
 
-from peloton.constants import (PELOTON_CSV_DIR, PELOTON_PASSWORD,
-                               PELOTON_USERNAME, DF_DTYPES_DICT, WORKOUTS_DIR)
-from peloton.pyloton_zmv import PylotonZMV
-from peloton.handlers import PelotonSQL, PelotonStdoutPrinter, PelotonJSONWriter, PelotonCSVWriter, PelotonChartMaker, PelotonMongoDB
-from peloton.schema import PelotonPivots, PelotonWorkoutData, PelotonSummary, PelotonMetrics
+from peloton.constants import (DF_DTYPES_DICT, PELOTON_CSV_DIR,
+                               PELOTON_PASSWORD, PELOTON_USERNAME,
+                               WORKOUTS_DIR)
 from peloton.exceptions import WorkoutMismatchError
+from peloton.handlers import (PelotonChartMaker, PelotonCSVWriter,
+                              PelotonImageDownloader, PelotonJSONWriter,
+                              PelotonMongoDB, PelotonSQL, PelotonStdoutPrinter)
+from peloton.pyloton_zmv import PylotonZMV
+from peloton.schema import (PelotonMetrics, PelotonPivots, PelotonSummary,
+                            PelotonWorkoutData)
 
 
 class PelotonProcessor():
@@ -30,7 +34,7 @@ class PelotonProcessor():
         self.processed_df = self.make_dataframe() if len(self.workouts) > 0 else None
         self.pivots = PelotonPivots(self.processed_df) if self.processed_df is not None else None
         self.chart_maker = PelotonChartMaker(self.workouts)
-
+        self.image_downloader = PelotonImageDownloader()
 
     def check_for_new_workouts(self) -> None:
         ''' Check for new workouts on Peloton and update the internal state accordingly. '''
@@ -58,6 +62,7 @@ class PelotonProcessor():
             # self.json_writer.write_workout_to_json(workout)
             self.mongodb.export_workout_to_mongodb(workout)
             self.mongodb.write_workout_to_json(workout)
+            self.image_downloader.download_workout_image(workout)
 
         self.new_workouts = True
         

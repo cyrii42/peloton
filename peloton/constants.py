@@ -42,6 +42,7 @@ PELOTON_BASE_URL = "https://api.onepeloton.com"
 ROOT_DIR = Path.cwd()
 DATA_DIR = ROOT_DIR.joinpath('data')
 WORKOUTS_DIR = ROOT_DIR.joinpath('data', 'workouts')
+IMAGES_DIR = ROOT_DIR.joinpath('data', 'workout_images')
 SESSION_JSON = ROOT_DIR.joinpath('session_id.json')
 INSTRUCTORS_JSON = ROOT_DIR.joinpath('peloton_instructors.json')
 

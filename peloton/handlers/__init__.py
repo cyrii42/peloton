@@ -5,3 +5,4 @@ from .stdout_printer import PelotonStdoutPrinter
 from .chart_maker import PelotonChartMaker
 from .mongodb_handler import PelotonMongoDB
 from .mongodb_conn import MongoDBConnection
+from .image_downloader import PelotonImageDownloader
