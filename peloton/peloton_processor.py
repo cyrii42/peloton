@@ -2,9 +2,8 @@ import pandas as pd
 import polars as pl
 import sqlalchemy as db
 
-from peloton.constants import (DF_DTYPES_DICT, PELOTON_CSV_DIR,
-                               PELOTON_PASSWORD, PELOTON_USERNAME,
-                               WORKOUTS_DIR)
+from peloton.constants import (DF_DTYPES_DICT, PELOTON_PASSWORD,
+                               PELOTON_USERNAME)
 from peloton.exceptions import WorkoutMismatchError
 from peloton.handlers import (PelotonChartMaker, PelotonCSVWriter,
                               PelotonImageDownloader, PelotonJSONWriter,
@@ -166,7 +165,8 @@ class PelotonProcessor():
         peloton_printer.print_pivot_tables()
 
     def write_csv_files(self) -> None:
-        ...
+        csv_writer = PelotonCSVWriter(self.processed_df)
+        csv_writer.write_csv_files()
 
 def main():
     print("This is a module, not a script.")
