@@ -14,7 +14,7 @@ args = parser.parse_args()
 
 def main():   
     peloton_processor = PelotonProcessor()
-    # peloton_processor.write_csv_files()
+    peloton_processor.write_csv_files()
     
     # if args.CHECK_FOR_NEW_WORKOUTS:
     #     peloton_processor.check_for_new_workouts()
