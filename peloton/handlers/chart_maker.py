@@ -12,6 +12,24 @@ class PelotonChartMaker():
         self.workouts_by_id = {workout.summary.workout_id: workout for workout in workouts}
         pd.set_option('plotting.backend', backend)
 
+    def make_hr_zones_chart_df(self, workout_id: str) -> pd.DataFrame | None:
+        workout = self.workouts_by_id[workout_id]
+        if len(workout.metrics.metrics) < 5:
+            return None
+
+        hr_zones = [hr_zone.model_dump() for hr_zone in workout.metrics.metrics[4].zones]
+        df = pd.DataFrame(hr_zones)
+
+        def get_ss_multiplier(slug: str) -> int:
+            ss_multipliers = {'zone1': 1, 'zone2': 2, 'zone3': 4, 'zone4': 8, 'zone5': 8}
+            return ss_multipliers[slug]
+
+        df['ss_multiplier'] = df['slug'].apply(get_ss_multiplier)
+        df['strive_score'] = (df['duration'] * (df['ss_multiplier'] * 0.3))/60
+        df['pct'] = df['duration'] / df['duration'].sum()
+
+        return df
+
     def make_chart_dfs(self, workout_id: str) -> list[pd.DataFrame]:
         workout = self.workouts_by_id[workout_id]
         metrics = {'output': 'watts',
