@@ -41,7 +41,7 @@ class PelotonProcessor():
         new_workout_ids = self._get_new_workout_ids()
         if len(new_workout_ids) == 0:
             self.new_workouts = False
-            return list()
+            return list()   # everything below will only happen if there are new workouts!
 
         print(f"New Workout IDs:  {new_workout_ids}")
         new_workout_list: list[PelotonWorkoutData] = []
@@ -73,6 +73,7 @@ class PelotonProcessor():
         self.chart_maker = PelotonChartMaker(self.workouts)
         if self.pivots is not None:
             self.pivots.regenerate_tables(self.processed_df)
+        self.write_csv_files()
 
     def get_workouts_from_mongodb(self) -> list[PelotonWorkoutData]:
         ''' Get the list of workouts from the MongoDB database. '''
