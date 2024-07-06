@@ -32,6 +32,7 @@
 # print(list(**d1))
 
 from datetime import timedelta, date, datetime
+from peloton.constants import EASTERN_TIME
 DAYS = 30
 curr_start_date = date.today() - timedelta(days=(DAYS - 1))
 curr_end_date = date.today()
@@ -50,3 +51,5 @@ print(f"{DURATION // 3600} hours, {DURATION % 3600 // 60} minutes")
 print(f"Today: {date.today().weekday()}")
 print(f"Previous Monday: {date.today() - timedelta(days=(date.today().weekday()))}")
 print([char for char in 'asoiasdfoihaspdfoihaspdofihaspofihapsoifhapsoidfhfhasoidfh'])
+print(datetime.now(tz=EASTERN_TIME).date())
+print(datetime.now().replace(hour=0, minute=0, second=0, microsecond=0))
