@@ -1,11 +1,12 @@
 import random
-from datetime import timedelta, date
+from datetime import timedelta, date, datetime
 
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
 
 from peloton.schema import PelotonWorkoutData, PelotonPivots
+from peloton.constants import EASTERN_TIME
 
 STRIVE_SCORE_COLOR_MAP = {
     'Zone 1': '#88cfa5',
@@ -30,57 +31,43 @@ class PelotonChartMaker():
                         if len(workout.summary_raw['achievement_templates']) > 0]
         return pd.DataFrame([item for row in achievements for item in row])
 
-    def make_stats_summary(self) -> dict:
+    def make_stats_summary(self, end_date: datetime = datetime.now(tz=EASTERN_TIME)) -> dict:
         '''
         Total workouts, total workout time, total calories, total strive score
 
         Total active days, difference in total active dates as compared to previous 30-day period
 
         Week streak
-        '''
+        ''' 
         DAYS = 30
         output_dict = {}
-        
-        curr_start_date = date.today() - timedelta(days=(DAYS - 1))
-        curr_end_date = date.today()
-        curr_workouts = [workout for workout in self.workouts 
-                             if workout.summary.start_time.date() >= curr_start_date]
 
-        prev_start_date = date.today() - timedelta(days=((DAYS * 2) - 1))
-        prev_end_date = date.today() - timedelta(days=DAYS)
-        prev_workouts = [workout for workout in self.workouts 
-                             if workout.summary.start_time.date() >= prev_start_date
-                             and workout.summary.start_time.date() <= prev_end_date]
+        end_date = end_date.date()
+        start_date = end_date - timedelta(days=(DAYS - 1))
+        workouts = [workout for workout in self.workouts 
+                             if workout.summary.start_time.date() >= start_date
+                             and workout.summary.start_time.date() <= end_date]
 
-        output_dict['current_total_workouts'] = len(curr_workouts)
-        output_dict['current_workout_days'] = len(set([workout.summary.start_time.date() for workout in curr_workouts]))
-        output_dict['previous_total_workouts'] = len(prev_workouts)
-        output_dict['previous_workout_days'] = len(set([workout.summary.start_time.date() for workout in prev_workouts]))
+        output_dict['total_workouts'] = len(workouts)
+        output_dict['total_workout_days'] = len(set([workout.summary.start_time.date() for workout in workouts]))
 
-        curr_total_duration = sum([workout.summary.ride.ride_duration for workout in curr_workouts])
-        output_dict['current_total_duration'] = curr_total_duration
-        output_dict['current_total_duration_str'] = f"{curr_total_duration // 3600} hr {curr_total_duration % 3600 // 60} min"
-        prev_total_duration = sum([workout.summary.ride.ride_duration for workout in prev_workouts])
-        output_dict['previous_total_duration'] = prev_total_duration
-        output_dict['previous_total_duration_str'] = f"{prev_total_duration // 3600} hr {prev_total_duration % 3600 // 60} min"
+        total_duration = sum([workout.summary.ride.ride_duration for workout in workouts])
+        output_dict['total_duration'] = total_duration
+        output_dict['total_duration_str'] = f"{total_duration // 3600} hr {total_duration % 3600 // 60} min"
+        output_dict['total_hours'] = total_duration / 3600
 
-        curr_workout_metrics_summaries = [workout.metrics.summaries for workout in curr_workouts]
-        output_dict['current_total_calories'] = sum([x[2].value for x in curr_workout_metrics_summaries])
-        prev_workout_metrics_summaries = [workout.metrics.summaries for workout in prev_workouts]
-        output_dict['previous_total_calories'] = sum([x[2].value for x in prev_workout_metrics_summaries])
+        workout_metrics_summaries = [workout.metrics.summaries for workout in workouts]
+        output_dict['total_calories'] = sum([x[2].value for x in workout_metrics_summaries])
 
-        curr_strive_score_total = sum([workout.metrics.effort_zones.effort_score for workout in curr_workouts 
+        strive_score_total = sum([workout.metrics.effort_zones.effort_score for workout in workouts 
                                        if workout.metrics.effort_zones is not None])
-        output_dict['current_strive_score_total'] = curr_strive_score_total
-        prev_strive_score_total = sum([workout.metrics.effort_zones.effort_score for workout in prev_workouts 
-                                       if workout.metrics.effort_zones is not None])
-        output_dict['previous_strive_score_total'] = prev_strive_score_total
+        output_dict['total_strive_score'] = strive_score_total
 
         active_weekly_streak = 0
-        last_monday = date.today() - timedelta(days=(date.today().weekday()))
+        last_monday = (end_date - timedelta(days=end_date.weekday()))
         test_date = last_monday
         while True:
-            if len([workout for workout in self.workouts 
+            if len([workout for workout in self.workouts
                     if workout.summary.start_time.date() >= test_date
                     and workout.summary.start_time.date() <= (test_date + timedelta(weeks=1))]) > 0:
                 active_weekly_streak += 1
@@ -92,8 +79,6 @@ class PelotonChartMaker():
         output_dict['active_weekly_streak'] = active_weekly_streak
 
         return output_dict
-        
-        
 
     def make_workouts_chart(self) -> go.Figure:
         df = self.pivots.month_table
