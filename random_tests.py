@@ -31,4 +31,22 @@
 # d1.update({'fart': 3, 'boop': 44})
 # print(list(**d1))
 
-print(634 / 60)
+from datetime import timedelta, date, datetime
+DAYS = 30
+curr_start_date = date.today() - timedelta(days=(DAYS - 1))
+curr_end_date = date.today()
+
+prev_start_date = date.today() - timedelta(days=((DAYS * 2) - 1))
+prev_end_date = date.today() - timedelta(days=DAYS)
+
+print(f"Current start date: {curr_start_date}")
+print(f"Current end date: {curr_end_date}")
+print(f"Previous start date: {prev_start_date}")
+print(f"Previous end date: {prev_end_date}")
+
+DURATION = 26705
+print(f"{DURATION // 3600} hours, {DURATION % 3600 // 60} minutes")
+
+print(f"Today: {date.today().weekday()}")
+print(f"Previous Monday: {date.today() - timedelta(days=(date.today().weekday()))}")
+print([char for char in 'asoiasdfoihaspdfoihaspdofihaspofihapsoifhapsoidfhfhasoidfh'])
