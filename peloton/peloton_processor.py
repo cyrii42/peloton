@@ -32,7 +32,7 @@ class PelotonProcessor():
             self.sql_writer = PelotonSQL(sql_engine)
         self.processed_df = self.make_dataframe() if len(self.workouts) > 0 else None
         self.pivots = PelotonPivots(self.processed_df) if self.processed_df is not None else None
-        self.chart_maker = PelotonChartMaker(self.workouts)
+        self.chart_maker = PelotonChartMaker(self.workouts, self.pivots)
         self.image_downloader = PelotonImageDownloader()
 
     def check_for_new_workouts(self) -> None:
@@ -70,9 +70,9 @@ class PelotonProcessor():
         self.workouts = self.mongodb.ingest_workouts_from_mongodb()
         
         self.processed_df = self.make_dataframe()
-        self.chart_maker = PelotonChartMaker(self.workouts)
         if self.pivots is not None:
             self.pivots.regenerate_tables(self.processed_df)
+        self.chart_maker = PelotonChartMaker(self.workouts, self.pivots)
         self.write_csv_files()
 
     def get_workouts_from_mongodb(self) -> list[PelotonWorkoutData]:
