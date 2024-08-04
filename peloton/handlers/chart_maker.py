@@ -188,5 +188,36 @@ class PelotonChartMaker():
         workout = self.workouts[random.randint(0, len(self.workouts))]
         return self.make_chart_dfs(workout.workout_id)
 
+    def make_line_chart_df_new(self, workout_id: str) -> pd.DataFrame:
+        workout = self.workouts_by_id[workout_id]
+        metrics = {'output': 'watts',
+                   'cadence': 'rpm',
+                   'resistance': '%',
+                   'speed': 'mph',
+                   'heart_rate': 'bpm'}
+
+        print(f"Start Time: {workout.summary.start_time.strftime('%a, %b %-d, %Y @ %-I:%M %p')}")
+        print(f"Title: {workout.summary.ride.title}")
+
+        output_list: list[pd.DataFrame] = []
+        for x in range(len(workout.metrics.metrics)):
+            if x == 4:
+                values = list(map(lambda x: max(100, x), workout.metrics.metrics[x].values))
+            else:
+                values = workout.metrics.metrics[x].values
+            slug = workout.metrics.metrics[x].slug
+            df = pd.DataFrame(
+                {slug: values},
+                index = [(workout.summary.start_time + timedelta(seconds=(x))) 
+                         for x in range(0, (5 * len(workout.metrics.metrics[x].values)), 5)]
+            )
+            output_list.append(df)
+
+        return output_list[0].join(output_list[1:])
+
+    def make_random_chart_dfs(self) -> list[pd.DataFrame]:
+        workout = self.workouts[random.randint(0, len(self.workouts))]
+        return self.make_line_chart_dfs(workout.workout_id)
+
 if __name__ == '__main__':
     main()
