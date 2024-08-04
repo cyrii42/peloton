@@ -25,16 +25,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 peloton = PelotonProcessor()
 
 peloton_data = peloton.workouts[8]
 
-# @app.get('/favicon.ico', include_in_schema=False)
-# async def favicon():
-#     favicon_path = Path.cwd().joinpath('static', 'images', 'favicon.ico')
-#     return FileResponse(favicon_path)
+@app.get('/favicon.ico', include_in_schema=False)
+async def favicon():
+    favicon_path = Path.cwd().joinpath('static', 'images', 'favicon.ico')
+    return FileResponse(favicon_path)
 
 @app.post('/refresh_data')
 async def refresh_data() -> None:
