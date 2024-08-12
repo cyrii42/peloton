@@ -53,3 +53,8 @@ print(f"Previous Monday: {date.today() - timedelta(days=(date.today().weekday())
 print([char for char in 'asoiasdfoihaspdfoihaspdofihaspofihapsoifhapsoidfhfhasoidfh'])
 print(datetime.now(tz=EASTERN_TIME).date())
 print(datetime.now().replace(hour=0, minute=0, second=0, microsecond=0))
+
+asdf = int(round((datetime.now(tz=EASTERN_TIME).replace(hour=0, minute=0, second=0, microsecond=0) 
+                             - timedelta(days=30)).timestamp()))
+
+print(datetime.fromtimestamp(asdf, tz=EASTERN_TIME))
