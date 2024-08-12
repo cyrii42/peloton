@@ -6,6 +6,8 @@ services:
     container_name: peloton
     ports:
       - 8555:8000
+    env_file: 
+      - .env
     environment:
       MONGODB_HOSTNAME: mongodb
     volumes:
