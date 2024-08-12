@@ -1,5 +1,5 @@
 import random
-from datetime import timedelta, date, datetime
+from datetime import timedelta, datetime
 
 import pandas as pd
 import plotly.express as px

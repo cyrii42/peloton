@@ -1,9 +1,7 @@
 import json
-from pathlib import Path
-
 
 from peloton.schema import PelotonWorkoutData
-from peloton.constants import EASTERN_TIME, WORKOUTS_DIR, INSTRUCTORS_JSON
+from peloton.constants import WORKOUTS_DIR, INSTRUCTORS_JSON
 
 
 class PelotonJSONWriter():

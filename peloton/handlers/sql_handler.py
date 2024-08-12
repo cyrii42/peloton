@@ -1,12 +1,9 @@
 import json
-from pathlib import Path
-from pprint import pprint
 
 import pandas as pd
 import sqlalchemy as db
 from sqlalchemy.dialects.sqlite import TEXT
 
-from peloton.constants import EASTERN_TIME, INSTRUCTORS_JSON, WORKOUTS_DIR
 from peloton.schema import PelotonMetrics, PelotonSummary, PelotonWorkoutData
 
 metadata_obj = db.MetaData()

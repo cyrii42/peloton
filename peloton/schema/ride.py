@@ -1,11 +1,11 @@
-from typing import Any, Optional
+from typing import Optional
 
 from pydantic import (AliasChoices, BaseModel, ConfigDict, Field,
                       ValidationInfo, computed_field, field_validator)
 
 from peloton.constants import INSTRUCTOR_NAMES_DICT
 
-from .instructors import PelotonHumanInstructor, PelotonNonHumanInstructor
+from .instructors import PelotonNonHumanInstructor
 
 
 class PelotonRideColumn(BaseModel):

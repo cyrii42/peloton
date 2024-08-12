@@ -1,16 +1,13 @@
-import json
 import time
 from datetime import datetime
-from pathlib import Path
-from pprint import pprint
 
 import requests
 from pydantic import BaseModel, Field, field_serializer
 from typing_extensions import Optional, Self
 
-from .constants import (PELOTON_BASE_URL, EASTERN_TIME, INSTRUCTORS_JSON,
-                        PELOTON_PASSWORD, PELOTON_USER_ID, PELOTON_USERNAME,
-                        SESSION_JSON)
+from .constants import (PELOTON_BASE_URL, EASTERN_TIME,
+                        PELOTON_USER_ID, SESSION_JSON)
+                        
 from .exceptions import PelotonInstructorNotFoundError
 
 

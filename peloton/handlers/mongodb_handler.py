@@ -1,10 +1,8 @@
 import json
 
-from pymongo import MongoClient
-
 from peloton.constants import (MONGODB_COLLECTION, MONGODB_DATABASE,
-                               MONGODB_HOSTNAME, WORKOUTS_DIR,
-                               MONGODB_INSTRUCTORS_COLLECTION)
+                               WORKOUTS_DIR, MONGODB_INSTRUCTORS_COLLECTION)
+
 from peloton.schema import PelotonWorkoutData
 from .mongodb_conn import MongoDBConnection
 

@@ -10,17 +10,10 @@ load_dotenv()
 EASTERN_TIME = ZoneInfo("America/New_York")
 
 # MongoDB setup
-MONGODB_CONNECTION_STRING = os.getenv("MONGODB_CONNECTION_STRING")
 MONGODB_DATABASE = 'peloton'
 MONGODB_COLLECTION = 'peloton'
 MONGODB_INSTRUCTORS_COLLECTION = 'peloton_instructors'
 MONGODB_HOSTNAME = os.getenv("MONGODB_HOSTNAME")
-
-# InfluxDB setup
-INFLUX_URL = os.getenv("INFLUX_URL") 
-INFLUX_ORG = os.getenv("INFLUX_ORG")
-INFLUX_TOKEN_HASS = os.getenv("INFLUX_TOKEN_HASS") # Home Assistant read-only
-INFLUX_TOKEN_CONED = os.getenv("INFLUX_TOKEN_CONED") # Con Edison token
 
 # Home Assistant MariaDB setup
 MARIADB_SERVER = os.getenv("MARIADB_HASS_IP")

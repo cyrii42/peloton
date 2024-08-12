@@ -1,13 +1,12 @@
 import pandas as pd
-import polars as pl
 import sqlalchemy as db
 
 from peloton.constants import (DF_DTYPES_DICT, PELOTON_PASSWORD,
                                PELOTON_USERNAME)
 from peloton.exceptions import WorkoutMismatchError
 from peloton.handlers import (PelotonChartMaker, PelotonCSVWriter,
-                              PelotonImageDownloader, PelotonJSONWriter,
-                              PelotonMongoDB, PelotonSQL, PelotonStdoutPrinter)
+                              PelotonImageDownloader, PelotonMongoDB, 
+                              PelotonSQL, PelotonStdoutPrinter)
 from peloton.pyloton_zmv import PylotonZMV
 from peloton.schema import (PelotonMetrics, PelotonPivots, PelotonSummary,
                             PelotonWorkoutData)
