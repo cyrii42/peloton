@@ -1,0 +1,2352 @@
+{
+    "workout_id": "d859075bbeca43c383a5ea772ea5afd4",
+    "summary_raw": {
+        "created_at": 1691350664,
+        "device_type": "home_bike_v1",
+        "end_time": 1691352524,
+        "fitness_discipline": "cycling",
+        "has_pedaling_metrics": true,
+        "has_leaderboard_metrics": true,
+        "id": "d859075bbeca43c383a5ea772ea5afd4",
+        "is_total_work_personal_record": false,
+        "is_outdoor": false,
+        "metrics_type": "cycling",
+        "name": "Cycling Workout",
+        "peloton_id": "27b1bdd42f2e4e16a3c3dd761a0cb3aa",
+        "platform": "home_bike",
+        "start_time": 1691350724,
+        "status": "COMPLETE",
+        "timezone": "Etc/GMT+4",
+        "title": null,
+        "total_work": 212689.79,
+        "user_id": "d181e93bdc6c42d3b388a8e72c3b62a6",
+        "workout_type": "class",
+        "total_video_watch_time_seconds": 0,
+        "total_video_buffering_seconds": 0,
+        "v2_total_video_watch_time_seconds": 1944,
+        "v2_total_video_buffering_seconds": 1,
+        "total_music_audio_play_seconds": null,
+        "total_music_audio_buffer_seconds": null,
+        "service_id": null,
+        "created": 1691350664,
+        "device_time_created_at": 1691336264,
+        "strava_id": null,
+        "fitbit_id": null,
+        "is_skip_intro_available": true,
+        "pause_time_remaining": null,
+        "pause_time_elapsed": null,
+        "is_paused": false,
+        "has_paused": false,
+        "is_pause_available": true,
+        "pause_time_limit": 60.0,
+        "ride": {
+            "content_availability": "digital_and_above",
+            "content_availability_level": "digital_and_above",
+            "free_for_limited_time": false,
+            "is_limited_ride": false,
+            "availability": {
+                "is_available": true,
+                "reason": null
+            },
+            "class_type_ids": [
+                "f10471dcd6a34e5f8ed54eb634b5df19"
+            ],
+            "content_provider": "peloton",
+            "content_format": "video",
+            "description": "Elevate your mood in this collection of Hannah's Pick-Me-Up rides! Clip in and lift your spirits with Hannah Corbin. Happy riding!",
+            "difficulty_estimate": 6.840501281686129,
+            "overall_estimate": 0.996689738188384,
+            "difficulty_rating_avg": 6.840501281686129,
+            "difficulty_rating_count": 3511,
+            "difficulty_level": null,
+            "duration": 1800,
+            "equipment_ids": [],
+            "equipment_tags": [],
+            "explicit_rating": 0,
+            "extra_images": [],
+            "fitness_discipline": "cycling",
+            "fitness_discipline_display_name": "Cycling",
+            "has_closed_captions": true,
+            "has_pedaling_metrics": true,
+            "home_peloton_id": "b2baf81e71c742c7b5e5e7e1ff5316a8",
+            "id": "50d47fe4a0654426b2bec6948b379b36",
+            "image_url": "https://s3.amazonaws.com/peloton-ride-images/f4dd31b99ce8c360f5642a4dba931f4b78d05119/img_1689266328_f2004dd7233441f9b723249d270d7a6e.png",
+            "instructor_id": "561f95c405734d8488ed8dcc8980d599",
+            "individual_instructor_ids": [],
+            "is_archived": true,
+            "is_closed_caption_shown": true,
+            "is_explicit": false,
+            "has_free_mode": false,
+            "is_live_in_studio_only": true,
+            "language": "english",
+            "origin_locale": "en-US",
+            "length": 1945,
+            "live_stream_id": "50d47fe4a0654426b2bec6948b379b36-live",
+            "live_stream_url": null,
+            "location": "psny-studio-1",
+            "metrics": [
+                "heart_rate",
+                "cadence",
+                "calories"
+            ],
+            "original_air_time": 1689263700,
+            "overall_rating_avg": 0.996689738188384,
+            "overall_rating_count": 3323,
+            "pedaling_start_offset": 60,
+            "pedaling_end_offset": 1860,
+            "pedaling_duration": 1800,
+            "rating": 0,
+            "ride_type_id": "f10471dcd6a34e5f8ed54eb634b5df19",
+            "ride_type_ids": [
+                "f10471dcd6a34e5f8ed54eb634b5df19"
+            ],
+            "sample_vod_stream_url": null,
+            "sample_preview_stream_url": null,
+            "scheduled_start_time": 1689264000,
+            "series_id": "64445b0ab026454688ac41f604e14b88",
+            "sold_out": false,
+            "studio_peloton_id": "5c05aca47a724ba7a958373f2595b0f6",
+            "title": "30 min Pick-Me-Up Ride",
+            "total_ratings": 20780,
+            "total_in_progress_workouts": 0,
+            "total_workouts": 30000,
+            "vod_stream_url": null,
+            "vod_stream_id": "50d47fe4a0654426b2bec6948b379b36-vod",
+            "captions": [
+                "en-US"
+            ],
+            "user_caption_locales": [],
+            "join_tokens": {
+                "on_demand": "eyJob21lX3BlbG90b25faWQiOiBudWxsLCAicmlkZV9pZCI6ICI1MGQ0N2ZlNGEwNjU0NDI2YjJiZWM2OTQ4YjM3OWIzNiIsICJzdHVkaW9fcGVsb3Rvbl9pZCI6IG51bGwsICJ0eXBlIjogIm9uX2RlbWFuZCJ9"
+            },
+            "flags": [],
+            "is_dynamic_video_eligible": false,
+            "is_fixed_distance": false,
+            "dynamic_video_recorded_speed_in_mph": 0.0,
+            "thumbnail_title": null,
+            "thumbnail_location": null,
+            "distance": null,
+            "distance_unit": null,
+            "distance_display_value": null,
+            "is_outdoor": false,
+            "excluded_platforms": [],
+            "class_avg_follow_along_score": 0.0,
+            "muscle_group_score": [
+                {
+                    "muscle_group": "biceps",
+                    "score": 1800.0,
+                    "percentage": 5,
+                    "bucket": 1,
+                    "display_name": "Biceps"
+                },
+                {
+                    "muscle_group": "calves",
+                    "score": 3815.0,
+                    "percentage": 12,
+                    "bucket": 2,
+                    "display_name": "Calves"
+                },
+                {
+                    "muscle_group": "core",
+                    "score": 3600.0,
+                    "percentage": 11,
+                    "bucket": 2,
+                    "display_name": "Core"
+                },
+                {
+                    "muscle_group": "glutes",
+                    "score": 5185.0,
+                    "percentage": 16,
+                    "bucket": 3,
+                    "display_name": "Glutes"
+                },
+                {
+                    "muscle_group": "hamstrings",
+                    "score": 5400.0,
+                    "percentage": 17,
+                    "bucket": 3,
+                    "display_name": "Hamstrings"
+                },
+                {
+                    "muscle_group": "hips",
+                    "score": 3600.0,
+                    "percentage": 11,
+                    "bucket": 2,
+                    "display_name": "Hips"
+                },
+                {
+                    "muscle_group": "quads",
+                    "score": 5400.0,
+                    "percentage": 17,
+                    "bucket": 3,
+                    "display_name": "Quads"
+                },
+                {
+                    "muscle_group": "shoulders",
+                    "score": 1800.0,
+                    "percentage": 5,
+                    "bucket": 1,
+                    "display_name": "Shoulders"
+                },
+                {
+                    "muscle_group": "triceps",
+                    "score": 1800.0,
+                    "percentage": 6,
+                    "bucket": 1,
+                    "display_name": "Triceps"
+                }
+            ]
+        },
+        "total_heart_rate_zone_durations": {
+            "heart_rate_z1_duration": 70,
+            "heart_rate_z2_duration": 292,
+            "heart_rate_z3_duration": 1498,
+            "heart_rate_z4_duration": 5585,
+            "heart_rate_z5_duration": 5135
+        },
+        "average_effort_score": 66.0,
+        "achievement_templates": [
+            {
+                "id": "bac5aefabb2940ba8f0a170fc9d63bf0",
+                "name": "Best Output",
+                "slug": "best_output",
+                "image_url": "https://s3.amazonaws.com/peloton-achievement-images-prod/c302f0a5128e4e5bb72ba659caac1ec2",
+                "description": "Personal best output in a workout.",
+                "achievement_count": 31
+            }
+        ],
+        "leaderboard_rank": 8260,
+        "total_leaderboard_users": 29308,
+        "ftp_info": {
+            "ftp": 0,
+            "ftp_source": null,
+            "ftp_workout_id": null
+        },
+        "device_type_display_name": "Bike",
+        "workout_id": "d859075bbeca43c383a5ea772ea5afd4"
+    },
+    "metrics_raw": {
+        "duration": 1800,
+        "is_class_plan_shown": true,
+        "segment_list": [
+            {
+                "id": "74388825a89747b0b77aea620436a078",
+                "length": 153,
+                "start_time_offset": 0,
+                "icon_url": "https://s3.amazonaws.com/static-cdn.pelotoncycle.com/segment-icons/warmup.png",
+                "intensity_in_mets": 3.5,
+                "metrics_type": "cycling",
+                "icon_name": "warmup",
+                "icon_slug": "warmup",
+                "name": "Warm Up",
+                "is_drill": false
+            },
+            {
+                "id": "9a38d46303424738b49f0861ab07e899",
+                "length": 1587,
+                "start_time_offset": 153,
+                "icon_url": "https://s3.amazonaws.com/static-cdn.pelotoncycle.com/segment-icons/cycling.png",
+                "intensity_in_mets": 6.0,
+                "metrics_type": "cycling",
+                "icon_name": "cycling",
+                "icon_slug": "cycling",
+                "name": "Cycling",
+                "is_drill": false
+            },
+            {
+                "id": "52df5c632b714f1aac5de189c6534790",
+                "length": 60,
+                "start_time_offset": 1740,
+                "icon_url": "https://s3.amazonaws.com/static-cdn.pelotoncycle.com/segment-icons/cooldown.png",
+                "intensity_in_mets": 3.5,
+                "metrics_type": "cycling",
+                "icon_name": "cooldown",
+                "icon_slug": "cooldown",
+                "name": "Cool Down",
+                "is_drill": false
+            }
+        ],
+        "seconds_since_pedaling_start": [
+            1,
+            61,
+            121,
+            181,
+            241,
+            301,
+            361,
+            421,
+            481,
+            541,
+            601,
+            661,
+            721,
+            781,
+            841,
+            901,
+            961,
+            1021,
+            1081,
+            1141,
+            1201,
+            1261,
+            1321,
+            1381,
+            1441,
+            1501,
+            1561,
+            1621,
+            1681,
+            1741,
+            1800
+        ],
+        "average_summaries": [
+            {
+                "display_name": "Avg Output",
+                "display_unit": "watts",
+                "value": 118,
+                "slug": "avg_output"
+            },
+            {
+                "display_name": "Avg Cadence",
+                "display_unit": "rpm",
+                "value": 76,
+                "slug": "avg_cadence"
+            },
+            {
+                "display_name": "Avg Resistance",
+                "display_unit": "%",
+                "value": 43,
+                "slug": "avg_resistance"
+            },
+            {
+                "display_name": "Avg Speed",
+                "display_unit": "mph",
+                "value": 16.9,
+                "slug": "avg_speed"
+            }
+        ],
+        "summaries": [
+            {
+                "display_name": "Total Output",
+                "display_unit": "kj",
+                "value": 213,
+                "slug": "total_output"
+            },
+            {
+                "display_name": "Distance",
+                "display_unit": "mi",
+                "value": 8.47,
+                "slug": "distance"
+            },
+            {
+                "display_name": "Calories",
+                "display_unit": "kcal",
+                "value": 502,
+                "slug": "calories"
+            }
+        ],
+        "metrics": [
+            {
+                "display_name": "Output",
+                "display_unit": "watts",
+                "max_value": 311,
+                "average_value": 118,
+                "values": [
+                    105,
+                    110,
+                    106,
+                    154,
+                    162,
+                    192,
+                    210,
+                    262,
+                    177,
+                    181,
+                    229,
+                    207,
+                    84,
+                    144,
+                    134,
+                    142,
+                    130,
+                    151,
+                    296,
+                    240,
+                    119,
+                    173,
+                    169,
+                    163,
+                    219,
+                    260,
+                    230,
+                    217,
+                    195,
+                    74,
+                    64
+                ],
+                "slug": "output"
+            },
+            {
+                "display_name": "Cadence",
+                "display_unit": "rpm",
+                "max_value": 121,
+                "average_value": 76,
+                "values": [
+                    115,
+                    119,
+                    116,
+                    96,
+                    99,
+                    86,
+                    77,
+                    77,
+                    78,
+                    72,
+                    73,
+                    80,
+                    80,
+                    117,
+                    113,
+                    117,
+                    110,
+                    101,
+                    80,
+                    83,
+                    83,
+                    95,
+                    88,
+                    87,
+                    84,
+                    71,
+                    71,
+                    69,
+                    79,
+                    86,
+                    79
+                ],
+                "slug": "cadence"
+            },
+            {
+                "display_name": "Resistance",
+                "display_unit": "%",
+                "max_value": 79,
+                "average_value": 43,
+                "values": [
+                    30,
+                    30,
+                    32,
+                    40,
+                    40,
+                    52,
+                    55,
+                    59,
+                    51,
+                    57,
+                    57,
+                    57,
+                    36,
+                    34,
+                    34,
+                    34,
+                    34,
+                    40,
+                    67,
+                    63,
+                    41,
+                    45,
+                    45,
+                    45,
+                    60,
+                    64,
+                    65,
+                    58,
+                    59,
+                    35,
+                    32
+                ],
+                "slug": "resistance"
+            },
+            {
+                "display_name": "Speed",
+                "display_unit": "mph",
+                "max_value": 25.3,
+                "average_value": 16.9,
+                "values": [
+                    16.6,
+                    16.9,
+                    16.6,
+                    19.3,
+                    19.7,
+                    21.1,
+                    21.8,
+                    23.7,
+                    20.4,
+                    20.6,
+                    22.5,
+                    21.7,
+                    15.1,
+                    18.8,
+                    18.3,
+                    18.7,
+                    18.1,
+                    19.2,
+                    24.8,
+                    22.9,
+                    17.4,
+                    20.2,
+                    20.1,
+                    19.8,
+                    22.1,
+                    23.6,
+                    22.6,
+                    22.1,
+                    21.2,
+                    14.3,
+                    13.4
+                ],
+                "slug": "speed"
+            },
+            {
+                "display_name": "Heart Rate",
+                "display_unit": "bpm",
+                "max_value": 177,
+                "average_value": 159,
+                "values": [
+                    127,
+                    140,
+                    142,
+                    148,
+                    150,
+                    153,
+                    163,
+                    165,
+                    169,
+                    169,
+                    165,
+                    168,
+                    166,
+                    152,
+                    154,
+                    163,
+                    167,
+                    167,
+                    175,
+                    177,
+                    175,
+                    166,
+                    166,
+                    166,
+                    171,
+                    173,
+                    177,
+                    173,
+                    175,
+                    175,
+                    157
+                ],
+                "slug": "heart_rate",
+                "zones": [
+                    {
+                        "display_name": "Zone 1",
+                        "slug": "zone1",
+                        "range": "<116 bpm",
+                        "duration": 29,
+                        "max_value": 115,
+                        "min_value": 0
+                    },
+                    {
+                        "display_name": "Zone 2",
+                        "slug": "zone2",
+                        "range": "116-133 bpm",
+                        "duration": 59,
+                        "max_value": 133,
+                        "min_value": 116
+                    },
+                    {
+                        "display_name": "Zone 3",
+                        "slug": "zone3",
+                        "range": "134-151 bpm",
+                        "duration": 410,
+                        "max_value": 151,
+                        "min_value": 134
+                    },
+                    {
+                        "display_name": "Zone 4",
+                        "slug": "zone4",
+                        "range": "152-169 bpm",
+                        "duration": 984,
+                        "max_value": 169,
+                        "min_value": 152
+                    },
+                    {
+                        "display_name": "Zone 5",
+                        "slug": "zone5",
+                        "range": ">=170 bpm",
+                        "duration": 316,
+                        "max_value": 179,
+                        "min_value": 170
+                    }
+                ],
+                "missing_data_duration": 2
+            }
+        ],
+        "has_apple_watch_metrics": false,
+        "location_data": [],
+        "is_location_data_accurate": null,
+        "splits_data": {
+            "distance_marker_display_unit": "mi",
+            "elevation_change_display_unit": "ft",
+            "splits": [
+                {
+                    "distance_marker": 1.0,
+                    "order": 1,
+                    "seconds": 235.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                },
+                {
+                    "distance_marker": 2.0,
+                    "order": 2,
+                    "seconds": 196.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": true
+                },
+                {
+                    "distance_marker": 3.0,
+                    "order": 3,
+                    "seconds": 201.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                },
+                {
+                    "distance_marker": 4.0,
+                    "order": 4,
+                    "seconds": 236.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                },
+                {
+                    "distance_marker": 5.0,
+                    "order": 5,
+                    "seconds": 213.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                },
+                {
+                    "distance_marker": 6.0,
+                    "order": 6,
+                    "seconds": 209.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                },
+                {
+                    "distance_marker": 7.0,
+                    "order": 7,
+                    "seconds": 198.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                },
+                {
+                    "distance_marker": 8.0,
+                    "order": 8,
+                    "seconds": 200.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                },
+                {
+                    "distance_marker": 0.47,
+                    "order": 9,
+                    "seconds": 238.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                }
+            ]
+        },
+        "splits_metrics": {
+            "header": [
+                {
+                    "slug": "mi",
+                    "display_name": "mi"
+                },
+                {
+                    "slug": "total_time",
+                    "display_name": "Total Time"
+                },
+                {
+                    "slug": "pace",
+                    "display_name": "Pace"
+                },
+                {
+                    "slug": "elevation",
+                    "display_name": "Elevation"
+                }
+            ],
+            "metrics": [
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 1.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 3.92,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.92,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": true,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 2.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 7.18,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.27,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 3.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 10.53,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.35,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 4.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 14.47,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.93,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 5.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 18.02,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.55,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 6.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 21.5,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.48,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 7.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 24.8,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.3,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 8.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 28.13,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.33,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 0.47,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 30.0,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.97,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                }
+            ]
+        },
+        "target_performance_metrics": {
+            "target_graph_metrics": [
+                {
+                    "graph_data": {
+                        "upper": [
+                            100,
+                            110,
+                            110,
+                            95,
+                            95,
+                            95,
+                            75,
+                            75,
+                            75,
+                            70,
+                            70,
+                            70,
+                            70,
+                            70,
+                            100,
+                            100,
+                            100,
+                            100,
+                            100,
+                            70,
+                            70,
+                            70,
+                            90,
+                            90,
+                            90,
+                            70,
+                            70,
+                            70,
+                            70,
+                            80
+                        ],
+                        "lower": [
+                            80,
+                            90,
+                            90,
+                            85,
+                            85,
+                            85,
+                            65,
+                            65,
+                            65,
+                            60,
+                            60,
+                            60,
+                            60,
+                            60,
+                            90,
+                            90,
+                            90,
+                            80,
+                            80,
+                            60,
+                            60,
+                            60,
+                            80,
+                            80,
+                            80,
+                            60,
+                            60,
+                            60,
+                            60,
+                            60
+                        ],
+                        "average": [
+                            90,
+                            100,
+                            100,
+                            90,
+                            90,
+                            90,
+                            70,
+                            70,
+                            70,
+                            65,
+                            65,
+                            65,
+                            65,
+                            65,
+                            95,
+                            95,
+                            95,
+                            90,
+                            90,
+                            65,
+                            65,
+                            65,
+                            85,
+                            85,
+                            85,
+                            65,
+                            65,
+                            65,
+                            65,
+                            70
+                        ]
+                    },
+                    "max": 110,
+                    "min": 60,
+                    "average": 76,
+                    "type": "cadence"
+                },
+                {
+                    "graph_data": {
+                        "upper": [
+                            35,
+                            35,
+                            35,
+                            35,
+                            35,
+                            40,
+                            50,
+                            50,
+                            50,
+                            60,
+                            60,
+                            60,
+                            40,
+                            35,
+                            35,
+                            35,
+                            35,
+                            35,
+                            35,
+                            40,
+                            40,
+                            40,
+                            45,
+                            45,
+                            45,
+                            55,
+                            55,
+                            55,
+                            65,
+                            35
+                        ],
+                        "lower": [
+                            25,
+                            25,
+                            25,
+                            30,
+                            30,
+                            35,
+                            40,
+                            40,
+                            40,
+                            50,
+                            50,
+                            50,
+                            30,
+                            30,
+                            30,
+                            30,
+                            30,
+                            25,
+                            25,
+                            30,
+                            30,
+                            30,
+                            35,
+                            35,
+                            35,
+                            40,
+                            40,
+                            40,
+                            45,
+                            30
+                        ],
+                        "average": [
+                            30,
+                            30,
+                            30,
+                            32,
+                            32,
+                            37,
+                            45,
+                            45,
+                            45,
+                            55,
+                            55,
+                            55,
+                            35,
+                            32,
+                            32,
+                            32,
+                            32,
+                            30,
+                            30,
+                            35,
+                            35,
+                            35,
+                            40,
+                            40,
+                            40,
+                            47,
+                            47,
+                            47,
+                            55,
+                            32
+                        ]
+                    },
+                    "max": 65,
+                    "min": 25,
+                    "average": 40,
+                    "type": "resistance"
+                }
+            ],
+            "cadence_time_in_range": 55,
+            "resistance_time_in_range": 79
+        },
+        "target_metrics_compliance": {},
+        "target_metrics_performance_data": {
+            "target_metrics": [
+                {
+                    "offsets": {
+                        "start": 60,
+                        "end": 60
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 25.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 100.0,
+                            "lower": 80.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 61,
+                        "end": 102
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 25.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 100.0,
+                            "lower": 80.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 103,
+                        "end": 130
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 25.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 110.0,
+                            "lower": 90.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 131,
+                        "end": 164
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 25.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 100.0,
+                            "lower": 80.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 165,
+                        "end": 199
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 25.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 110.0,
+                            "lower": 90.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 200,
+                        "end": 230
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 25.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 100.0,
+                            "lower": 80.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 231,
+                        "end": 248
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 95.0,
+                            "lower": 85.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 249,
+                        "end": 281
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 40.0,
+                            "lower": 35.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 95.0,
+                            "lower": 85.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 282,
+                        "end": 304
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 95.0,
+                            "lower": 85.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 305,
+                        "end": 376
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 40.0,
+                            "lower": 35.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 95.0,
+                            "lower": 85.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 377,
+                        "end": 411
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 50.0,
+                            "lower": 40.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 95.0,
+                            "lower": 85.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 412,
+                        "end": 591
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 50.0,
+                            "lower": 40.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 75.0,
+                            "lower": 65.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 592,
+                        "end": 598
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 50.0,
+                            "lower": 40.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 599,
+                        "end": 760
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 60.0,
+                            "lower": 50.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 761,
+                        "end": 832
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 40.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 833,
+                        "end": 864
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 865,
+                        "end": 903
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 100.0,
+                            "lower": 90.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 904,
+                        "end": 944
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 945,
+                        "end": 983
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 100.0,
+                            "lower": 90.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 984,
+                        "end": 1002
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1003,
+                        "end": 1040
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 100.0,
+                            "lower": 90.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1041,
+                        "end": 1061
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1062,
+                        "end": 1144
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 25.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 100.0,
+                            "lower": 80.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1145,
+                        "end": 1169
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 65.0,
+                            "lower": 45.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1170,
+                        "end": 1217
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 40.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1218,
+                        "end": 1248
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 65.0,
+                            "lower": 45.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1249,
+                        "end": 1325
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 40.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1326,
+                        "end": 1371
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 90.0,
+                            "lower": 80.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1372,
+                        "end": 1399
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 45.0,
+                            "lower": 35.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 90.0,
+                            "lower": 80.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1400,
+                        "end": 1430
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 90.0,
+                            "lower": 80.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1431,
+                        "end": 1453
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 45.0,
+                            "lower": 35.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 90.0,
+                            "lower": 80.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1454,
+                        "end": 1477
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 90.0,
+                            "lower": 80.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1478,
+                        "end": 1501
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 45.0,
+                            "lower": 35.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 90.0,
+                            "lower": 80.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1502,
+                        "end": 1514
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 90.0,
+                            "lower": 80.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1515,
+                        "end": 1542
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 65.0,
+                            "lower": 45.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1543,
+                        "end": 1575
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 55.0,
+                            "lower": 40.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1576,
+                        "end": 1608
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 65.0,
+                            "lower": 45.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1609,
+                        "end": 1637
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 55.0,
+                            "lower": 40.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1638,
+                        "end": 1663
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 65.0,
+                            "lower": 45.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1664,
+                        "end": 1689
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 55.0,
+                            "lower": 40.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1690,
+                        "end": 1754
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 65.0,
+                            "lower": 45.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1755,
+                        "end": 1787
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 55.0,
+                            "lower": 40.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 70.0,
+                            "lower": 60.0
+                        }
+                    ]
+                },
+                {
+                    "offsets": {
+                        "start": 1788,
+                        "end": 1860
+                    },
+                    "segment_type": "cycling",
+                    "metrics": [
+                        {
+                            "name": "resistance",
+                            "upper": 35.0,
+                            "lower": 30.0
+                        },
+                        {
+                            "name": "cadence",
+                            "upper": 80.0,
+                            "lower": 60.0
+                        }
+                    ]
+                }
+            ],
+            "time_in_metric": [
+                {
+                    "name": "resistance",
+                    "value": 79
+                },
+                {
+                    "name": "cadence",
+                    "value": 55
+                }
+            ]
+        },
+        "effort_zones": {
+            "total_effort_points": 60.9,
+            "heart_rate_zone_durations": {
+                "heart_rate_z1_duration": 29,
+                "heart_rate_z2_duration": 59,
+                "heart_rate_z3_duration": 410,
+                "heart_rate_z4_duration": 984,
+                "heart_rate_z5_duration": 316
+            }
+        },
+        "muscle_group_score": [
+            {
+                "muscle_group": "biceps",
+                "score": 1800.0,
+                "percentage": 5,
+                "bucket": 1,
+                "display_name": "Biceps"
+            },
+            {
+                "muscle_group": "calves",
+                "score": 3815.0,
+                "percentage": 12,
+                "bucket": 2,
+                "display_name": "Calves"
+            },
+            {
+                "muscle_group": "core",
+                "score": 3600.0,
+                "percentage": 11,
+                "bucket": 2,
+                "display_name": "Core"
+            },
+            {
+                "muscle_group": "glutes",
+                "score": 5185.0,
+                "percentage": 16,
+                "bucket": 3,
+                "display_name": "Glutes"
+            },
+            {
+                "muscle_group": "hamstrings",
+                "score": 5400.0,
+                "percentage": 17,
+                "bucket": 3,
+                "display_name": "Hamstrings"
+            },
+            {
+                "muscle_group": "hips",
+                "score": 3600.0,
+                "percentage": 11,
+                "bucket": 2,
+                "display_name": "Hips"
+            },
+            {
+                "muscle_group": "quads",
+                "score": 5400.0,
+                "percentage": 17,
+                "bucket": 3,
+                "display_name": "Quads"
+            },
+            {
+                "muscle_group": "shoulders",
+                "score": 1800.0,
+                "percentage": 5,
+                "bucket": 1,
+                "display_name": "Shoulders"
+            },
+            {
+                "muscle_group": "triceps",
+                "score": 1800.0,
+                "percentage": 6,
+                "bucket": 1,
+                "display_name": "Triceps"
+            }
+        ],
+        "summary_available": true,
+        "performance_graph_available": true,
+        "workout_id": "d859075bbeca43c383a5ea772ea5afd4"
+    },
+    "summary": {
+        "workout_id": "d859075bbeca43c383a5ea772ea5afd4",
+        "start_time": "2023-08-06T15:38:44-04:00",
+        "end_time": "2023-08-06T16:08:44-04:00",
+        "metrics_type": "cycling",
+        "workout_type": "class",
+        "leaderboard_rank": 8260,
+        "total_leaderboard_users": 29308,
+        "average_effort_score": 66.0,
+        "ride": {
+            "title": "30 min Pick-Me-Up Ride",
+            "description": "Elevate your mood in this collection of Hannah's Pick-Me-Up rides! Clip in and lift your spirits with Hannah Corbin. Happy riding!",
+            "ride_length": 1945,
+            "ride_duration": 1800,
+            "image_url": "https://s3.amazonaws.com/peloton-ride-images/f4dd31b99ce8c360f5642a4dba931f4b78d05119/img_1689266328_f2004dd7233441f9b723249d270d7a6e.png",
+            "difficulty_estimate": 6.840501281686129,
+            "fitness_discipline": "cycling",
+            "ride_id": "50d47fe4a0654426b2bec6948b379b36",
+            "instructor_json": null,
+            "instructor_id": "561f95c405734d8488ed8dcc8980d599",
+            "instructor_name": "Hannah Corbin"
+        }
+    },
+    "metrics": {
+        "workout_id": "d859075bbeca43c383a5ea772ea5afd4",
+        "metrics": [
+            {
+                "average_value": 118,
+                "display_name": "Output",
+                "display_unit": "watts",
+                "max_value": 311,
+                "slug": "output",
+                "values": [
+                    105,
+                    110,
+                    106,
+                    154,
+                    162,
+                    192,
+                    210,
+                    262,
+                    177,
+                    181,
+                    229,
+                    207,
+                    84,
+                    144,
+                    134,
+                    142,
+                    130,
+                    151,
+                    296,
+                    240,
+                    119,
+                    173,
+                    169,
+                    163,
+                    219,
+                    260,
+                    230,
+                    217,
+                    195,
+                    74,
+                    64
+                ],
+                "zones": null
+            },
+            {
+                "average_value": 76,
+                "display_name": "Cadence",
+                "display_unit": "rpm",
+                "max_value": 121,
+                "slug": "cadence",
+                "values": [
+                    115,
+                    119,
+                    116,
+                    96,
+                    99,
+                    86,
+                    77,
+                    77,
+                    78,
+                    72,
+                    73,
+                    80,
+                    80,
+                    117,
+                    113,
+                    117,
+                    110,
+                    101,
+                    80,
+                    83,
+                    83,
+                    95,
+                    88,
+                    87,
+                    84,
+                    71,
+                    71,
+                    69,
+                    79,
+                    86,
+                    79
+                ],
+                "zones": null
+            },
+            {
+                "average_value": 43,
+                "display_name": "Resistance",
+                "display_unit": "%",
+                "max_value": 79,
+                "slug": "resistance",
+                "values": [
+                    30,
+                    30,
+                    32,
+                    40,
+                    40,
+                    52,
+                    55,
+                    59,
+                    51,
+                    57,
+                    57,
+                    57,
+                    36,
+                    34,
+                    34,
+                    34,
+                    34,
+                    40,
+                    67,
+                    63,
+                    41,
+                    45,
+                    45,
+                    45,
+                    60,
+                    64,
+                    65,
+                    58,
+                    59,
+                    35,
+                    32
+                ],
+                "zones": null
+            },
+            {
+                "average_value": 16.9,
+                "display_name": "Speed",
+                "display_unit": "mph",
+                "max_value": 25.3,
+                "slug": "speed",
+                "values": [
+                    16.6,
+                    16.9,
+                    16.6,
+                    19.3,
+                    19.7,
+                    21.1,
+                    21.8,
+                    23.7,
+                    20.4,
+                    20.6,
+                    22.5,
+                    21.7,
+                    15.1,
+                    18.8,
+                    18.3,
+                    18.7,
+                    18.1,
+                    19.2,
+                    24.8,
+                    22.9,
+                    17.4,
+                    20.2,
+                    20.1,
+                    19.8,
+                    22.1,
+                    23.6,
+                    22.6,
+                    22.1,
+                    21.2,
+                    14.3,
+                    13.4
+                ],
+                "zones": null
+            },
+            {
+                "average_value": 159,
+                "display_name": "Heart Rate",
+                "display_unit": "bpm",
+                "max_value": 177,
+                "slug": "heart_rate",
+                "values": [
+                    127,
+                    140,
+                    142,
+                    148,
+                    150,
+                    153,
+                    163,
+                    165,
+                    169,
+                    169,
+                    165,
+                    168,
+                    166,
+                    152,
+                    154,
+                    163,
+                    167,
+                    167,
+                    175,
+                    177,
+                    175,
+                    166,
+                    166,
+                    166,
+                    171,
+                    173,
+                    177,
+                    173,
+                    175,
+                    175,
+                    157
+                ],
+                "zones": [
+                    {
+                        "display_name": "Zone 1",
+                        "duration": 29,
+                        "max_value": 115,
+                        "min_value": 0,
+                        "range": "<116 bpm",
+                        "slug": "zone1"
+                    },
+                    {
+                        "display_name": "Zone 2",
+                        "duration": 59,
+                        "max_value": 133,
+                        "min_value": 116,
+                        "range": "116-133 bpm",
+                        "slug": "zone2"
+                    },
+                    {
+                        "display_name": "Zone 3",
+                        "duration": 410,
+                        "max_value": 151,
+                        "min_value": 134,
+                        "range": "134-151 bpm",
+                        "slug": "zone3"
+                    },
+                    {
+                        "display_name": "Zone 4",
+                        "duration": 984,
+                        "max_value": 169,
+                        "min_value": 152,
+                        "range": "152-169 bpm",
+                        "slug": "zone4"
+                    },
+                    {
+                        "display_name": "Zone 5",
+                        "duration": 316,
+                        "max_value": 179,
+                        "min_value": 170,
+                        "range": ">=170 bpm",
+                        "slug": "zone5"
+                    }
+                ]
+            }
+        ],
+        "summaries": [
+            {
+                "display_name": "Total Output",
+                "display_unit": "kj",
+                "slug": "total_output",
+                "value": 213
+            },
+            {
+                "display_name": "Distance",
+                "display_unit": "mi",
+                "slug": "distance",
+                "value": 8.47
+            },
+            {
+                "display_name": "Calories",
+                "display_unit": "kcal",
+                "slug": "calories",
+                "value": 502
+            }
+        ],
+        "effort_zones": {
+            "total_effort_points": 60.9
+        }
+    }
+}

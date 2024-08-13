@@ -1,0 +1,1150 @@
+{
+    "workout_id": "1291528d48524a4eac18a854f87c4c0f",
+    "summary_raw": {
+        "created_at": 1702237379,
+        "device_type": "home_bike_v1",
+        "end_time": 1702239187,
+        "fitness_discipline": "cycling",
+        "has_pedaling_metrics": true,
+        "has_leaderboard_metrics": true,
+        "id": "1291528d48524a4eac18a854f87c4c0f",
+        "is_total_work_personal_record": false,
+        "is_outdoor": false,
+        "metrics_type": "cycling",
+        "name": "Scenic Ride",
+        "peloton_id": "40eb164e12db428eba09209118c33b8e",
+        "platform": "home_bike",
+        "start_time": 1702237389,
+        "status": "COMPLETE",
+        "timezone": "Etc/GMT+5",
+        "title": null,
+        "total_work": 192112.89,
+        "user_id": "d181e93bdc6c42d3b388a8e72c3b62a6",
+        "workout_type": "scenic",
+        "total_video_watch_time_seconds": 0,
+        "total_video_buffering_seconds": 0,
+        "v2_total_video_watch_time_seconds": 1817,
+        "v2_total_video_buffering_seconds": 0,
+        "total_music_audio_play_seconds": 1817,
+        "total_music_audio_buffer_seconds": 0,
+        "service_id": null,
+        "created": 1702237379,
+        "device_time_created_at": 1702219378,
+        "strava_id": null,
+        "fitbit_id": null,
+        "is_skip_intro_available": false,
+        "pause_time_remaining": null,
+        "pause_time_elapsed": null,
+        "is_paused": false,
+        "has_paused": false,
+        "is_pause_available": false,
+        "ride": {
+            "content_availability": "all_access_only",
+            "content_availability_level": "all_access_only",
+            "free_for_limited_time": false,
+            "is_limited_ride": false,
+            "availability": {
+                "is_available": true,
+                "reason": null
+            },
+            "class_type_ids": [
+                "3e8b662199414382be3f4bed70634f6f"
+            ],
+            "content_provider": "virtual_active",
+            "content_format": "video",
+            "description": "Journey over to Northern Italy as we head to Lago Di Garda. You'll be accompanied by blue skies, gorgeous mountains, tall lush trees and miles of scenic roadways.",
+            "difficulty_estimate": 0.0,
+            "overall_estimate": 0.9752295537048901,
+            "difficulty_rating_avg": 0.0,
+            "difficulty_rating_count": 0,
+            "difficulty_level": null,
+            "duration": 1800,
+            "equipment_ids": [],
+            "equipment_tags": [],
+            "explicit_rating": 0,
+            "extra_images": [],
+            "fitness_discipline": "cycling",
+            "fitness_discipline_display_name": "Cycling",
+            "has_closed_captions": false,
+            "has_pedaling_metrics": true,
+            "home_peloton_id": null,
+            "id": "9782f9d1ea9c46c88ccb8c512b2d37f6",
+            "image_url": "https://s3.amazonaws.com/peloton-ride-images/b646cb6ac88a5267d790ee33b6d8cab5cdded057/img_1639076093_efeed76867d34c1c874ee890e1a58f9e.png",
+            "instructor_id": null,
+            "individual_instructor_ids": [],
+            "is_archived": true,
+            "is_closed_caption_shown": false,
+            "is_explicit": false,
+            "has_free_mode": false,
+            "is_live_in_studio_only": false,
+            "language": "english",
+            "origin_locale": "en-US",
+            "length": 1819,
+            "live_stream_id": "9782f9d1ea9c46c88ccb8c512b2d37f6-live",
+            "live_stream_url": null,
+            "location": "Italian Alps, Italy",
+            "metrics": [
+                "heart_rate",
+                "cadence",
+                "calories"
+            ],
+            "original_air_time": 1640790000,
+            "overall_rating_avg": 0.9752295537048901,
+            "overall_rating_count": 9366,
+            "pedaling_start_offset": 10,
+            "pedaling_end_offset": 1808,
+            "pedaling_duration": 1798,
+            "rating": 0,
+            "ride_type_id": "3e8b662199414382be3f4bed70634f6f",
+            "ride_type_ids": [
+                "3e8b662199414382be3f4bed70634f6f"
+            ],
+            "sample_vod_stream_url": null,
+            "sample_preview_stream_url": null,
+            "scheduled_start_time": 1640790000,
+            "series_id": "15114ee7c55f43faac0ac007b817b1a9",
+            "sold_out": false,
+            "studio_peloton_id": null,
+            "title": "30 min Lago Di Garda Ride",
+            "total_ratings": 9366,
+            "total_in_progress_workouts": 1,
+            "total_workouts": 100000,
+            "vod_stream_url": null,
+            "vod_stream_id": "9782f9d1ea9c46c88ccb8c512b2d37f6-vod",
+            "captions": [],
+            "user_caption_locales": [],
+            "join_tokens": {
+                "on_demand": "eyJob21lX3BlbG90b25faWQiOiBudWxsLCAicmlkZV9pZCI6ICI5NzgyZjlkMWVhOWM0NmM4OGNjYjhjNTEyYjJkMzdmNiIsICJzdHVkaW9fcGVsb3Rvbl9pZCI6IG51bGwsICJ0eXBlIjogIm9uX2RlbWFuZCJ9"
+            },
+            "flags": [],
+            "is_dynamic_video_eligible": false,
+            "is_fixed_distance": false,
+            "dynamic_video_recorded_speed_in_mph": 0.0,
+            "thumbnail_title": "Lago Di Garda",
+            "thumbnail_location": "Italian Alps, Italy",
+            "distance": null,
+            "distance_unit": null,
+            "distance_display_value": null,
+            "is_outdoor": false,
+            "excluded_platforms": [
+                "home_tread",
+                "studio_tread",
+                "aurora"
+            ],
+            "class_avg_follow_along_score": 0.0,
+            "muscle_group_score": []
+        },
+        "total_heart_rate_zone_durations": {
+            "heart_rate_z1_duration": 128,
+            "heart_rate_z2_duration": 724,
+            "heart_rate_z3_duration": 3902,
+            "heart_rate_z4_duration": 12121,
+            "heart_rate_z5_duration": 971
+        },
+        "average_effort_score": 61.0,
+        "achievement_templates": [],
+        "leaderboard_rank": 57888,
+        "total_leaderboard_users": 125411,
+        "ftp_info": {
+            "ftp": 0,
+            "ftp_source": null,
+            "ftp_workout_id": null
+        },
+        "device_type_display_name": "Bike",
+        "workout_id": "1291528d48524a4eac18a854f87c4c0f"
+    },
+    "metrics_raw": {
+        "duration": 1800,
+        "is_class_plan_shown": false,
+        "segment_list": [
+            {
+                "id": "6227c84a782e419c8fd667477bafb4bd",
+                "length": 1798,
+                "start_time_offset": 0,
+                "icon_url": "https://s3.amazonaws.com/static-cdn.pelotoncycle.com/segment-icons/cycling.png",
+                "intensity_in_mets": 6.0,
+                "metrics_type": "cycling",
+                "icon_name": "cycling",
+                "icon_slug": "cycling",
+                "name": "Cycling",
+                "is_drill": false
+            }
+        ],
+        "seconds_since_pedaling_start": [
+            1,
+            61,
+            121,
+            181,
+            241,
+            301,
+            361,
+            421,
+            481,
+            541,
+            601,
+            661,
+            721,
+            781,
+            841,
+            901,
+            961,
+            1021,
+            1081,
+            1141,
+            1201,
+            1261,
+            1321,
+            1381,
+            1441,
+            1501,
+            1561,
+            1621,
+            1681,
+            1741,
+            1798
+        ],
+        "average_summaries": [
+            {
+                "display_name": "Avg Output",
+                "display_unit": "watts",
+                "value": 107,
+                "slug": "avg_output"
+            },
+            {
+                "display_name": "Avg Cadence",
+                "display_unit": "rpm",
+                "value": 75,
+                "slug": "avg_cadence"
+            },
+            {
+                "display_name": "Avg Resistance",
+                "display_unit": "%",
+                "value": 41,
+                "slug": "avg_resistance"
+            },
+            {
+                "display_name": "Avg Speed",
+                "display_unit": "mph",
+                "value": 16.3,
+                "slug": "avg_speed"
+            }
+        ],
+        "summaries": [
+            {
+                "display_name": "Total Output",
+                "display_unit": "kj",
+                "value": 192,
+                "slug": "total_output"
+            },
+            {
+                "display_name": "Distance",
+                "display_unit": "mi",
+                "value": 8.13,
+                "slug": "distance"
+            },
+            {
+                "display_name": "Calories",
+                "display_unit": "kcal",
+                "value": 519,
+                "slug": "calories"
+            }
+        ],
+        "metrics": [
+            {
+                "display_name": "Output",
+                "display_unit": "watts",
+                "max_value": 203,
+                "average_value": 107,
+                "values": [
+                    121,
+                    146,
+                    156,
+                    144,
+                    178,
+                    183,
+                    109,
+                    150,
+                    176,
+                    187,
+                    108,
+                    146,
+                    103,
+                    107,
+                    112,
+                    109,
+                    107,
+                    136,
+                    136,
+                    94,
+                    111,
+                    132,
+                    132,
+                    123,
+                    109,
+                    165,
+                    118,
+                    134,
+                    144,
+                    126,
+                    70
+                ],
+                "slug": "output"
+            },
+            {
+                "display_name": "Cadence",
+                "display_unit": "rpm",
+                "max_value": 108,
+                "average_value": 75,
+                "values": [
+                    83,
+                    81,
+                    88,
+                    89,
+                    90,
+                    66,
+                    85,
+                    89,
+                    89,
+                    65,
+                    99,
+                    106,
+                    86,
+                    88,
+                    90,
+                    88,
+                    88,
+                    86,
+                    84,
+                    83,
+                    86,
+                    80,
+                    80,
+                    82,
+                    89,
+                    87,
+                    82,
+                    83,
+                    86,
+                    91,
+                    77
+                ],
+                "slug": "cadence"
+            },
+            {
+                "display_name": "Resistance",
+                "display_unit": "%",
+                "max_value": 65,
+                "average_value": 41,
+                "values": [
+                    43,
+                    45,
+                    45,
+                    43,
+                    62,
+                    56,
+                    56,
+                    42,
+                    59,
+                    57,
+                    57,
+                    38,
+                    37,
+                    37,
+                    37,
+                    37,
+                    37,
+                    42,
+                    42,
+                    36,
+                    43,
+                    43,
+                    43,
+                    43,
+                    37,
+                    54,
+                    54,
+                    42,
+                    42,
+                    42,
+                    34
+                ],
+                "slug": "resistance"
+            },
+            {
+                "display_name": "Speed",
+                "display_unit": "mph",
+                "max_value": 21.5,
+                "average_value": 16.3,
+                "values": [
+                    17.6,
+                    18.9,
+                    19.4,
+                    18.8,
+                    20.4,
+                    20.7,
+                    16.8,
+                    19.1,
+                    20.4,
+                    20.9,
+                    16.8,
+                    18.9,
+                    16.4,
+                    16.7,
+                    17.0,
+                    16.8,
+                    16.7,
+                    18.4,
+                    18.4,
+                    15.8,
+                    17.0,
+                    18.2,
+                    18.2,
+                    17.7,
+                    16.8,
+                    19.9,
+                    17.4,
+                    18.3,
+                    18.8,
+                    17.9,
+                    14.0
+                ],
+                "slug": "speed"
+            },
+            {
+                "display_name": "Heart Rate",
+                "display_unit": "bpm",
+                "max_value": 179,
+                "average_value": 165,
+                "values": [
+                    143,
+                    150,
+                    159,
+                    164,
+                    163,
+                    176,
+                    176,
+                    174,
+                    170,
+                    179,
+                    179,
+                    173,
+                    176,
+                    177,
+                    169,
+                    162,
+                    163,
+                    163,
+                    176,
+                    173,
+                    164,
+                    170,
+                    171,
+                    172,
+                    165,
+                    175,
+                    178,
+                    171,
+                    176,
+                    176,
+                    168
+                ],
+                "slug": "heart_rate",
+                "zones": [
+                    {
+                        "display_name": "Zone 1",
+                        "slug": "zone1",
+                        "range": "<116 bpm",
+                        "duration": 0,
+                        "max_value": 115,
+                        "min_value": 0
+                    },
+                    {
+                        "display_name": "Zone 2",
+                        "slug": "zone2",
+                        "range": "116-133 bpm",
+                        "duration": 0,
+                        "max_value": 133,
+                        "min_value": 116
+                    },
+                    {
+                        "display_name": "Zone 3",
+                        "slug": "zone3",
+                        "range": "134-151 bpm",
+                        "duration": 143,
+                        "max_value": 151,
+                        "min_value": 134
+                    },
+                    {
+                        "display_name": "Zone 4",
+                        "slug": "zone4",
+                        "range": "152-169 bpm",
+                        "duration": 1032,
+                        "max_value": 169,
+                        "min_value": 152
+                    },
+                    {
+                        "display_name": "Zone 5",
+                        "slug": "zone5",
+                        "range": ">=170 bpm",
+                        "duration": 609,
+                        "max_value": 179,
+                        "min_value": 170
+                    }
+                ],
+                "missing_data_duration": 16
+            }
+        ],
+        "has_apple_watch_metrics": false,
+        "location_data": [],
+        "is_location_data_accurate": null,
+        "splits_data": {
+            "distance_marker_display_unit": "mi",
+            "elevation_change_display_unit": "ft",
+            "splits": [
+                {
+                    "distance_marker": 1.0,
+                    "order": 1,
+                    "seconds": 217.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                },
+                {
+                    "distance_marker": 2.0,
+                    "order": 2,
+                    "seconds": 222.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                },
+                {
+                    "distance_marker": 3.0,
+                    "order": 3,
+                    "seconds": 204.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": true
+                },
+                {
+                    "distance_marker": 4.0,
+                    "order": 4,
+                    "seconds": 229.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                },
+                {
+                    "distance_marker": 5.0,
+                    "order": 5,
+                    "seconds": 227.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                },
+                {
+                    "distance_marker": 6.0,
+                    "order": 6,
+                    "seconds": 232.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                },
+                {
+                    "distance_marker": 7.0,
+                    "order": 7,
+                    "seconds": 219.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                },
+                {
+                    "distance_marker": 8.0,
+                    "order": 8,
+                    "seconds": 218.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                },
+                {
+                    "distance_marker": 0.13,
+                    "order": 9,
+                    "seconds": 231.0,
+                    "elevation_change": null,
+                    "has_floor_segment": false,
+                    "is_best": false
+                }
+            ]
+        },
+        "splits_metrics": {
+            "header": [
+                {
+                    "slug": "mi",
+                    "display_name": "mi"
+                },
+                {
+                    "slug": "total_time",
+                    "display_name": "Total Time"
+                },
+                {
+                    "slug": "pace",
+                    "display_name": "Pace"
+                },
+                {
+                    "slug": "elevation",
+                    "display_name": "Elevation"
+                }
+            ],
+            "metrics": [
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 1.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 3.62,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.62,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 2.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 7.32,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.7,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": true,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 3.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 10.72,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.4,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 4.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 14.53,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.82,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 5.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 18.32,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.78,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 6.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 22.18,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.87,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 7.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 25.83,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.65,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 8.0,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 29.47,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.63,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                },
+                {
+                    "is_best": false,
+                    "has_floor_segment": false,
+                    "data": [
+                        {
+                            "slug": "mi",
+                            "value": 0.13,
+                            "unit": "mi"
+                        },
+                        {
+                            "slug": "total_time",
+                            "value": 29.97,
+                            "unit": "min"
+                        },
+                        {
+                            "slug": "pace",
+                            "value": 3.85,
+                            "unit": "min/mi"
+                        },
+                        {
+                            "slug": "elevation",
+                            "value": null,
+                            "unit": "ft"
+                        }
+                    ]
+                }
+            ]
+        },
+        "target_metrics_performance_data": {
+            "target_metrics": [],
+            "time_in_metric": []
+        },
+        "effort_zones": {
+            "total_effort_points": 68.5,
+            "heart_rate_zone_durations": {
+                "heart_rate_z1_duration": 0,
+                "heart_rate_z2_duration": 0,
+                "heart_rate_z3_duration": 143,
+                "heart_rate_z4_duration": 1032,
+                "heart_rate_z5_duration": 609
+            }
+        },
+        "muscle_group_score": [],
+        "summary_available": true,
+        "performance_graph_available": true,
+        "workout_id": "1291528d48524a4eac18a854f87c4c0f"
+    },
+    "summary": {
+        "workout_id": "1291528d48524a4eac18a854f87c4c0f",
+        "start_time": "2023-12-10T14:43:09-05:00",
+        "end_time": "2023-12-10T15:13:07-05:00",
+        "metrics_type": "cycling",
+        "workout_type": "scenic",
+        "leaderboard_rank": 57888,
+        "total_leaderboard_users": 125411,
+        "average_effort_score": 61.0,
+        "ride": {
+            "title": "30 min Lago Di Garda Ride",
+            "description": "Journey over to Northern Italy as we head to Lago Di Garda. You'll be accompanied by blue skies, gorgeous mountains, tall lush trees and miles of scenic roadways.",
+            "ride_length": 1819,
+            "ride_duration": 1800,
+            "image_url": "https://s3.amazonaws.com/peloton-ride-images/b646cb6ac88a5267d790ee33b6d8cab5cdded057/img_1639076093_efeed76867d34c1c874ee890e1a58f9e.png",
+            "difficulty_estimate": 0.0,
+            "fitness_discipline": "cycling",
+            "ride_id": "9782f9d1ea9c46c88ccb8c512b2d37f6",
+            "instructor_json": null,
+            "instructor_id": null,
+            "instructor_name": null
+        }
+    },
+    "metrics": {
+        "workout_id": "1291528d48524a4eac18a854f87c4c0f",
+        "metrics": [
+            {
+                "average_value": 107,
+                "display_name": "Output",
+                "display_unit": "watts",
+                "max_value": 203,
+                "slug": "output",
+                "values": [
+                    121,
+                    146,
+                    156,
+                    144,
+                    178,
+                    183,
+                    109,
+                    150,
+                    176,
+                    187,
+                    108,
+                    146,
+                    103,
+                    107,
+                    112,
+                    109,
+                    107,
+                    136,
+                    136,
+                    94,
+                    111,
+                    132,
+                    132,
+                    123,
+                    109,
+                    165,
+                    118,
+                    134,
+                    144,
+                    126,
+                    70
+                ],
+                "zones": null
+            },
+            {
+                "average_value": 75,
+                "display_name": "Cadence",
+                "display_unit": "rpm",
+                "max_value": 108,
+                "slug": "cadence",
+                "values": [
+                    83,
+                    81,
+                    88,
+                    89,
+                    90,
+                    66,
+                    85,
+                    89,
+                    89,
+                    65,
+                    99,
+                    106,
+                    86,
+                    88,
+                    90,
+                    88,
+                    88,
+                    86,
+                    84,
+                    83,
+                    86,
+                    80,
+                    80,
+                    82,
+                    89,
+                    87,
+                    82,
+                    83,
+                    86,
+                    91,
+                    77
+                ],
+                "zones": null
+            },
+            {
+                "average_value": 41,
+                "display_name": "Resistance",
+                "display_unit": "%",
+                "max_value": 65,
+                "slug": "resistance",
+                "values": [
+                    43,
+                    45,
+                    45,
+                    43,
+                    62,
+                    56,
+                    56,
+                    42,
+                    59,
+                    57,
+                    57,
+                    38,
+                    37,
+                    37,
+                    37,
+                    37,
+                    37,
+                    42,
+                    42,
+                    36,
+                    43,
+                    43,
+                    43,
+                    43,
+                    37,
+                    54,
+                    54,
+                    42,
+                    42,
+                    42,
+                    34
+                ],
+                "zones": null
+            },
+            {
+                "average_value": 16.3,
+                "display_name": "Speed",
+                "display_unit": "mph",
+                "max_value": 21.5,
+                "slug": "speed",
+                "values": [
+                    17.6,
+                    18.9,
+                    19.4,
+                    18.8,
+                    20.4,
+                    20.7,
+                    16.8,
+                    19.1,
+                    20.4,
+                    20.9,
+                    16.8,
+                    18.9,
+                    16.4,
+                    16.7,
+                    17.0,
+                    16.8,
+                    16.7,
+                    18.4,
+                    18.4,
+                    15.8,
+                    17.0,
+                    18.2,
+                    18.2,
+                    17.7,
+                    16.8,
+                    19.9,
+                    17.4,
+                    18.3,
+                    18.8,
+                    17.9,
+                    14.0
+                ],
+                "zones": null
+            },
+            {
+                "average_value": 165,
+                "display_name": "Heart Rate",
+                "display_unit": "bpm",
+                "max_value": 179,
+                "slug": "heart_rate",
+                "values": [
+                    143,
+                    150,
+                    159,
+                    164,
+                    163,
+                    176,
+                    176,
+                    174,
+                    170,
+                    179,
+                    179,
+                    173,
+                    176,
+                    177,
+                    169,
+                    162,
+                    163,
+                    163,
+                    176,
+                    173,
+                    164,
+                    170,
+                    171,
+                    172,
+                    165,
+                    175,
+                    178,
+                    171,
+                    176,
+                    176,
+                    168
+                ],
+                "zones": [
+                    {
+                        "display_name": "Zone 1",
+                        "duration": 0,
+                        "max_value": 115,
+                        "min_value": 0,
+                        "range": "<116 bpm",
+                        "slug": "zone1"
+                    },
+                    {
+                        "display_name": "Zone 2",
+                        "duration": 0,
+                        "max_value": 133,
+                        "min_value": 116,
+                        "range": "116-133 bpm",
+                        "slug": "zone2"
+                    },
+                    {
+                        "display_name": "Zone 3",
+                        "duration": 143,
+                        "max_value": 151,
+                        "min_value": 134,
+                        "range": "134-151 bpm",
+                        "slug": "zone3"
+                    },
+                    {
+                        "display_name": "Zone 4",
+                        "duration": 1032,
+                        "max_value": 169,
+                        "min_value": 152,
+                        "range": "152-169 bpm",
+                        "slug": "zone4"
+                    },
+                    {
+                        "display_name": "Zone 5",
+                        "duration": 609,
+                        "max_value": 179,
+                        "min_value": 170,
+                        "range": ">=170 bpm",
+                        "slug": "zone5"
+                    }
+                ]
+            }
+        ],
+        "summaries": [
+            {
+                "display_name": "Total Output",
+                "display_unit": "kj",
+                "slug": "total_output",
+                "value": 192
+            },
+            {
+                "display_name": "Distance",
+                "display_unit": "mi",
+                "slug": "distance",
+                "value": 8.13
+            },
+            {
+                "display_name": "Calories",
+                "display_unit": "kcal",
+                "slug": "calories",
+                "value": 519
+            }
+        ],
+        "effort_zones": {
+            "total_effort_points": 68.5
+        }
+    }
+}

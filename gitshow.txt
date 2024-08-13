@@ -1,0 +1,666 @@
+commit e06fd5865e48314ea9245cf34c1a7e24a683bfbc
+Author: Zach Vaughan <85461794+cyrii42@users.noreply.github.com>
+Date:   Sat Aug 3 21:02:24 2024 -0400
+
+    updates
+
+diff --git a/Dockerfile b/Dockerfile
+new file mode 100644
+index 0000000..0525799
+--- /dev/null
++++ b/Dockerfile
+@@ -0,0 +1,34 @@
++FROM python:latest
++
++# set the working directory
++WORKDIR /workspaces/peloton
++
++# install some useful stuff
++RUN apt-get -y update && apt-get -y install nano
++
++# # Create the user
++ARG USERNAME=peloton
++ARG USER_UID=1000
++ARG USER_GID=$USER_UID
++RUN groupadd --gid $USER_GID $USERNAME \
++    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
++    # [Optional] Add sudo support. Omit if you don't need to install software after connecting.
++    && apt-get update \
++    && apt-get install -y sudo \
++    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
++    && chmod 0440 /etc/sudoers.d/$USERNAME
++
++# install dependencies
++RUN pip install --upgrade pip
++COPY requirements.txt /tmp/requirements.txt
++RUN pip install --no-cache-dir --upgrade -r /tmp/requirements.txt && rm /tmp/requirements.txt
++
++# copy the scripts to the folder
++# COPY . /streamlit
++
++# [Optional] Set the default user. Omit if you want to keep the default as root.
++USER $USERNAME
++
++# start the server
++CMD ["fastapi", "run", "api.py", "--reload"]
++
+diff --git a/api.py b/api.py
+new file mode 100644
+index 0000000..cb9d305
+--- /dev/null
++++ b/api.py
+@@ -0,0 +1,109 @@
++import json
++from pathlib import Path
++from datetime import datetime
++from zoneinfo import ZoneInfo
++
++from fastapi import FastAPI, HTTPException
++from fastapi.staticfiles import StaticFiles
++from fastapi.responses import FileResponse
++from fastapi.middleware.cors import CORSMiddleware
++import pandas as pd
++
++from peloton import PelotonProcessor, PelotonWorkoutData
++
++LOCAL_TZ = ZoneInfo('America/New_York')
++
++origins = ["*"]
++
++app = FastAPI()
++
++app.add_middleware(
++    CORSMiddleware,
++    allow_origins=origins,
++    allow_credentials=True,
++    allow_methods=["*"],
++    allow_headers=["*"],
++)
++
++app.mount("/static", StaticFiles(directory="static"), name="static")
++
++peloton = PelotonProcessor()
++
++peloton_data = peloton.workouts[8]
++
++@app.get('/favicon.ico', include_in_schema=False)
++async def favicon():
++    favicon_path = Path.cwd().joinpath('static', 'images', 'favicon.ico')
++    return FileResponse(favicon_path)
++
++@app.post('/refresh_data')
++async def refresh_data() -> None:
++    peloton.check_for_new_workouts()
++    return None
++
++@app.get('/stats_summary')
++async def get_stats_summary(end_date: int) -> dict:
++    end_date_dt = datetime.fromtimestamp(end_date, tz=LOCAL_TZ)
++    return peloton.chart_maker.make_stats_summary(end_date_dt)
++
++@app.get('/data')
++async def get_data(workout_id: str) -> PelotonWorkoutData:
++    return peloton.get_workout_object_from_id(workout_id)
++
++@app.get('/dataframe')
++async def get_dataframe() -> list[dict]:
++    df = peloton.processed_df
++    df_json = df.to_json(orient='records')
++    
++    return json.loads(df_json)
++
++@app.get('/year_table')
++async def get_year_table() -> list[dict]:
++    df = peloton.pivots.year_table.copy()
++    df = df.sort_index(ascending=False)
++    df_json = df.to_json(orient='records')
++
++    return json.loads(df_json)
++
++@app.get('/month_table')
++async def get_month_table() -> list[dict]:
++    df = peloton.pivots.month_table.copy()
++    df = (df
++          .rename(columns={'avg_output/min': 'avg_output_min'})
++          .sort_index(ascending=False))
++    df_json = df.to_json(orient='records')
++
++    return json.loads(df_json)
++
++@app.get('/totals_table')
++async def get_totals_table() -> list[dict]:
++    df = peloton.pivots.totals_table.copy()
++    df = (df
++          .rename(columns={
++                'month': 'Month',
++                'rides': 'Rides',
++                'total_hours': 'Hours',
++                'total_miles': 'Miles',
++                'avg_calories': 'Avg. Cals',
++                'avg_output/min': 'OT/min'})
++          .sort_index(ascending=False))
++    df_json = df.to_json(orient='records')
++
++    return json.loads(df_json)
++
++@app.get('/hr_zones/')
++async def get_hr_zones_chart_df(workout_id: str) -> list[dict]:
++    df = peloton.chart_maker.make_hr_zones_chart_df(workout_id)
++    if isinstance(df, pd.DataFrame):
++        return json.loads(df.to_json(orient='records'))
++    else:
++        raise HTTPException(status_code=404, detail=f"No HR zone data for workout ID: {workout_id}")
++
++@app.get('/line_chart/')
++async def get_line_chart_df(workout_id: str):
++    df = (peloton.chart_maker
++          .make_line_chart_df_new(workout_id)
++          .reset_index(names='datetime'))
++    df_json = df.to_json(orient='records')
++
++    return json.loads(df_json)
+\ No newline at end of file
+diff --git a/api_test.py b/api_test.py
+new file mode 100644
+index 0000000..64fd06c
+--- /dev/null
++++ b/api_test.py
+@@ -0,0 +1,27 @@
++import requests
++import pandas as pd
++from datetime import datetime
++from zoneinfo import ZoneInfo
++
++ts_now = int(round(datetime.now(tz=ZoneInfo('America/New_York')).timestamp()))
++
++# test_ts = ts_now
++# test_dt = datetime.fromtimestamp(test_ts)
++# print(test_dt)
++
++url = f"https://pelotondata.cyrii42.net/stats_summary/?end_date={ts_now}"
++
++print(url)
++
++response = requests.get(url)
++
++resp = response.json()
++
++print(resp)
++
++# df = pd.DataFrame(resp)#.astype({'datetime': 'datetime64[ms]'}).set_index('datetime')
++
++# print(df)
++
++# dt = datetime.now(tz=ZoneInfo('America/New_York')).isoformat()
++# print(dt)
+\ No newline at end of file
+diff --git a/data/month_table.csv b/data/month_table.csv
+index b75741c..e955ff2 100644
+--- a/data/month_table.csv
++++ b/data/month_table.csv
+@@ -25,4 +25,7 @@
+ 23,February 2024,22,21,10.34,163.91,472.05,6.85
+ 24,March 2024,17,17,7.83,133.37,456.41,7.11
+ 25,April 2024,15,15,6.17,105.31,415.4,7.17
+-26,May 2024,13,13,6.08,103.68,479.0,7.21
++26,May 2024,15,15,7.08,121.36,484.4,7.28
++27,June 2024,15,15,7.42,127.35,487.6,7.37
++28,July 2024,17,17,6.58,113.54,392.24,7.48
++29,August 2024,1,1,0.33,5.49,336.0,6.75
+diff --git a/data/processed_workouts_data.csv b/data/processed_workouts_data.csv
+index c45dc94..cdef79d 100644
+--- a/data/processed_workouts_data.csv
++++ b/data/processed_workouts_data.csv
+@@ -308,4 +308,39 @@
+ 306,2c9bde52c5a940daa4caf50519cdd474,2024-05-20 17:41:50-04:00,2024-05-20 18:06:51-04:00,cycling,freestyle,,0,,,25 min Just Ride,,,1501,,,,00000000000000000000000000000000,"{'name': 'JUST RIDE', 'image_url': 'https://s3.amazonaws.com/peloton-ride-images/just-ride-indoor.png'}",,JUST RIDE,178.0,7.04,420.0,118.0,72.0,44.0,16.9,161.0,212.0,89.0,61.0,21.9,182.0,6.0,9.0,213.0,896.0,358.0,54.5,7.115256495669554,0.41694444444444445
+ 307,bf50deee62a54459af3699a84f2de606,2024-05-22 09:55:59-04:00,2024-05-22 10:25:59-04:00,cycling,scenic,58470.0,164227,67.7,64.39684095794236,30 min Draguignan Ride,Ride through the town of Draguignan and find vineyards and olive trees as you make your way towards the small village of Figanières in Provence.,1810.0,1800,https://s3.amazonaws.com/peloton-ride-images/885668959d9dfdeefa98bb8fc39dbc1289dd7bbf/img_1668804725_b1f65819517141dfa0a49b66c8d19190.png,0.0,cycling,8808cd54c8924f948a4f0cfdc0ab8dda,,,,211.0,8.48,517.0,118.0,73.0,44.0,17.0,164.0,225.0,87.0,60.0,22.4,180.0,0.0,37.0,170.0,967.0,615.0,67.0,7.033333333333333,0.5
+ 308,8acc5d5030c9434bbc7c4eec1d18fd69,2024-05-23 12:08:46-04:00,2024-05-23 12:38:46-04:00,cycling,scenic,48655.0,133415,67.6,63.53108720908443,30 min Front Range Trails Ride,Explore Colorado's Front Range trails starting in Boulder with views of the Flat Irons and Eldorado Canyon. Then head up to White Ranch through the meadows where you may must catch a glimpse of Denver in the distance.,1810.0,1800,https://s3.amazonaws.com/peloton-ride-images/c3bf304f8b6c977e5fce68a7ebedd0d4d1263fbe/img_1682272802_b1cf6907d54a4514a092564816890f2b.png,0.0,cycling,70aed3eec3104400a360707d9a394569,,,,213.0,8.41,511.0,118.0,71.0,44.0,16.8,163.0,198.0,92.0,57.0,21.3,184.0,0.0,58.0,262.0,837.0,627.0,64.4,7.1,0.5
+-309,ffc6bd7e27244118aab4fc3c7ad4a400,2024-05-28 11:04:24-04:00,2024-05-28 11:34:24-04:00,cycling,scenic,49267.0,165576,67.3,70.24508382857418,30 min Streets of London Ride,Take a ride through the streets of London taking in iconic sites from Big Ben to Tower Bridge. Filmed by professionals on a closed course. Do not attempt to recreate.,1811.0,1800,https://s3.amazonaws.com/peloton-ride-images/e9e4253f78e4877d267b8dbacc47e3da620e70b2/img_1666115383_13232dbbc48d43739b3a0108e71266e5.jpg,0.0,cycling,ee5c49927f2e4f5489da5387d6444a60,,,,223.0,8.67,537.0,124.0,73.0,45.0,17.4,169.0,204.0,89.0,59.0,21.6,183.0,0.0,0.0,73.0,654.0,1061.0,70.1,7.433333333333334,0.5
++309,ffc6bd7e27244118aab4fc3c7ad4a400,2024-05-28 11:04:24-04:00,2024-05-28 11:34:24-04:00,cycling,scenic,49274.0,165599,67.3,70.24498940210991,30 min Streets of London Ride,Take a ride through the streets of London taking in iconic sites from Big Ben to Tower Bridge. Filmed by professionals on a closed course. Do not attempt to recreate.,1811.0,1800,https://s3.amazonaws.com/peloton-ride-images/e9e4253f78e4877d267b8dbacc47e3da620e70b2/img_1666115383_13232dbbc48d43739b3a0108e71266e5.jpg,0.0,cycling,ee5c49927f2e4f5489da5387d6444a60,,,,223.0,8.67,537.0,124.0,73.0,45.0,17.4,169.0,204.0,89.0,59.0,21.6,183.0,0.0,0.0,73.0,654.0,1061.0,70.1,7.433333333333334,0.5
++310,676c7fe780374e55aa97e7c85dd8af18,2024-05-29 10:58:29-04:00,2024-05-29 11:28:29-04:00,cycling,scenic,49.0,158,67.6,68.9873417721519,30 min Montenegro Ride,Take in the stunning views from the Slansko Lake before climbing your way up the hills and into the second largest city in Montenegro.,1810.0,1800,https://s3.amazonaws.com/peloton-ride-images/a43a314360abb72e4717a31beefb88e2a3a67a04/img_1714686493_aea6e000975245f2bc08e21d6ecccab4.jpg,0.0,cycling,302cef2b3e004e25b46d467890c1601c,,,,232.0,8.83,523.0,129.0,72.0,46.0,17.7,165.0,223.0,90.0,59.0,22.3,179.0,0.0,25.0,144.0,1006.0,611.0,67.8,7.733333333333333,0.5
++311,373db1d5033a4fbc9777b6c491c2228c,2024-05-30 11:33:32-04:00,2024-05-30 12:03:32-04:00,cycling,scenic,34539.0,116619,67.8,70.38304221439044,30 min Grisons St. Moritz Ride,This ride follows mountain bike trails around the high alpine resort town of St. Moritz on a sunny afternoon.,1810.0,1800,https://s3.amazonaws.com/peloton-ride-images/84cc1411f10ea1b7dd3dbb1efbd335636d840855/img_1689894478_ac8227de09c14b818de58997a727a142.png,0.0,cycling,bfc59f2483a24c44ba4354129cf7a1ba,,,,233.0,8.85,516.0,129.0,74.0,45.0,17.7,164.0,225.0,90.0,61.0,22.4,179.0,6.0,34.0,160.0,900.0,686.0,67.0,7.766666666666667,0.5
++312,7431049bb29043b08d86d836d2f7857d,2024-06-01 12:05:13-04:00,2024-06-01 12:35:13-04:00,cycling,scenic,28026.0,74516,67.7,62.38928552257234,30 min Fjallfos Ride,Start your ride at a viewpoint near the longest tunnel in Iceland leading from the town of Isafjordur as you travel towards the Fjallfoss waterfall that stands at a height of 100 meters.,1811.0,1800,https://s3.amazonaws.com/peloton-ride-images/257a488cd0b22f48ee37f2a0ed90a92a115adb9c/img_1663794305_983716073eca42769ae4598e3118c8c7.png,0.0,cycling,66e9815842e14073adb5679bb4b6aff1,,,,214.0,8.47,496.0,119.0,71.0,45.0,16.9,160.0,213.0,89.0,60.0,21.9,174.0,0.0,8.0,188.0,1520.0,74.0,67.6,7.133333333333334,0.5
++313,cd649f3df05e4be7906c220115d92afa,2024-06-02 14:03:25-04:00,2024-06-02 14:23:26-04:00,cycling,scenic,25561.0,86547,43.8,70.4657584896068,20 min Gorenjska Region Ride,"Ride on one of the most picturesque trails in the Gorenjska region of Slovenia, along the former railroad from Mojstrana to Lake Jasna.",1210.0,1200,https://s3.amazonaws.com/peloton-ride-images/6855f33cb365258b888faac502106d6ef8e83764/img_1684252369_b35106353ce84feb97914d263106c439.png,0.0,cycling,23c99e4be04340c6b0935756b00fd712,,,,154.0,5.9,316.0,129.0,75.0,45.0,17.7,155.0,217.0,92.0,58.0,22.1,171.0,1.0,42.0,220.0,915.0,10.0,41.8,7.7,0.3333333333333333
++314,823d7cb38142482d93073596fc2621e3,2024-06-06 18:32:22-04:00,2024-06-06 19:02:22-04:00,cycling,scenic,49376.0,139195,67.6,64.5274614749093,30 min Algarve Ride,"""Take a deep breath and enjoy the rolling mountains of Algarve. Can you smell the pine, oak and eucalyptus forest?",1810.0,1800,https://s3.amazonaws.com/peloton-ride-images/228ec32d5ced2208c2246fc9a0513d6cac8d1b07/img_1626979429_672ae38406f04c5099f390ff37c8fd8d.png,0.0,cycling,baa23cc3b5774fabbf793c16ae327359,,,,227.0,8.81,528.0,126.0,72.0,46.0,17.6,167.0,237.0,90.0,64.0,22.8,180.0,0.0,21.0,96.0,865.0,793.0,68.5,7.566666666666666,0.5
++315,4c6c5915860b4185928f54700526cc85,2024-06-07 11:43:41-04:00,2024-06-07 12:18:42-04:00,cycling,freestyle,,0,,,35 min Just Ride,,,2101,,,,00000000000000000000000000000000,"{'name': 'JUST RIDE', 'image_url': 'https://s3.amazonaws.com/peloton-ride-images/just-ride-indoor.png'}",,JUST RIDE,244.0,9.77,594.0,116.0,70.0,45.0,16.7,162.0,239.0,89.0,61.0,22.9,178.0,3.0,59.0,115.0,1557.0,348.0,79.1,6.968110423607806,0.5836111111111111
++316,69301c0f2bde4bed9809cfebd04f0984,2024-06-09 20:33:11-04:00,2024-06-09 21:13:13-04:00,cycling,freestyle,,0,,,40 min Entertainment Ride,,,2402,,,,00000000000000000000000000000000,"{'name': 'ENTERTAINMENT', 'image_url': 'https://s3.amazonaws.com/peloton-ride-images/entertainment_2x.png'}",,ENTERTAINMENT,270.0,11.09,647.0,113.0,72.0,43.0,16.6,156.0,187.0,90.0,58.0,20.9,173.0,0.0,2.0,271.0,1981.0,105.0,88.9,6.7443796835970025,0.6672222222222223
++317,0a6cf72e37e64fb089e1b5219210d70d,2024-06-11 09:56:44-04:00,2024-06-11 10:26:44-04:00,cycling,scenic,35823.0,107941,67.6,66.8124253064174,30 min Haleakalā National Park Ride,Ride among pink and lavender clouds as you rise and fall through winding crater roads of Haleakalā's National Park on the island of Maui.,1810.0,1800,https://s3.amazonaws.com/peloton-ride-images/0cd5a621c5e2c1396c264d866e26dda620dd0450/img_1661616720_440c601ba894492fa5f1c3810b5bcbe6.png,0.0,cycling,bcdc82bb4179458b86b9a840fc982a4f,,,,217.0,8.54,500.0,121.0,72.0,44.0,17.1,161.0,249.0,122.0,60.0,23.2,182.0,4.0,37.0,180.0,1447.0,123.0,66.8,7.233333333333333,0.5
++318,035690396d0845ec954f746bf19f88bf,2024-06-12 21:29:48-04:00,2024-06-12 22:09:49-04:00,cycling,freestyle,,0,,,40 min Just Ride,,,2401,,,,00000000000000000000000000000000,"{'name': 'JUST RIDE', 'image_url': 'https://s3.amazonaws.com/peloton-ride-images/just-ride-indoor.png'}",,JUST RIDE,277.0,11.21,643.0,115.0,72.0,44.0,16.8,157.0,210.0,88.0,72.0,21.8,171.0,0.0,28.0,266.0,2048.0,36.0,89.0,6.922115785089546,0.6669444444444445
++319,69cbea338cfa4221a8a5ca55146d3d5b,2024-06-13 21:50:55-04:00,2024-06-13 22:20:56-04:00,cycling,freestyle,,0,,,30 min Just Ride,,,1801,,,,00000000000000000000000000000000,"{'name': 'JUST RIDE', 'image_url': 'https://s3.amazonaws.com/peloton-ride-images/just-ride-indoor.png'}",,JUST RIDE,219.0,8.63,486.0,122.0,71.0,45.0,17.2,157.0,219.0,89.0,60.0,22.1,172.0,0.0,16.0,214.0,1519.0,34.0,66.6,7.295946696279845,0.5002777777777778
++320,76d42a4332884fa992d9eda5b6dae042,2024-06-17 17:53:40-04:00,2024-06-17 18:23:40-04:00,cycling,scenic,24691.0,66854,67.4,63.06728094055703,30 min Wheeler County Ride,Start your journey on a highway through rural Oregon greeted with clear blue skies and surrounded by the beautiful Blue Mountains.,1810.0,1800,https://s3.amazonaws.com/peloton-ride-images/6fc33b6f0eb12503c30541019ad8f28a3947c6af/img_1661617001_989f3111e42b4a41834cfe1463afb84b.png,0.0,cycling,e7e430a24a3c47fe8db1ede3c30ab135,,,,226.0,8.75,488.0,126.0,74.0,45.0,17.5,158.0,219.0,90.0,60.0,22.1,176.0,0.0,51.0,322.0,1275.0,140.0,63.5,7.533333333333333,0.5
++321,f27d688937b04222bf3b05b31e6dd0b7,2024-06-20 16:01:36-04:00,2024-06-20 16:21:36-04:00,cycling,scenic,17698.0,84707,43.4,79.1068034518989,20 min English Bay Seawall Ride,"Discover the English Bay coastline in Vancouver, riding from Stanley Park to False Creek. There's not a cloud in the sky on this ride!",1210.0,1200,https://s3.amazonaws.com/peloton-ride-images/0831d2d32f06c4e72149239a405403992b7fbb80/img_1710875516_6f42dec7db9a47a69ab5083ca5c06edd.jpg,0.0,cycling,e246bebd232a4ab0a565f2171f30c756,,,,163.0,5.99,357.0,136.0,74.0,46.0,18.0,168.0,237.0,92.0,62.0,22.8,181.0,4.0,0.0,79.0,512.0,599.0,46.0,8.15,0.3333333333333333
++322,0f8bf366336846b38e4bc5578cb0bd6a,2024-06-21 16:56:04-04:00,2024-06-21 17:26:04-04:00,cycling,scenic,31246.0,90245,67.0,65.3764751509779,30 min Maine Peaks Island Ride,"Take this chilled ride to visit the island, its village, and its pristine coastline. This ride offers it all: lush forests, jaw dropping ocean views, boats bobbing in the harbour past beautiful seaside houses.",1810.0,1800,https://s3.amazonaws.com/peloton-ride-images/086d2a8d8e92539d71233cb8f98a3852ff8a50b6/img_1702908571_a9420da2134a4d00b916a45f6feb83d6.jpeg,0.0,cycling,1363f796d34a45629f5b9f0ace602094,,,,217.0,8.46,480.0,122.0,72.0,45.0,17.1,157.0,257.0,92.0,60.0,23.5,174.0,8.0,41.0,179.0,1481.0,69.0,66.0,7.233333333333333,0.5
++323,c88c652828004d7faf1ccfa2b016624c,2024-06-23 15:05:26-04:00,2024-06-23 15:35:26-04:00,cycling,scenic,41711.0,121521,66.9,65.67589140971519,30 min Ticino Gotthard Pass Ride,"Ride high along the Gotthard Pass in the Swiss Alps, the mountain pass connecting northern and southern Switzerland.",1810.0,1800,https://s3.amazonaws.com/peloton-ride-images/6b7a073c79d22bea3650b10582e557c14c87df27/img_1682272602_5ea6cea52ef5404cb29f62fac3ae92e5.png,0.0,cycling,7f554d40de164b0cbd29ac5073e3d9cf,,,,219.0,8.53,470.0,121.0,70.0,46.0,17.1,154.0,225.0,87.0,62.0,22.4,171.0,4.0,24.0,494.0,1258.0,14.0,61.0,7.3,0.5
++324,8e7f324eedc14a1bab77f7cea1984838,2024-06-26 11:52:42-04:00,2024-06-26 12:22:42-04:00,cycling,scenic,26310.0,79647,66.3,66.96674074353083,30 min Llandudno Conwy Ride,"Feel the breeze of the Irish Sea as you ride along the coast to the town of Llandudno in Conwy. The ride will take you all the way to Conwy Castle, known as the largest medieval fortification in Europe.",1810.0,1800,https://s3.amazonaws.com/peloton-ride-images/b7445ef9e7b5ba42a5f4921723f9a821ebf9fc45/img_1702908606_54d255e58ba445c9ab5d2f32bfeed618.jpeg,0.0,cycling,18105ce8f13f42f29d0e6dbab3f5b332,,,,227.0,8.69,504.0,126.0,71.0,46.0,17.4,161.0,510.0,109.0,61.0,30.2,179.0,0.0,37.0,182.0,1260.0,309.0,66.8,7.566666666666666,0.5
++325,49494d91d42143a4911f79627aefaeb4,2024-06-27 11:27:28-04:00,2024-06-27 11:57:28-04:00,cycling,scenic,31698.0,98189,66.6,67.71736141522982,30 min Santiago Chile Ride,"Have fun while sight-seeing in Santiago de Chile, recognized as ""Latin America's Most Bike-Friendly City"". You'll go through three urban parks before climbing into the hills to overlook the city.",1811.0,1800,https://s3.amazonaws.com/peloton-ride-images/cf20549f49598e3653743520c2040622e173d384/img_1695146690_a490a8a92eb74ba9867bd2c362806fc0.jpeg,0.0,cycling,4ba7fea5e24c4ad7a9ff4512fe187034,,,,220.0,8.62,461.0,122.0,72.0,45.0,17.2,152.0,244.0,91.0,62.0,23.1,171.0,17.0,55.0,589.0,1100.0,28.0,57.5,7.333333333333333,0.5
++326,c8dd78f9496e4a34984dea523d173dd8,2024-06-30 14:18:59-04:00,2024-06-30 14:38:59-04:00,cycling,scenic,38295.0,148172,43.3,74.15503603919768,20 min Scotland Kinloch Hourn Ride,Ride through the heavy dew in the mystical Kinloch Hourn and see what natural beauties Scotland has to offer. Filmed by professionals on a closed course. Do not attempt to recreate.,1211.0,1200,https://s3.amazonaws.com/peloton-ride-images/de3b6c55e1827c85bfa373261cb85b0b4265ecc7/img_1658786008_8f9b3ad1b7124408a7ccd12e2794554d.png,0.0,cycling,4f21e6e0a95e4314be332ba61a0bd22a,,,,156.0,5.89,344.0,130.0,67.0,48.0,17.7,164.0,488.0,106.0,64.0,29.7,181.0,0.0,33.0,100.0,738.0,318.0,44.6,7.8,0.3333333333333333
++327,9e298f2c299d4b3aaac5072d892f9e70,2024-07-01 15:22:03-04:00,2024-07-01 15:42:03-04:00,cycling,scenic,51128.0,170053,43.5,69.9340793752536,20 min Olympic Valley Ride,"It's a pleasant day in Olympic Valley, host of the 1960 Winter Olympic Games. Enjoy the view as you ride the bike path and alongside the Truckee River.",1210.0,1200,https://s3.amazonaws.com/peloton-ride-images/506761a4da02585cee782ca34a7946c5fba7102d/img_1671394681_18975ffd9fc24b9d8e9d5b794225f220.png,0.0,cycling,ace9c7c5462944069aa6254120d75268,,,,142.0,5.66,336.0,119.0,65.0,48.0,17.0,162.0,254.0,113.0,62.0,23.4,177.0,0.0,0.0,105.0,864.0,213.0,45.2,7.1,0.3333333333333333
++328,2558223d255f446ca096d69c3857d031,2024-07-04 12:42:16-04:00,2024-07-04 13:12:16-04:00,cycling,scenic,6429.0,16154,65.3,60.20180760183237,30 min Chaitén Ride,"Take a ride through Chile on this sunny day, where you’ll pass over the deep green Yelcho Lake and admire the grandeur of the Andes Mountains.",1810.0,1800,https://s3.amazonaws.com/peloton-ride-images/c2d44be38e7ccc430a9f7eccdde823221ae0da54/img_1718650189_433bdbe005ac4fc4a979e247cbc6f8d6.png,0.0,cycling,97713935cbba470482ead72b39e79c7f,,,,205.0,8.38,540.0,114.0,71.0,44.0,16.8,169.0,222.0,103.0,63.0,22.3,183.0,0.0,23.0,52.0,672.0,1043.0,69.9,6.833333333333333,0.5
++329,490e72d3299e4693b57020a6c1a97009,2024-07-06 15:17:30-04:00,2024-07-06 15:37:30-04:00,cycling,scenic,42654.0,159122,43.6,73.19415291411622,20 min Hawaii Puna Coast Ride,Embrace the free spirited vibe of the Big Island as you pedal your way along the coast and indulge in the sea breeze and the luscious green of the trees.,1210.0,1200,https://s3.amazonaws.com/peloton-ride-images/e490ef62dd89e8bb20ba8e65297b0169434b5c31/img_1652985510_8cc8d8666ad54c109c2765520233aa4d.jpg,0.0,cycling,aae60798972d45fe87679d539b8286d9,,,,143.0,5.67,341.0,119.0,68.0,46.0,17.0,163.0,395.0,89.0,62.0,27.6,178.0,0.0,30.0,54.0,881.0,226.0,45.7,7.15,0.3333333333333333
++330,a4fc4a225ae54fb0abd8c4d5c7521855,2024-07-08 16:53:46-04:00,2024-07-08 17:13:46-04:00,cycling,scenic,20762.0,83058,44.7,75.00300994485781,20 min Galloping Goose Trail Ride,Take in the fall colors on this ride along the historic Galloping Goose Trail. Begin by riding the Selkirk Trestle and end at Glen Lake.,1210.0,1200,https://s3.amazonaws.com/peloton-ride-images/33b93172e281d865c47e60f6c78eb361facadb67/img_1684252325_c31c61a3ee374126ae9dd7bb733820f9.png,0.0,cycling,117f96a69bfe4bfaaf8d1d259d580274,,,,160.0,5.95,326.0,133.0,72.0,47.0,17.9,158.0,227.0,91.0,60.0,22.4,172.0,9.0,30.0,98.0,1005.0,48.0,44.4,8.0,0.3333333333333333
++331,f90fa1e94fbb4df48158e5811ede1386,2024-07-09 10:57:04-04:00,2024-07-09 11:27:04-04:00,cycling,scenic,43174.0,132671,65.5,67.45784685424849,30 min Trentino Ride,Escape the bustling city for the luxurious mountain views in Trentino. Enjoy the climb as the views take your breath away on this journey through Italy.,1810.0,1800,https://s3.amazonaws.com/peloton-ride-images/9d9fc4806ad04ba933d74d66a9f4b3f02e91d25c/img_1652985521_d883b9d4887d436c8d38f46cda32c024.jpg,0.0,cycling,7069dc29d4324c7faa5b025606deb36a,,,,224.0,8.58,520.0,125.0,71.0,46.0,17.2,165.0,237.0,92.0,62.0,22.8,181.0,0.0,58.0,110.0,1023.0,595.0,67.5,7.466666666666667,0.5
++332,4a2aec2b6cf9401f962b24ef998559fa,2024-07-11 11:08:24-04:00,2024-07-11 11:33:25-04:00,cycling,freestyle,,0,,,25 min Just Ride,,,1501,,,,00000000000000000000000000000000,"{'name': 'JUST RIDE', 'image_url': 'https://s3.amazonaws.com/peloton-ride-images/just-ride-indoor.png'}",,JUST RIDE,181.0,7.03,413.0,120.0,66.0,47.0,16.9,160.0,225.0,88.0,62.0,22.4,175.0,0.0,85.0,224.0,881.0,292.0,52.2,7.235176548967355,0.41694444444444445
++333,a83f64f0b64f45c9bb039469903a5842,2024-07-12 11:17:47-04:00,2024-07-12 11:37:47-04:00,cycling,scenic,32109.0,155798,44.6,79.39062118897546,20 min Marina Green Park Ride,Enjoy the sweeping views of the San Francisco Bay and Golden Gate Bridge as you ride through Marina Green Park,1213.0,1200,https://s3.amazonaws.com/peloton-ride-images/24acb6cc9a70ee2c6082b2c555ca923c6c2c3ba9/img_1619730101_16854f8593f54cd1b645b799d23a7677.png,0.0,cycling,3a80009834e94826913b94b3f8b1b066,,,,162.0,5.97,346.0,135.0,71.0,48.0,17.9,165.0,231.0,93.0,61.0,22.6,178.0,0.0,0.0,74.0,788.0,331.0,46.2,8.1,0.3333333333333333
++334,b8404d4d8e934f99872c55dc578f04a5,2024-07-15 10:24:46-04:00,2024-07-15 10:44:46-04:00,cycling,scenic,26885.0,97229,44.8,72.34878482757202,20 min Northern Rockies Ride,"Snow capped mountains, vibrant sub alpine scenery and lakes, wild animals and landscapes will ravish your senses as you ride along the famous Alaskan Highway in the Northern Canadian Rockies.",1210.0,1200,https://s3.amazonaws.com/peloton-ride-images/429f7b7d8c7d3e3b91b9151d958332d88a971288/img_1692295326_b14cfca74cb84aa4a2e411f14219a5b1.jpeg,0.0,cycling,d4a3fa9346414c05b30a0c331046ac03,,,,150.0,5.75,345.0,125.0,72.0,45.0,17.3,165.0,217.0,89.0,61.0,22.1,181.0,0.0,18.0,110.0,785.0,283.0,45.1,7.5,0.3333333333333333
++335,cd7475a29a254e53991212265886fb50,2024-07-16 10:54:24-04:00,2024-07-16 11:14:24-04:00,cycling,scenic,14417.0,57314,44.9,74.8455874655407,20 min Provence Ride,"You’ll smell the lavender for miles on this glorious ride through France. The sun is shining, and the fields are blooming on these open roads.",1210.0,1200,https://s3.amazonaws.com/peloton-ride-images/7e94e5509de2f1ceb9fce0c9cbb27fafd0764307/img_1632849664_2784e2820f3b4ec4b06ec16a18562e56.jpg,0.0,cycling,322e375dafb94b30af1d5f78b8b1389a,,,,160.0,5.86,331.0,133.0,71.0,47.0,17.6,160.0,240.0,91.0,61.0,22.9,180.0,0.0,57.0,125.0,709.0,287.0,42.9,8.0,0.3333333333333333
++336,63f87f3f8b8e45a49639054aff82e4dd,2024-07-18 18:20:20-04:00,2024-07-18 18:40:20-04:00,cycling,scenic,26260.0,121336,44.7,78.35761851387882,20 min Lutsen Ride,Feel the dirt and gravel under your pedals as you ride along this open road through Minnesota.,1220.0,1200,https://s3.amazonaws.com/peloton-ride-images/337fb754693f4123dfd101b5a9aff3a955adf1ee/img_1644522150_299b17bb901b4601af626ca409135feb.png,0.0,cycling,e00cb9d6e37341378ed465928ef815b0,,,,163.0,6.03,339.0,136.0,77.0,45.0,18.1,163.0,237.0,94.0,62.0,22.8,179.0,0.0,29.0,65.0,889.0,192.0,44.8,8.15,0.3333333333333333
++337,28580e84c15e409eb103f368fd33440a,2024-07-22 12:50:46-04:00,2024-07-22 13:20:46-04:00,cycling,scenic,39469.0,127177,65.6,68.96530032946208,30 min South Africa Clarence Drive Ride,"Follow the coast as you ride along the magnificent Clarence Drive. You’ll ride from the naval town of Gordon’s Bay to the windswept hamlet of Rooi-Els, and at times will be so close to the water, you can almost touch it!",1811.0,1800,https://s3.amazonaws.com/peloton-ride-images/c1345f1a5fcaf2839dbe1910b05bf72df640ecea/img_1661616686_3cfccc8e829544a981b922ca4b18138c.jpeg,0.0,cycling,bd3d50ea49d94c8aa3d581f88bc3a8d6,,,,222.0,8.62,500.0,124.0,74.0,44.0,17.3,161.0,231.0,89.0,64.0,22.6,176.0,0.0,30.0,114.0,1507.0,127.0,67.9,7.4,0.5
++338,12c5d733b90c4cb28f9fd544dcc876af,2024-07-23 11:32:17-04:00,2024-07-23 12:02:17-04:00,cycling,scenic,61349.0,172711,65.6,64.47881142486581,30 min Canyonlands National Park Ride,"Sweat it out through the desert as you explore the Canyonlands National Park. Carved from the Colorado River, you'll experience so much throughout the rocky terrain.",1810.0,1800,https://s3.amazonaws.com/peloton-ride-images/e2af40d6c5831b814ad6de3808d8cf4a189fbc62/img_1648321069_8f8e7d00c8f4433997cc774b370ecc3e.png,0.0,cycling,863442bfb1f44863889a71fffd65106e,,,,215.0,8.49,519.0,120.0,69.0,46.0,17.0,165.0,231.0,89.0,62.0,22.6,183.0,18.0,15.0,159.0,991.0,612.0,67.5,7.166666666666667,0.5
++339,06e1c4461b8c428babc9ae3c3da736c7,2024-07-24 11:20:14-04:00,2024-07-24 11:40:13-04:00,cycling,scenic,39135.0,151333,44.7,74.13981088064071,20 min Italian Alps Ride,Ride up and over the rolling hills of the Italian Alps. Push through till the end to watch the sun set behind beautiful snowy mountain peaks.,1214.0,1200,https://s3.amazonaws.com/peloton-ride-images/e3660de2ff747533af4942bb32ee1c0511ef1de1/img_1638903983_5fff1696db4c49f68c5f8b93f068fc28.jpg,0.0,cycling,771e0f69e0ee41988447724223940fae,,,,152.0,5.82,322.0,127.0,70.0,47.0,17.5,157.0,243.0,89.0,61.0,23.0,175.0,20.0,24.0,180.0,840.0,131.0,42.8,7.6,0.3333333333333333
++340,c086fc3f17ed46ceac56eef231c9fe19,2024-07-25 11:01:53-04:00,2024-07-25 11:31:53-04:00,cycling,scenic,21997.0,64232,65.5,65.7538298667331,30 min Buenavista del Norte Baracan Ride,Climb up through winding roads and admire the beautiful views of the Mediterranean countryside.,1810.0,1800,https://s3.amazonaws.com/peloton-ride-images/7a507dffde6fcd3b8c160b1260d22b7145b8da12/img_1713189689_20ee55eccc5047d7b5289c9caaaf4ab2.jpg,0.0,cycling,3c7e5baada0749ff98889de602b64b8a,,,,221.0,8.61,511.0,123.0,73.0,45.0,17.3,163.0,240.0,90.0,61.0,22.9,179.0,5.0,2.0,191.0,1208.0,386.0,67.6,7.366666666666666,0.5
++341,d154f5c4471b44378c84c531f5a30e70,2024-07-29 08:54:52-04:00,2024-07-29 09:21:37-04:00,cycling,class,,0,44.8,,20 min Pick-Me-Up Ride,Elevate your mood in this collection of Hannah's Pick-Me-Up rides! Clip in and lift your spirits with Hannah Corbin. Happy riding!,1370.0,1200,https://s3.amazonaws.com/peloton-ride-images/493fc1dad593c792df575586bc996db8b33a0b92/img_1720537490_498ca1595ff54f48bc4a9390ac7ece9c.png,6.458233890214797,cycling,f1582f73a1534ab2a31d11444dfb2c41,,561f95c405734d8488ed8dcc8980d599,Hannah Corbin,146.0,5.67,330.0,121.0,77.0,43.0,17.1,151.0,276.0,112.0,62.0,24.1,179.0,23.0,65.0,160.0,636.0,312.0,41.9,7.3,0.3333333333333333
++342,f9c8b786904f4db3bbdff2009b0af8fb,2024-07-30 09:15:29-04:00,2024-07-30 09:35:23-04:00,cycling,scenic,24193.0,75820,44.4,68.09153257715643,20 min Escalante Utah Ride,"Cruise through Grand Staircase-Escalante National Monument and embrace the open roads as you pass by mountains, cliffs, flats and canyons.",1214.0,1200,https://s3.amazonaws.com/peloton-ride-images/0750e0558528b962ec91e6da7c532656dbc84eb1/img_1639075750_b626c9b9308d4ca988a8da457e46928a.png,0.0,cycling,24ce0897c84b43cf89aa04d01229ffcc,,,,150.0,5.73,321.0,126.0,69.0,47.0,17.3,158.0,231.0,89.0,60.0,22.6,177.0,0.0,84.0,135.0,783.0,174.0,41.8,7.5,0.3333333333333333
++343,36db83b8a6424472a2c534cc09cc9452,2024-07-31 09:13:31-04:00,2024-07-31 09:33:31-04:00,cycling,scenic,11591.0,35408,44.1,67.2644600090375,20 min Veluwe National Park Ride,Ride on this quiet forest path of the beautiful nature reserve of the Veluwe National Park.,1211.0,1200,https://s3.amazonaws.com/peloton-ride-images/a07c094718d77c5c3b2fe2d5b50b4fde8ee54bcc/img_1700587926_57bda01b709c4d1495792eee3f5434b7.jpg,0.0,cycling,155516e41dda4869bd84671a197cfc10,,,,147.0,5.72,328.0,123.0,69.0,47.0,17.2,159.0,202.0,88.0,58.0,21.5,181.0,8.0,30.0,130.0,883.0,143.0,44.0,7.35,0.3333333333333333
++344,f00165fbfcba42a79610df7d56b56095,2024-08-01 08:58:54-04:00,2024-08-01 09:18:55-04:00,cycling,class,6395.0,20354,44.0,68.58111427729193,20 min R&B Ride,"Old school, new school, and everything in between. You'll recognize these smooth beats and won't be able to resist the greatest R&B hits from past and present.",1332.0,1200,https://s3.amazonaws.com/peloton-ride-images/d7ecdebc43ab3e194a03311794a413840e6d139f/img_1712250197_d8e32234bd3142febf09c85a573aa5cc.png,7.031263957123716,cycling,77f0d78fde524f0d837f87bb139da682,,561f95c405734d8488ed8dcc8980d599,Hannah Corbin,135.0,5.49,336.0,112.0,79.0,40.0,16.5,162.0,261.0,110.0,71.0,23.6,176.0,0.0,9.0,154.0,829.0,204.0,44.5,6.75,0.3333333333333333
+diff --git a/data/totals_table.csv b/data/totals_table.csv
+index 3f232a5..082690e 100644
+--- a/data/totals_table.csv
++++ b/data/totals_table.csv
+@@ -1,2 +1,2 @@
+ ,rides,total_hours,total_miles,avg_calories,avg_output/min
+-0,310,129.24,2075.2200000000003,312.12,6.22
++0,345,144.57999999999998,2339.28,310.28,6.25
+diff --git a/data/year_table.csv b/data/year_table.csv
+index fd89d61..73106ef 100644
+--- a/data/year_table.csv
++++ b/data/year_table.csv
+@@ -2,4 +2,4 @@
+ 0,2021,9,7,2.25,32.37,117.11,5.5
+ 1,2022,54,47,17.44,266.59,248.17,6.02
+ 2,2023,169,164,73.7,1178.9,420.92,6.31
+-3,2024,78,77,35.85,597.36,462.26,7.04
++3,2024,113,112,51.19,861.42,454.92,7.16
+diff --git a/docker-compose.yml b/docker-compose.yml
+new file mode 100644
+index 0000000..7dfce0c
+--- /dev/null
++++ b/docker-compose.yml
+@@ -0,0 +1,14 @@
++version: '3.8'
++services:
++  peloton:
++    build: 
++      context: .
++      dockerfile: Dockerfile
++    container_name: peloton
++    ports:
++      - 8555:8000
++    env_file:
++      - /home/zvaughan/python/.env
++    volumes:
++      - .:/workspaces/peloton
++    restart: unless-stopped
+\ No newline at end of file
+diff --git a/favicon.ico b/favicon.ico
+new file mode 100644
+index 0000000..59c2a8f
+Binary files /dev/null and b/favicon.ico differ
+diff --git a/line_charts_testing.ipynb b/line_charts_testing.ipynb
+new file mode 100644
+index 0000000..16fba75
+--- /dev/null
++++ b/line_charts_testing.ipynb
+@@ -0,0 +1,212 @@
++{
++ "cells": [
++  {
++   "cell_type": "code",
++   "execution_count": 1,
++   "metadata": {},
++   "outputs": [
++    {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "Getting workouts from MongoDB...\n",
++      "Creating processed Dataframe...\n"
++     ]
++    }
++   ],
++   "source": [
++    "from pprint import pprint\n",
++    "import pandas as pd\n",
++    "import plotly.express as px\n",
++    "\n",
++    "from peloton import PelotonProcessor\n",
++    "\n",
++    "peloton_processor = PelotonProcessor()"
++   ]
++  },
++  {
++   "cell_type": "code",
++   "execution_count": 3,
++   "metadata": {},
++   "outputs": [
++    {
++     "name": "stdout",
++     "output_type": "stream",
++     "text": [
++      "Start Time: Fri, Sep 1, 2023 @ 10:28 AM\n",
++      "Title: 30 min Low Impact Ride\n"
++     ]
++    },
++    {
++     "data": {
++      "text/html": [
++       "<div>\n",
++       "<style scoped>\n",
++       "    .dataframe tbody tr th:only-of-type {\n",
++       "        vertical-align: middle;\n",
++       "    }\n",
++       "\n",
++       "    .dataframe tbody tr th {\n",
++       "        vertical-align: top;\n",
++       "    }\n",
++       "\n",
++       "    .dataframe thead th {\n",
++       "        text-align: right;\n",
++       "    }\n",
++       "</style>\n",
++       "<table border=\"1\" class=\"dataframe\">\n",
++       "  <thead>\n",
++       "    <tr style=\"text-align: right;\">\n",
++       "      <th></th>\n",
++       "      <th>output</th>\n",
++       "      <th>cadence</th>\n",
++       "      <th>resistance</th>\n",
++       "      <th>speed</th>\n",
++       "      <th>heart_rate</th>\n",
++       "    </tr>\n",
++       "  </thead>\n",
++       "  <tbody>\n",
++       "    <tr>\n",
++       "      <th>2023-09-01 10:28:08-04:00</th>\n",
++       "      <td>72</td>\n",
++       "      <td>78</td>\n",
++       "      <td>34</td>\n",
++       "      <td>14.1</td>\n",
++       "      <td>113</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>2023-09-01 10:28:13-04:00</th>\n",
++       "      <td>1</td>\n",
++       "      <td>10</td>\n",
++       "      <td>34</td>\n",
++       "      <td>0.6</td>\n",
++       "      <td>113</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>2023-09-01 10:28:18-04:00</th>\n",
++       "      <td>90</td>\n",
++       "      <td>88</td>\n",
++       "      <td>34</td>\n",
++       "      <td>15.6</td>\n",
++       "      <td>113</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>2023-09-01 10:28:23-04:00</th>\n",
++       "      <td>80</td>\n",
++       "      <td>90</td>\n",
++       "      <td>33</td>\n",
++       "      <td>14.8</td>\n",
++       "      <td>112</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>2023-09-01 10:28:28-04:00</th>\n",
++       "      <td>66</td>\n",
++       "      <td>85</td>\n",
++       "      <td>30</td>\n",
++       "      <td>13.6</td>\n",
++       "      <td>114</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>...</th>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "      <td>...</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>2023-09-01 10:57:48-04:00</th>\n",
++       "      <td>62</td>\n",
++       "      <td>77</td>\n",
++       "      <td>32</td>\n",
++       "      <td>13.2</td>\n",
++       "      <td>166</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>2023-09-01 10:57:53-04:00</th>\n",
++       "      <td>67</td>\n",
++       "      <td>81</td>\n",
++       "      <td>32</td>\n",
++       "      <td>13.7</td>\n",
++       "      <td>168</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>2023-09-01 10:57:58-04:00</th>\n",
++       "      <td>60</td>\n",
++       "      <td>76</td>\n",
++       "      <td>32</td>\n",
++       "      <td>13.0</td>\n",
++       "      <td>168</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>2023-09-01 10:58:03-04:00</th>\n",
++       "      <td>58</td>\n",
++       "      <td>74</td>\n",
++       "      <td>32</td>\n",
++       "      <td>12.8</td>\n",
++       "      <td>166</td>\n",
++       "    </tr>\n",
++       "    <tr>\n",
++       "      <th>2023-09-01 10:58:08-04:00</th>\n",
++       "      <td>51</td>\n",
++       "      <td>67</td>\n",
++       "      <td>32</td>\n",
++       "      <td>12.1</td>\n",
++       "      <td>166</td>\n",
++       "    </tr>\n",
++       "  </tbody>\n",
++       "</table>\n",
++       "<p>361 rows × 5 columns</p>\n",
++       "</div>"
++      ],
++      "text/plain": [
++       "                           output  cadence  resistance  speed  heart_rate\n",
++       "2023-09-01 10:28:08-04:00      72       78          34   14.1         113\n",
++       "2023-09-01 10:28:13-04:00       1       10          34    0.6         113\n",
++       "2023-09-01 10:28:18-04:00      90       88          34   15.6         113\n",
++       "2023-09-01 10:28:23-04:00      80       90          33   14.8         112\n",
++       "2023-09-01 10:28:28-04:00      66       85          30   13.6         114\n",
++       "...                           ...      ...         ...    ...         ...\n",
++       "2023-09-01 10:57:48-04:00      62       77          32   13.2         166\n",
++       "2023-09-01 10:57:53-04:00      67       81          32   13.7         168\n",
++       "2023-09-01 10:57:58-04:00      60       76          32   13.0         168\n",
++       "2023-09-01 10:58:03-04:00      58       74          32   12.8         166\n",
++       "2023-09-01 10:58:08-04:00      51       67          32   12.1         166\n",
++       "\n",
++       "[361 rows x 5 columns]"
++      ]
++     },
++     "execution_count": 3,
++     "metadata": {},
++     "output_type": "execute_result"
++    }
++   ],
++   "source": [
++    "df = peloton_processor.chart_maker.make_line_chart_df_new('d16517543409433f9d52ee37b8e824d0')\n",
++    "\n",
++    "df"
++   ]
++  }
++ ],
++ "metadata": {
++  "kernelspec": {
++   "display_name": ".venv",
++   "language": "python",
++   "name": "python3"
++  },
++  "language_info": {
++   "codemirror_mode": {
++    "name": "ipython",
++    "version": 3
++   },
++   "file_extension": ".py",
++   "mimetype": "text/x-python",
++   "name": "python",
++   "nbconvert_exporter": "python",
++   "pygments_lexer": "ipython3",
++   "version": "3.11.9"
++  }
++ },
++ "nbformat": 4,
++ "nbformat_minor": 2
++}
+diff --git a/peloton/handlers/chart_maker.py b/peloton/handlers/chart_maker.py
+index ca08bc0..cb208b1 100644
+--- a/peloton/handlers/chart_maker.py
++++ b/peloton/handlers/chart_maker.py
+@@ -184,9 +184,36 @@ class PelotonChartMaker():
+ 
+         return output_list
+ 
++    def make_line_chart_df_new(self, workout_id: str) -> pd.DataFrame:
++        workout = self.workouts_by_id[workout_id]
++        metrics = {'output': 'watts',
++                   'cadence': 'rpm',
++                   'resistance': '%',
++                   'speed': 'mph',
++                   'heart_rate': 'bpm'}
++
++        print(f"Start Time: {workout.summary.start_time.strftime('%a, %b %-d, %Y @ %-I:%M %p')}")
++        print(f"Title: {workout.summary.ride.title}")
++
++        output_list: list[pd.DataFrame] = []
++        for x in range(len(workout.metrics.metrics)):
++            if x == 4:
++                values = list(map(lambda x: max(100, x), workout.metrics.metrics[x].values))
++            else:
++                values = workout.metrics.metrics[x].values
++            slug = workout.metrics.metrics[x].slug
++            df = pd.DataFrame(
++                {slug: values},
++                index = [(workout.summary.start_time + timedelta(seconds=(x))) 
++                         for x in range(0, (5 * len(workout.metrics.metrics[x].values)), 5)]
++            )
++            output_list.append(df)
++
++        return output_list[0].join(output_list[1:])
++
+     def make_random_chart_dfs(self) -> list[pd.DataFrame]:
+         workout = self.workouts[random.randint(0, len(self.workouts))]
+-        return self.make_chart_dfs(workout.workout_id)
++        return self.make_line_chart_dfs(workout.workout_id)
+ 
+ if __name__ == '__main__':
+     main()
+\ No newline at end of file
+diff --git a/pivot_charts_test.ipynb b/pivot_charts_test.ipynb
+index 884d29d..f2427aa 100644
+--- a/pivot_charts_test.ipynb
++++ b/pivot_charts_test.ipynb
+@@ -1469,7 +1469,7 @@
+    "name": "python",
+    "nbconvert_exporter": "python",
+    "pygments_lexer": "ipython3",
+-   "version": "3.11.7"
++   "version": "3.11.9"
+   }
+  },
+  "nbformat": 4,
+diff --git a/requirements.txt b/requirements.txt
+index b214dc3..b91b67b 100644
+--- a/requirements.txt
++++ b/requirements.txt
+@@ -22,8 +22,11 @@ dash-table==5.0.0
+ debugpy==1.8.1
+ decorator==5.1.1
+ dnspython==2.6.1
++email_validator==2.2.0
+ et-xmlfile==1.1.0
+ executing==2.0.1
++fastapi==0.111.1
++fastapi-cli==0.0.4
+ fastjsonschema==2.19.1
+ Flask==3.0.3
+ fonttools==4.51.0
+@@ -32,13 +35,14 @@ GitPython==3.1.43
+ google-auth==2.29.0
+ google-auth-oauthlib==1.2.0
+ greenlet==3.0.3
+-gspread<6
++gspread==5.12.4
+ gspread-formatting==1.1.2
+ gspread-pandas==3.3.0
+ gunicorn==22.0.0
+ h11==0.14.0
+ htmlmin==0.1.12
+ httpcore==1.0.5
++httptools==0.6.1
+ httpx==0.27.0
+ idna==3.7
+ ImageHash==4.3.1
+@@ -80,14 +84,14 @@ platformdirs==4.2.2
+ plotly==5.22.0
+ polars==0.20.28
+ prompt-toolkit==3.0.43
+-protobuf<5
++protobuf==4.25.3
+ psutil==5.9.8
+ ptyprocess==0.7.0
+ pur==7.3.1
+ pure-eval==0.2.2
+ pyarrow==16.1.0
+ pyasn1==0.6.0
+-pyasn1-modules==0.4.0
++pyasn1_modules==0.4.0
+ pydantic==2.7.1
+ pydantic-settings==2.2.1
+ pydantic_core==2.18.2
+@@ -100,6 +104,7 @@ pyparsing==3.1.2
+ pyproject_hooks==1.1.0
+ python-dateutil==2.9.0.post0
+ python-dotenv==1.0.1
++python-multipart==0.0.9
+ pytz==2024.1
+ PyWavelets==1.6.0
+ PyYAML==6.0.1
+@@ -114,12 +119,14 @@ rpds-py==0.18.1
+ rsa==4.9
+ scipy==1.13.0
+ seaborn==0.13.2
++shellingham==1.5.4
+ six==1.16.0
+ smmap==5.0.1
+ sniffio==1.3.1
+ SQLAlchemy==2.0.30
+ sqlmodel==0.0.18
+ stack-data==0.6.3
++starlette==0.37.2
+ streamlit==1.34.0
+ streamlit-pandas-profiling==0.1.3
+ streamlit-pydantic==0.6.0
+@@ -131,13 +138,18 @@ toolz==0.12.1
+ tornado==6.4
+ tqdm==4.66.4
+ traitlets==5.14.3
++typer==0.12.3
+ typing_extensions==4.11.0
+ tzdata==2024.1
+ tzlocal==5.2
+ urllib3==2.2.1
++uvicorn==0.30.3
++uvloop==0.19.0
+ validators==0.28.1
+ visions==0.7.4
+ watchdog==4.0.0
++watchfiles==0.22.0
+ wcwidth==0.2.13
++websockets==12.0
+ Werkzeug==3.0.3
+ zipp==3.18.2
+diff --git a/static/images/favicon.ico b/static/images/favicon.ico
+new file mode 100644
+index 0000000..59c2a8f
+Binary files /dev/null and b/static/images/favicon.ico differ

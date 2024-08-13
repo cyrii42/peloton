@@ -1,10 +1,10 @@
-**/data/raw_csv
-**/data/raw_txt
+# **/data/raw_csv
+# **/data/raw_txt
 **/session_id*.json
-**/*.txt
+# **/*.txt
 !requirements.txt
-**/*.csv
-**/workouts_backup_feb23
+# **/*.csv
+# **/workouts_backup_feb23
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
