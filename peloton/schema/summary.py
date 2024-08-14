@@ -1,9 +1,10 @@
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, field_serializer, field_validator, computed_field
+from pydantic import BaseModel, ConfigDict, field_serializer, field_validator, computed_field, Field, AliasChoices
 from typing import Optional
 
 from .ride import PelotonRideColumn
+from .achievement import PelotonAchievement
 from peloton.constants import EASTERN_TIME
 
      
@@ -18,6 +19,7 @@ class PelotonSummary(BaseModel):
     leaderboard_rank: Optional[int] = None
     total_leaderboard_users: Optional[int] = None
     average_effort_score: Optional[float] = None
+    achievements: Optional[list[PelotonAchievement]] = Field(alias=AliasChoices('achievement_templates', 'achievements'), default=None)
     ride: PelotonRideColumn
 
     @computed_field

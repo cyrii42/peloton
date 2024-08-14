@@ -35,6 +35,15 @@ class PelotonMongoDB():
             db = client.connection[MONGODB_DATABASE]
             collection = db[MONGODB_COLLECTION]
             collection.insert_one(workout.model_dump())
+        
+    def update_workout_in_mongodb(self, workout: PelotonWorkoutData) -> None:
+        print(f"Updating workout {workout.workout_id} on MongoDB with new data...")
+        with self.mongodb_client as client:
+            db = client.connection[MONGODB_DATABASE]
+            collection = db[MONGODB_COLLECTION]
+            collection.find_one_and_replace(
+                filter={'workout_id': workout.workout_id},
+                replacement=workout.model_dump())
 
     def get_workout_from_mongodb(self, workout_id: str) -> PelotonWorkoutData:
         with self.mongodb_client as client:
@@ -44,6 +53,7 @@ class PelotonMongoDB():
         return PelotonWorkoutData(**workout)
 
     def write_workout_to_json(self, workout: PelotonWorkoutData) -> None:
+        print(f"Writing JSON file for workout {workout.workout_id} to disk...")
         with open(WORKOUTS_DIR.joinpath(f"{workout.workout_id}.json"), 'w') as f:
             json.dump(workout.model_dump(), f, indent=4)
 
