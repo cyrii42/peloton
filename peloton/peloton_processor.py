@@ -91,6 +91,30 @@ class PelotonProcessor():
 
         return self.json_writer.get_workouts_from_json()
 
+    def reprocess_mongodb_data(self) -> None:
+        ''' Reprocesses the raw workout data in MongoDB, replaces the data in MongoDB, and writes new JSON files. '''
+        
+        workout_list = []
+        for workout in self.workouts:
+            workout_id = workout.workout_id
+            summary_raw = workout.summary_raw
+            metrics_raw = workout.metrics_raw
+            workout_data = PelotonWorkoutData(
+                workout_id=workout_id,
+                summary_raw=summary_raw,
+                metrics_raw=metrics_raw,
+                summary=PelotonSummary(**summary_raw),
+                metrics=PelotonMetrics(**metrics_raw)
+                )
+            workout_list.append(workout_data)
+
+        self.workouts = workout_list
+        self.processed_df = self.make_dataframe()
+
+        for workout in self.workouts:
+            self.mongodb.update_workout_in_mongodb(workout)
+            self.mongodb.write_workout_to_json(workout)
+    
     def reprocess_json_data(self) -> None:
         ''' Reprocess the JSON data and update the internal state accordingly. '''
         
