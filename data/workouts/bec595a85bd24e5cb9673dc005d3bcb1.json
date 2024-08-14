@@ -38,7 +38,7 @@
         "is_paused": false,
         "has_paused": false,
         "is_pause_available": true,
-        "pause_time_limit": 60.0,
+        "pause_time_limit": 60,
         "ride": {
             "content_availability": "digital_and_above",
             "content_availability_level": "digital_and_above",
@@ -122,7 +122,7 @@
             "flags": [],
             "is_dynamic_video_eligible": false,
             "is_fixed_distance": false,
-            "dynamic_video_recorded_speed_in_mph": 0.0,
+            "dynamic_video_recorded_speed_in_mph": 0,
             "thumbnail_title": null,
             "thumbnail_location": null,
             "distance": null,
@@ -130,67 +130,67 @@
             "distance_display_value": null,
             "is_outdoor": false,
             "excluded_platforms": [],
-            "class_avg_follow_along_score": 0.0,
+            "class_avg_follow_along_score": 0,
             "muscle_group_score": [
                 {
                     "muscle_group": "biceps",
-                    "score": 1800.0,
+                    "score": 1800,
                     "percentage": 5,
                     "bucket": 1,
                     "display_name": "Biceps"
                 },
                 {
                     "muscle_group": "calves",
-                    "score": 4116.0,
+                    "score": 4116,
                     "percentage": 13,
                     "bucket": 3,
                     "display_name": "Calves"
                 },
                 {
                     "muscle_group": "core",
-                    "score": 3600.0,
+                    "score": 3600,
                     "percentage": 11,
                     "bucket": 2,
                     "display_name": "Core"
                 },
                 {
                     "muscle_group": "glutes",
-                    "score": 4884.0,
+                    "score": 4884,
                     "percentage": 15,
                     "bucket": 3,
                     "display_name": "Glutes"
                 },
                 {
                     "muscle_group": "hamstrings",
-                    "score": 5400.0,
+                    "score": 5400,
                     "percentage": 17,
                     "bucket": 3,
                     "display_name": "Hamstrings"
                 },
                 {
                     "muscle_group": "hips",
-                    "score": 3600.0,
+                    "score": 3600,
                     "percentage": 11,
                     "bucket": 2,
                     "display_name": "Hips"
                 },
                 {
                     "muscle_group": "quads",
-                    "score": 5400.0,
+                    "score": 5400,
                     "percentage": 17,
                     "bucket": 3,
                     "display_name": "Quads"
                 },
                 {
                     "muscle_group": "shoulders",
-                    "score": 1800.0,
+                    "score": 1800,
                     "percentage": 5,
                     "bucket": 1,
                     "display_name": "Shoulders"
                 },
                 {
                     "muscle_group": "triceps",
-                    "score": 1800.0,
+                    "score": 1800,
                     "percentage": 6,
                     "bucket": 1,
                     "display_name": "Triceps"
@@ -204,7 +204,7 @@
             "heart_rate_z4_duration": 11342,
             "heart_rate_z5_duration": 2244
         },
-        "average_effort_score": 62.0,
+        "average_effort_score": 62,
         "achievement_templates": [
             {
                 "id": "5298b832e2274ad59cf8857240440fb2",
@@ -246,7 +246,7 @@
                 "length": 1527,
                 "start_time_offset": 213,
                 "icon_url": "https://s3.amazonaws.com/static-cdn.pelotoncycle.com/segment-icons/cycling.png",
-                "intensity_in_mets": 6.0,
+                "intensity_in_mets": 6,
                 "metrics_type": "cycling",
                 "icon_name": "cycling",
                 "icon_slug": "cycling",
@@ -1815,18 +1815,18 @@
                     16.1,
                     16.3,
                     17.4,
-                    16.0,
-                    16.0,
+                    16,
+                    16,
                     16.1,
                     15.8,
                     18.7,
                     19.3,
                     19.1,
                     19.1,
-                    19.0,
+                    19,
                     18.3,
                     18.4,
-                    18.0,
+                    18,
                     6.5,
                     11.7,
                     17.1,
@@ -1836,8 +1836,8 @@
                     17.5,
                     17.9,
                     17.9,
-                    18.0,
-                    19.0,
+                    18,
+                    19,
                     18.6,
                     18.1,
                     17.5,
@@ -1848,13 +1848,13 @@
                     18.5,
                     18.8,
                     18.8,
-                    18.0,
+                    18,
                     18.8,
                     18.5,
                     18.4,
                     18.4,
                     12.1,
-                    17.0,
+                    17,
                     17.9,
                     18.2,
                     18.7,
@@ -1873,13 +1873,13 @@
                     10.8,
                     17.3,
                     17.9,
-                    17.0,
+                    17,
                     16.7,
                     16.7,
                     18.8,
                     18.5,
                     18.6,
-                    18.0,
+                    18,
                     17.3,
                     17.4,
                     17.4,
@@ -1893,7 +1893,7 @@
                     21.4,
                     22.2,
                     21.6,
-                    21.0,
+                    21,
                     20.8,
                     20.8,
                     20.5,
@@ -1943,12 +1943,12 @@
                     18.3,
                     18.3,
                     16.1,
-                    16.0,
+                    16,
                     14.8,
                     14.8,
                     15.3,
-                    15.0,
-                    15.0,
+                    15,
+                    15,
                     18.6,
                     18.3,
                     18.1,
@@ -1962,13 +1962,13 @@
                     15.6,
                     15.5,
                     15.7,
-                    19.0,
+                    19,
                     18.3,
                     18.3,
                     18.2,
                     18.2,
-                    18.0,
-                    15.0,
+                    18,
+                    15,
                     14.8,
                     14.5,
                     14.5,
@@ -1976,16 +1976,16 @@
                     13.8,
                     14.6,
                     15.5,
-                    15.0,
+                    15,
                     15.5,
                     15.3,
                     15.3,
                     15.3,
                     15.3,
                     15.5,
-                    16.0,
+                    16,
                     15.7,
-                    16.0,
+                    16,
                     15.8,
                     15.3,
                     18.8,
@@ -1997,8 +1997,8 @@
                     16.1,
                     15.4,
                     15.8,
-                    15.0,
-                    15.0,
+                    15,
+                    15,
                     15.6,
                     15.4,
                     14.8,
@@ -2007,13 +2007,13 @@
                     19.9,
                     19.8,
                     19.8,
-                    17.0,
+                    17,
                     14.3,
                     14.4,
                     14.8,
                     14.8,
                     14.6,
-                    14.0,
+                    14,
                     14.1,
                     14.1,
                     19.5,
@@ -2027,7 +2027,7 @@
                     14.4,
                     13.2,
                     13.6,
-                    8.0,
+                    8,
                     8.4,
                     12.8,
                     12.5,
@@ -2035,7 +2035,7 @@
                     19.2,
                     20.1,
                     18.8,
-                    19.0,
+                    19,
                     19.9,
                     19.5,
                     14.4,
@@ -2043,11 +2043,11 @@
                     14.6,
                     14.9,
                     19.5,
-                    21.0,
+                    21,
                     20.2,
                     19.8,
                     18.1,
-                    16.0,
+                    16,
                     15.8,
                     15.6,
                     13.5,
@@ -2070,7 +2070,7 @@
                     14.2,
                     17.3,
                     17.1,
-                    16.0,
+                    16,
                     11.9,
                     18.9,
                     21.3,
@@ -2087,7 +2087,7 @@
                     19.9,
                     20.1,
                     19.9,
-                    11.0,
+                    11,
                     12.9,
                     18.5,
                     18.1,
@@ -2102,8 +2102,8 @@
                     13.2,
                     13.2,
                     13.8,
-                    14.0,
-                    17.0,
+                    14,
+                    17,
                     18.3,
                     18.1,
                     17.9,
@@ -2114,15 +2114,15 @@
                     14.2,
                     10.9,
                     9.5,
-                    14.0,
-                    14.0,
+                    14,
+                    14,
                     14.2,
                     14.6,
                     15.3,
                     18.5,
-                    18.0,
+                    18,
                     18.3,
-                    18.0,
+                    18,
                     14.2,
                     3.1,
                     0.6,
@@ -2141,7 +2141,7 @@
                     18.7,
                     17.7,
                     13.4,
-                    13.0,
+                    13,
                     12.8,
                     10.2,
                     8.8,
@@ -2150,7 +2150,7 @@
                     12.8,
                     13.4,
                     13.4,
-                    13.0,
+                    13,
                     12.8,
                     9.8
                 ],
@@ -2578,57 +2578,57 @@
             "elevation_change_display_unit": "ft",
             "splits": [
                 {
-                    "distance_marker": 1.0,
+                    "distance_marker": 1,
                     "order": 1,
-                    "seconds": 222.0,
+                    "seconds": 222,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
                 },
                 {
-                    "distance_marker": 2.0,
+                    "distance_marker": 2,
                     "order": 2,
-                    "seconds": 222.0,
+                    "seconds": 222,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
                 },
                 {
-                    "distance_marker": 3.0,
+                    "distance_marker": 3,
                     "order": 3,
-                    "seconds": 200.0,
+                    "seconds": 200,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": true
                 },
                 {
-                    "distance_marker": 4.0,
+                    "distance_marker": 4,
                     "order": 4,
-                    "seconds": 223.0,
+                    "seconds": 223,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
                 },
                 {
-                    "distance_marker": 5.0,
+                    "distance_marker": 5,
                     "order": 5,
-                    "seconds": 223.0,
+                    "seconds": 223,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
                 },
                 {
-                    "distance_marker": 6.0,
+                    "distance_marker": 6,
                     "order": 6,
-                    "seconds": 235.0,
+                    "seconds": 235,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
                 },
                 {
-                    "distance_marker": 7.0,
+                    "distance_marker": 7,
                     "order": 7,
-                    "seconds": 236.0,
+                    "seconds": 236,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
@@ -2636,7 +2636,7 @@
                 {
                     "distance_marker": 0.82,
                     "order": 8,
-                    "seconds": 291.0,
+                    "seconds": 291,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
@@ -2669,7 +2669,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 1.0,
+                            "value": 1,
                             "unit": "mi"
                         },
                         {
@@ -2695,7 +2695,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 2.0,
+                            "value": 2,
                             "unit": "mi"
                         },
                         {
@@ -2721,7 +2721,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 3.0,
+                            "value": 3,
                             "unit": "mi"
                         },
                         {
@@ -2747,7 +2747,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 4.0,
+                            "value": 4,
                             "unit": "mi"
                         },
                         {
@@ -2773,7 +2773,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 5.0,
+                            "value": 5,
                             "unit": "mi"
                         },
                         {
@@ -2799,7 +2799,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 6.0,
+                            "value": 6,
                             "unit": "mi"
                         },
                         {
@@ -2825,7 +2825,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 7.0,
+                            "value": 7,
                             "unit": "mi"
                         },
                         {
@@ -2856,7 +2856,7 @@
                         },
                         {
                             "slug": "total_time",
-                            "value": 30.0,
+                            "value": 30,
                             "unit": "min"
                         },
                         {
@@ -5079,13 +5079,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 35.0,
-                            "lower": 25.0
+                            "upper": 35,
+                            "lower": 25
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5098,13 +5098,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 35.0,
-                            "lower": 25.0
+                            "upper": 35,
+                            "lower": 25
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5117,13 +5117,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 40.0,
-                            "lower": 30.0
+                            "upper": 40,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5136,13 +5136,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 35.0,
-                            "lower": 25.0
+                            "upper": 35,
+                            "lower": 25
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5155,13 +5155,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 40.0,
-                            "lower": 30.0
+                            "upper": 40,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5174,13 +5174,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 45.0,
-                            "lower": 40.0
+                            "upper": 45,
+                            "lower": 40
                         },
                         {
                             "name": "cadence",
-                            "upper": 80.0,
-                            "lower": 70.0
+                            "upper": 80,
+                            "lower": 70
                         }
                     ]
                 },
@@ -5193,13 +5193,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 50.0,
-                            "lower": 45.0
+                            "upper": 50,
+                            "lower": 45
                         },
                         {
                             "name": "cadence",
-                            "upper": 80.0,
-                            "lower": 70.0
+                            "upper": 80,
+                            "lower": 70
                         }
                     ]
                 },
@@ -5212,13 +5212,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 50.0,
-                            "lower": 45.0
+                            "upper": 50,
+                            "lower": 45
                         },
                         {
                             "name": "cadence",
-                            "upper": 70.0,
-                            "lower": 60.0
+                            "upper": 70,
+                            "lower": 60
                         }
                     ]
                 },
@@ -5231,13 +5231,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 65.0,
-                            "lower": 50.0
+                            "upper": 65,
+                            "lower": 50
                         },
                         {
                             "name": "cadence",
-                            "upper": 70.0,
-                            "lower": 60.0
+                            "upper": 70,
+                            "lower": 60
                         }
                     ]
                 },
@@ -5250,13 +5250,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 35.0,
-                            "lower": 25.0
+                            "upper": 35,
+                            "lower": 25
                         },
                         {
                             "name": "cadence",
-                            "upper": 70.0,
-                            "lower": 60.0
+                            "upper": 70,
+                            "lower": 60
                         }
                     ]
                 },
@@ -5269,13 +5269,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 40.0,
-                            "lower": 30.0
+                            "upper": 40,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 70.0,
-                            "lower": 60.0
+                            "upper": 70,
+                            "lower": 60
                         }
                     ]
                 },
@@ -5288,13 +5288,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 40.0,
-                            "lower": 30.0
+                            "upper": 40,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 105.0,
-                            "lower": 95.0
+                            "upper": 105,
+                            "lower": 95
                         }
                     ]
                 },
@@ -5307,13 +5307,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 40.0,
-                            "lower": 30.0
+                            "upper": 40,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 70.0,
-                            "lower": 60.0
+                            "upper": 70,
+                            "lower": 60
                         }
                     ]
                 },
@@ -5326,13 +5326,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 40.0,
-                            "lower": 30.0
+                            "upper": 40,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 105.0,
-                            "lower": 95.0
+                            "upper": 105,
+                            "lower": 95
                         }
                     ]
                 },
@@ -5345,13 +5345,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 40.0,
-                            "lower": 30.0
+                            "upper": 40,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 70.0,
-                            "lower": 60.0
+                            "upper": 70,
+                            "lower": 60
                         }
                     ]
                 },
@@ -5364,13 +5364,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 40.0,
-                            "lower": 30.0
+                            "upper": 40,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 105.0,
-                            "lower": 95.0
+                            "upper": 105,
+                            "lower": 95
                         }
                     ]
                 },
@@ -5383,13 +5383,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 40.0,
-                            "lower": 30.0
+                            "upper": 40,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 70.0,
-                            "lower": 60.0
+                            "upper": 70,
+                            "lower": 60
                         }
                     ]
                 },
@@ -5402,13 +5402,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 40.0,
-                            "lower": 30.0
+                            "upper": 40,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5421,13 +5421,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 50.0,
-                            "lower": 40.0
+                            "upper": 50,
+                            "lower": 40
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5440,13 +5440,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 40.0,
-                            "lower": 30.0
+                            "upper": 40,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5459,13 +5459,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 50.0,
-                            "lower": 40.0
+                            "upper": 50,
+                            "lower": 40
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5478,13 +5478,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 40.0,
-                            "lower": 30.0
+                            "upper": 40,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5497,13 +5497,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 50.0,
-                            "lower": 40.0
+                            "upper": 50,
+                            "lower": 40
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5516,13 +5516,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 40.0,
-                            "lower": 30.0
+                            "upper": 40,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5535,13 +5535,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 60.0,
-                            "lower": 50.0
+                            "upper": 60,
+                            "lower": 50
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5554,13 +5554,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 50.0,
-                            "lower": 40.0
+                            "upper": 50,
+                            "lower": 40
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5573,13 +5573,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 60.0,
-                            "lower": 50.0
+                            "upper": 60,
+                            "lower": 50
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5592,13 +5592,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 50.0,
-                            "lower": 40.0
+                            "upper": 50,
+                            "lower": 40
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5611,13 +5611,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 60.0,
-                            "lower": 50.0
+                            "upper": 60,
+                            "lower": 50
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5630,13 +5630,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 50.0,
-                            "lower": 40.0
+                            "upper": 50,
+                            "lower": 40
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5649,13 +5649,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 60.0,
-                            "lower": 50.0
+                            "upper": 60,
+                            "lower": 50
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5668,13 +5668,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 50.0,
-                            "lower": 40.0
+                            "upper": 50,
+                            "lower": 40
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5687,13 +5687,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 60.0,
-                            "lower": 50.0
+                            "upper": 60,
+                            "lower": 50
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5706,13 +5706,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 50.0,
-                            "lower": 40.0
+                            "upper": 50,
+                            "lower": 40
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5725,13 +5725,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 65.0,
-                            "lower": 55.0
+                            "upper": 65,
+                            "lower": 55
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5744,13 +5744,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 45.0,
-                            "lower": 30.0
+                            "upper": 45,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5763,13 +5763,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 45.0,
-                            "lower": 30.0
+                            "upper": 45,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 100.0,
-                            "lower": 90.0
+                            "upper": 100,
+                            "lower": 90
                         }
                     ]
                 },
@@ -5782,13 +5782,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 45.0,
-                            "lower": 30.0
+                            "upper": 45,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5801,13 +5801,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 45.0,
-                            "lower": 30.0
+                            "upper": 45,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 100.0,
-                            "lower": 90.0
+                            "upper": 100,
+                            "lower": 90
                         }
                     ]
                 },
@@ -5820,13 +5820,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 45.0,
-                            "lower": 30.0
+                            "upper": 45,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5839,13 +5839,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 45.0,
-                            "lower": 30.0
+                            "upper": 45,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 100.0,
-                            "lower": 90.0
+                            "upper": 100,
+                            "lower": 90
                         }
                     ]
                 },
@@ -5858,13 +5858,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 45.0,
-                            "lower": 30.0
+                            "upper": 45,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 90.0,
-                            "lower": 80.0
+                            "upper": 90,
+                            "lower": 80
                         }
                     ]
                 },
@@ -5877,13 +5877,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 45.0,
-                            "lower": 30.0
+                            "upper": 45,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 100.0,
-                            "lower": 90.0
+                            "upper": 100,
+                            "lower": 90
                         }
                     ]
                 },
@@ -5896,13 +5896,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 45.0,
-                            "lower": 30.0
+                            "upper": 45,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 70.0,
-                            "lower": 60.0
+                            "upper": 70,
+                            "lower": 60
                         }
                     ]
                 }
@@ -5931,63 +5931,63 @@
         "muscle_group_score": [
             {
                 "muscle_group": "biceps",
-                "score": 1800.0,
+                "score": 1800,
                 "percentage": 5,
                 "bucket": 1,
                 "display_name": "Biceps"
             },
             {
                 "muscle_group": "calves",
-                "score": 4116.0,
+                "score": 4116,
                 "percentage": 13,
                 "bucket": 3,
                 "display_name": "Calves"
             },
             {
                 "muscle_group": "core",
-                "score": 3600.0,
+                "score": 3600,
                 "percentage": 11,
                 "bucket": 2,
                 "display_name": "Core"
             },
             {
                 "muscle_group": "glutes",
-                "score": 4884.0,
+                "score": 4884,
                 "percentage": 15,
                 "bucket": 3,
                 "display_name": "Glutes"
             },
             {
                 "muscle_group": "hamstrings",
-                "score": 5400.0,
+                "score": 5400,
                 "percentage": 17,
                 "bucket": 3,
                 "display_name": "Hamstrings"
             },
             {
                 "muscle_group": "hips",
-                "score": 3600.0,
+                "score": 3600,
                 "percentage": 11,
                 "bucket": 2,
                 "display_name": "Hips"
             },
             {
                 "muscle_group": "quads",
-                "score": 5400.0,
+                "score": 5400,
                 "percentage": 17,
                 "bucket": 3,
                 "display_name": "Quads"
             },
             {
                 "muscle_group": "shoulders",
-                "score": 1800.0,
+                "score": 1800,
                 "percentage": 5,
                 "bucket": 1,
                 "display_name": "Shoulders"
             },
             {
                 "muscle_group": "triceps",
-                "score": 1800.0,
+                "score": 1800,
                 "percentage": 6,
                 "bucket": 1,
                 "display_name": "Triceps"
@@ -6006,6 +6006,16 @@
         "leaderboard_rank": 15510,
         "total_leaderboard_users": 26768,
         "average_effort_score": 62.0,
+        "achievements": [
+            {
+                "workout_id": "5298b832e2274ad59cf8857240440fb2",
+                "name": "3-Day Streak",
+                "slug": "3_day_streak",
+                "image_url": "https://s3.amazonaws.com/peloton-achievement-images-prod/b5a3058d09ad4470ba32343dad4ec245",
+                "description": "Awarded for working out 3 days in a row.",
+                "achievement_count": 29
+            }
+        ],
         "ride": {
             "title": "30 min Hip Hop Ride",
             "description": "Old school, new school, East Coast and West Coast. Sweat to the beats of the hottest hip hop throughout history.",
@@ -7167,18 +7177,18 @@
                     16.1,
                     16.3,
                     17.4,
-                    16.0,
-                    16.0,
+                    16,
+                    16,
                     16.1,
                     15.8,
                     18.7,
                     19.3,
                     19.1,
                     19.1,
-                    19.0,
+                    19,
                     18.3,
                     18.4,
-                    18.0,
+                    18,
                     6.5,
                     11.7,
                     17.1,
@@ -7188,8 +7198,8 @@
                     17.5,
                     17.9,
                     17.9,
-                    18.0,
-                    19.0,
+                    18,
+                    19,
                     18.6,
                     18.1,
                     17.5,
@@ -7200,13 +7210,13 @@
                     18.5,
                     18.8,
                     18.8,
-                    18.0,
+                    18,
                     18.8,
                     18.5,
                     18.4,
                     18.4,
                     12.1,
-                    17.0,
+                    17,
                     17.9,
                     18.2,
                     18.7,
@@ -7225,13 +7235,13 @@
                     10.8,
                     17.3,
                     17.9,
-                    17.0,
+                    17,
                     16.7,
                     16.7,
                     18.8,
                     18.5,
                     18.6,
-                    18.0,
+                    18,
                     17.3,
                     17.4,
                     17.4,
@@ -7245,7 +7255,7 @@
                     21.4,
                     22.2,
                     21.6,
-                    21.0,
+                    21,
                     20.8,
                     20.8,
                     20.5,
@@ -7295,12 +7305,12 @@
                     18.3,
                     18.3,
                     16.1,
-                    16.0,
+                    16,
                     14.8,
                     14.8,
                     15.3,
-                    15.0,
-                    15.0,
+                    15,
+                    15,
                     18.6,
                     18.3,
                     18.1,
@@ -7314,13 +7324,13 @@
                     15.6,
                     15.5,
                     15.7,
-                    19.0,
+                    19,
                     18.3,
                     18.3,
                     18.2,
                     18.2,
-                    18.0,
-                    15.0,
+                    18,
+                    15,
                     14.8,
                     14.5,
                     14.5,
@@ -7328,16 +7338,16 @@
                     13.8,
                     14.6,
                     15.5,
-                    15.0,
+                    15,
                     15.5,
                     15.3,
                     15.3,
                     15.3,
                     15.3,
                     15.5,
-                    16.0,
+                    16,
                     15.7,
-                    16.0,
+                    16,
                     15.8,
                     15.3,
                     18.8,
@@ -7349,8 +7359,8 @@
                     16.1,
                     15.4,
                     15.8,
-                    15.0,
-                    15.0,
+                    15,
+                    15,
                     15.6,
                     15.4,
                     14.8,
@@ -7359,13 +7369,13 @@
                     19.9,
                     19.8,
                     19.8,
-                    17.0,
+                    17,
                     14.3,
                     14.4,
                     14.8,
                     14.8,
                     14.6,
-                    14.0,
+                    14,
                     14.1,
                     14.1,
                     19.5,
@@ -7379,7 +7389,7 @@
                     14.4,
                     13.2,
                     13.6,
-                    8.0,
+                    8,
                     8.4,
                     12.8,
                     12.5,
@@ -7387,7 +7397,7 @@
                     19.2,
                     20.1,
                     18.8,
-                    19.0,
+                    19,
                     19.9,
                     19.5,
                     14.4,
@@ -7395,11 +7405,11 @@
                     14.6,
                     14.9,
                     19.5,
-                    21.0,
+                    21,
                     20.2,
                     19.8,
                     18.1,
-                    16.0,
+                    16,
                     15.8,
                     15.6,
                     13.5,
@@ -7422,7 +7432,7 @@
                     14.2,
                     17.3,
                     17.1,
-                    16.0,
+                    16,
                     11.9,
                     18.9,
                     21.3,
@@ -7439,7 +7449,7 @@
                     19.9,
                     20.1,
                     19.9,
-                    11.0,
+                    11,
                     12.9,
                     18.5,
                     18.1,
@@ -7454,8 +7464,8 @@
                     13.2,
                     13.2,
                     13.8,
-                    14.0,
-                    17.0,
+                    14,
+                    17,
                     18.3,
                     18.1,
                     17.9,
@@ -7466,15 +7476,15 @@
                     14.2,
                     10.9,
                     9.5,
-                    14.0,
-                    14.0,
+                    14,
+                    14,
                     14.2,
                     14.6,
                     15.3,
                     18.5,
-                    18.0,
+                    18,
                     18.3,
-                    18.0,
+                    18,
                     14.2,
                     3.1,
                     0.6,
@@ -7493,7 +7503,7 @@
                     18.7,
                     17.7,
                     13.4,
-                    13.0,
+                    13,
                     12.8,
                     10.2,
                     8.8,
@@ -7502,7 +7512,7 @@
                     12.8,
                     13.4,
                     13.4,
-                    13.0,
+                    13,
                     12.8,
                     9.8
                 ],

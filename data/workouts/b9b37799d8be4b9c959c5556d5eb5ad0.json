@@ -38,7 +38,7 @@
         "is_paused": false,
         "has_paused": false,
         "is_pause_available": true,
-        "pause_time_limit": 60.0,
+        "pause_time_limit": 60,
         "ride": {
             "content_availability": "digital_and_above",
             "content_availability_level": "digital_and_above",
@@ -122,7 +122,7 @@
             "flags": [],
             "is_dynamic_video_eligible": false,
             "is_fixed_distance": false,
-            "dynamic_video_recorded_speed_in_mph": 0.0,
+            "dynamic_video_recorded_speed_in_mph": 0,
             "thumbnail_title": null,
             "thumbnail_location": null,
             "distance": null,
@@ -130,67 +130,67 @@
             "distance_display_value": null,
             "is_outdoor": false,
             "excluded_platforms": [],
-            "class_avg_follow_along_score": 0.0,
+            "class_avg_follow_along_score": 0,
             "muscle_group_score": [
                 {
                     "muscle_group": "biceps",
-                    "score": 300.0,
+                    "score": 300,
                     "percentage": 5,
                     "bucket": 1,
                     "display_name": "Biceps"
                 },
                 {
                     "muscle_group": "calves",
-                    "score": 600.0,
+                    "score": 600,
                     "percentage": 11,
                     "bucket": 2,
                     "display_name": "Calves"
                 },
                 {
                     "muscle_group": "core",
-                    "score": 600.0,
+                    "score": 600,
                     "percentage": 11,
                     "bucket": 2,
                     "display_name": "Core"
                 },
                 {
                     "muscle_group": "glutes",
-                    "score": 900.0,
+                    "score": 900,
                     "percentage": 17,
                     "bucket": 3,
                     "display_name": "Glutes"
                 },
                 {
                     "muscle_group": "hamstrings",
-                    "score": 900.0,
+                    "score": 900,
                     "percentage": 17,
                     "bucket": 3,
                     "display_name": "Hamstrings"
                 },
                 {
                     "muscle_group": "hips",
-                    "score": 600.0,
+                    "score": 600,
                     "percentage": 11,
                     "bucket": 2,
                     "display_name": "Hips"
                 },
                 {
                     "muscle_group": "quads",
-                    "score": 900.0,
+                    "score": 900,
                     "percentage": 17,
                     "bucket": 3,
                     "display_name": "Quads"
                 },
                 {
                     "muscle_group": "shoulders",
-                    "score": 300.0,
+                    "score": 300,
                     "percentage": 5,
                     "bucket": 1,
                     "display_name": "Shoulders"
                 },
                 {
                     "muscle_group": "triceps",
-                    "score": 300.0,
+                    "score": 300,
                     "percentage": 6,
                     "bucket": 1,
                     "display_name": "Triceps"
@@ -575,13 +575,13 @@
                     17.7,
                     17.4,
                     17.7,
-                    18.0,
+                    18,
                     17.9,
                     18.2,
                     18.4,
                     17.7,
                     17.3,
-                    18.0,
+                    18,
                     18.4,
                     18.2,
                     17.6,
@@ -603,11 +603,11 @@
                     16.8,
                     16.8,
                     16.8,
-                    17.0,
-                    17.0,
+                    17,
+                    17,
                     16.9,
-                    17.0,
-                    17.0,
+                    17,
+                    17,
                     17.1,
                     17.3,
                     17.3,
@@ -635,9 +635,9 @@
             "elevation_change_display_unit": "ft",
             "splits": [
                 {
-                    "distance_marker": 1.0,
+                    "distance_marker": 1,
                     "order": 1,
-                    "seconds": 216.0,
+                    "seconds": 216,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": true
@@ -645,7 +645,7 @@
                 {
                     "distance_marker": 0.37,
                     "order": 2,
-                    "seconds": 227.0,
+                    "seconds": 227,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
@@ -678,7 +678,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 1.0,
+                            "value": 1,
                             "unit": "mi"
                         },
                         {
@@ -709,7 +709,7 @@
                         },
                         {
                             "slug": "total_time",
-                            "value": 5.0,
+                            "value": 5,
                             "unit": "min"
                         },
                         {
@@ -745,6 +745,16 @@
         "leaderboard_rank": 92340,
         "total_leaderboard_users": 393173,
         "average_effort_score": null,
+        "achievements": [
+            {
+                "workout_id": "bac5aefabb2940ba8f0a170fc9d63bf0",
+                "name": "Best Output",
+                "slug": "best_output",
+                "image_url": "https://s3.amazonaws.com/peloton-achievement-images-prod/c302f0a5128e4e5bb72ba659caac1ec2",
+                "description": "Personal best output in a workout.",
+                "achievement_count": 32
+            }
+        ],
         "ride": {
             "title": "5 min Cool Down Ride",
             "description": "You've done the hard work! Now take a few extra minutes after your ride to lower your heart rate and ease your body into a healthy recovery zone.",
@@ -996,13 +1006,13 @@
                     17.7,
                     17.4,
                     17.7,
-                    18.0,
+                    18,
                     17.9,
                     18.2,
                     18.4,
                     17.7,
                     17.3,
-                    18.0,
+                    18,
                     18.4,
                     18.2,
                     17.6,
@@ -1024,11 +1034,11 @@
                     16.8,
                     16.8,
                     16.8,
-                    17.0,
-                    17.0,
+                    17,
+                    17,
                     16.9,
-                    17.0,
-                    17.0,
+                    17,
+                    17,
                     17.1,
                     17.3,
                     17.3,

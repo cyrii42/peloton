@@ -38,7 +38,7 @@
         "is_paused": false,
         "has_paused": false,
         "is_pause_available": true,
-        "pause_time_limit": 60.0,
+        "pause_time_limit": 60,
         "ride": {
             "content_availability": "digital_and_above",
             "content_availability_level": "digital_and_above",
@@ -123,7 +123,7 @@
             "flags": [],
             "is_dynamic_video_eligible": false,
             "is_fixed_distance": false,
-            "dynamic_video_recorded_speed_in_mph": 0.0,
+            "dynamic_video_recorded_speed_in_mph": 0,
             "thumbnail_title": null,
             "thumbnail_location": null,
             "distance": null,
@@ -131,67 +131,67 @@
             "distance_display_value": null,
             "is_outdoor": false,
             "excluded_platforms": [],
-            "class_avg_follow_along_score": 0.0,
+            "class_avg_follow_along_score": 0,
             "muscle_group_score": [
                 {
                     "muscle_group": "biceps",
-                    "score": 300.0,
+                    "score": 300,
                     "percentage": 6,
                     "bucket": 1,
                     "display_name": "Biceps"
                 },
                 {
                     "muscle_group": "calves",
-                    "score": 600.0,
+                    "score": 600,
                     "percentage": 11,
                     "bucket": 2,
                     "display_name": "Calves"
                 },
                 {
                     "muscle_group": "core",
-                    "score": 600.0,
+                    "score": 600,
                     "percentage": 11,
                     "bucket": 2,
                     "display_name": "Core"
                 },
                 {
                     "muscle_group": "glutes",
-                    "score": 900.0,
+                    "score": 900,
                     "percentage": 17,
                     "bucket": 3,
                     "display_name": "Glutes"
                 },
                 {
                     "muscle_group": "hamstrings",
-                    "score": 900.0,
+                    "score": 900,
                     "percentage": 17,
                     "bucket": 3,
                     "display_name": "Hamstrings"
                 },
                 {
                     "muscle_group": "hips",
-                    "score": 600.0,
+                    "score": 600,
                     "percentage": 11,
                     "bucket": 2,
                     "display_name": "Hips"
                 },
                 {
                     "muscle_group": "quads",
-                    "score": 900.0,
+                    "score": 900,
                     "percentage": 17,
                     "bucket": 3,
                     "display_name": "Quads"
                 },
                 {
                     "muscle_group": "shoulders",
-                    "score": 300.0,
+                    "score": 300,
                     "percentage": 5,
                     "bucket": 1,
                     "display_name": "Shoulders"
                 },
                 {
                     "muscle_group": "triceps",
-                    "score": 300.0,
+                    "score": 300,
                     "percentage": 5,
                     "bucket": 1,
                     "display_name": "Triceps"
@@ -322,7 +322,7 @@
             {
                 "display_name": "Avg Speed",
                 "display_unit": "mph",
-                "value": 15.0,
+                "value": 15,
                 "slug": "avg_speed"
             }
         ],
@@ -561,7 +561,7 @@
                 "display_name": "Speed",
                 "display_unit": "mph",
                 "max_value": 18.3,
-                "average_value": 15.0,
+                "average_value": 15,
                 "values": [
                     14.4,
                     14.2,
@@ -569,9 +569,9 @@
                     15.6,
                     15.6,
                     15.4,
-                    15.0,
+                    15,
                     15.4,
-                    16.0,
+                    16,
                     18.1,
                     18.2,
                     17.4,
@@ -609,8 +609,8 @@
                     15.1,
                     14.4,
                     13.8,
-                    13.0,
-                    13.0,
+                    13,
+                    13,
                     12.9,
                     12.8,
                     12.8,
@@ -618,12 +618,12 @@
                     12.9,
                     12.9,
                     13.2,
-                    13.0,
+                    13,
                     13.2,
                     13.5,
                     13.5,
                     13.4,
-                    11.0
+                    11
                 ],
                 "slug": "speed"
             },
@@ -749,9 +749,9 @@
             "elevation_change_display_unit": "ft",
             "splits": [
                 {
-                    "distance_marker": 1.0,
+                    "distance_marker": 1,
                     "order": 1,
-                    "seconds": 230.0,
+                    "seconds": 230,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": true
@@ -759,7 +759,7 @@
                 {
                     "distance_marker": 0.25,
                     "order": 2,
-                    "seconds": 276.0,
+                    "seconds": 276,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
@@ -792,7 +792,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 1.0,
+                            "value": 1,
                             "unit": "mi"
                         },
                         {
@@ -823,7 +823,7 @@
                         },
                         {
                             "slug": "total_time",
-                            "value": 5.0,
+                            "value": 5,
                             "unit": "min"
                         },
                         {
@@ -1246,13 +1246,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 40.0,
-                            "lower": 30.0
+                            "upper": 40,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 100.0,
-                            "lower": 80.0
+                            "upper": 100,
+                            "lower": 80
                         }
                     ]
                 },
@@ -1265,13 +1265,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 40.0,
-                            "lower": 30.0
+                            "upper": 40,
+                            "lower": 30
                         },
                         {
                             "name": "cadence",
-                            "upper": 100.0,
-                            "lower": 80.0
+                            "upper": 100,
+                            "lower": 80
                         }
                     ]
                 },
@@ -1284,13 +1284,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 35.0,
-                            "lower": 25.0
+                            "upper": 35,
+                            "lower": 25
                         },
                         {
                             "name": "cadence",
-                            "upper": 100.0,
-                            "lower": 80.0
+                            "upper": 100,
+                            "lower": 80
                         }
                     ]
                 },
@@ -1303,13 +1303,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 35.0,
-                            "lower": 25.0
+                            "upper": 35,
+                            "lower": 25
                         },
                         {
                             "name": "cadence",
-                            "upper": 95.0,
-                            "lower": 85.0
+                            "upper": 95,
+                            "lower": 85
                         }
                     ]
                 },
@@ -1322,13 +1322,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 30.0,
-                            "lower": 20.0
+                            "upper": 30,
+                            "lower": 20
                         },
                         {
                             "name": "cadence",
-                            "upper": 95.0,
-                            "lower": 85.0
+                            "upper": 95,
+                            "lower": 85
                         }
                     ]
                 },
@@ -1341,13 +1341,13 @@
                     "metrics": [
                         {
                             "name": "resistance",
-                            "upper": 10.0,
-                            "lower": 1.0
+                            "upper": 10,
+                            "lower": 1
                         },
                         {
                             "name": "cadence",
-                            "upper": 10.0,
-                            "lower": 1.0
+                            "upper": 10,
+                            "lower": 1
                         }
                     ]
                 }
@@ -1376,63 +1376,63 @@
         "muscle_group_score": [
             {
                 "muscle_group": "biceps",
-                "score": 300.0,
+                "score": 300,
                 "percentage": 6,
                 "bucket": 1,
                 "display_name": "Biceps"
             },
             {
                 "muscle_group": "calves",
-                "score": 600.0,
+                "score": 600,
                 "percentage": 11,
                 "bucket": 2,
                 "display_name": "Calves"
             },
             {
                 "muscle_group": "core",
-                "score": 600.0,
+                "score": 600,
                 "percentage": 11,
                 "bucket": 2,
                 "display_name": "Core"
             },
             {
                 "muscle_group": "glutes",
-                "score": 900.0,
+                "score": 900,
                 "percentage": 17,
                 "bucket": 3,
                 "display_name": "Glutes"
             },
             {
                 "muscle_group": "hamstrings",
-                "score": 900.0,
+                "score": 900,
                 "percentage": 17,
                 "bucket": 3,
                 "display_name": "Hamstrings"
             },
             {
                 "muscle_group": "hips",
-                "score": 600.0,
+                "score": 600,
                 "percentage": 11,
                 "bucket": 2,
                 "display_name": "Hips"
             },
             {
                 "muscle_group": "quads",
-                "score": 900.0,
+                "score": 900,
                 "percentage": 17,
                 "bucket": 3,
                 "display_name": "Quads"
             },
             {
                 "muscle_group": "shoulders",
-                "score": 300.0,
+                "score": 300,
                 "percentage": 5,
                 "bucket": 1,
                 "display_name": "Shoulders"
             },
             {
                 "muscle_group": "triceps",
-                "score": 300.0,
+                "score": 300,
                 "percentage": 5,
                 "bucket": 1,
                 "display_name": "Triceps"
@@ -1451,6 +1451,16 @@
         "leaderboard_rank": 156713,
         "total_leaderboard_users": 377277,
         "average_effort_score": null,
+        "achievements": [
+            {
+                "workout_id": "f0bdc95051b64c5bbd296e20d3fecb03",
+                "name": "Pack",
+                "slug": "3_squad",
+                "image_url": "https://s3.amazonaws.com/peloton-achievement-images-prod/b198fbd9dad14128b29a08b77894dac9",
+                "description": "Awarded for working out with 3 friends.",
+                "achievement_count": 1
+            }
+        ],
         "ride": {
             "title": "5 min Cool Down Ride",
             "description": "You've done the hard work! Now take a few extra minutes after your ride to lower your heart rate and ease your body into a healthy recovery zone.",
@@ -1683,7 +1693,7 @@
                 "zones": null
             },
             {
-                "average_value": 15.0,
+                "average_value": 15,
                 "display_name": "Speed",
                 "display_unit": "mph",
                 "max_value": 18.3,
@@ -1695,9 +1705,9 @@
                     15.6,
                     15.6,
                     15.4,
-                    15.0,
+                    15,
                     15.4,
-                    16.0,
+                    16,
                     18.1,
                     18.2,
                     17.4,
@@ -1735,8 +1745,8 @@
                     15.1,
                     14.4,
                     13.8,
-                    13.0,
-                    13.0,
+                    13,
+                    13,
                     12.9,
                     12.8,
                     12.8,
@@ -1744,12 +1754,12 @@
                     12.9,
                     12.9,
                     13.2,
-                    13.0,
+                    13,
                     13.2,
                     13.5,
                     13.5,
                     13.4,
-                    11.0
+                    11
                 ],
                 "zones": null
             },

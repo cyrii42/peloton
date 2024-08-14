@@ -38,7 +38,7 @@
         "is_paused": false,
         "has_paused": false,
         "is_pause_available": true,
-        "pause_time_limit": 60.0,
+        "pause_time_limit": 60,
         "ride": {
             "content_availability": "digital_and_above",
             "content_availability_level": "digital_and_above",
@@ -122,7 +122,7 @@
             "flags": [],
             "is_dynamic_video_eligible": false,
             "is_fixed_distance": false,
-            "dynamic_video_recorded_speed_in_mph": 0.0,
+            "dynamic_video_recorded_speed_in_mph": 0,
             "thumbnail_title": null,
             "thumbnail_location": null,
             "distance": null,
@@ -130,7 +130,7 @@
             "distance_display_value": null,
             "is_outdoor": false,
             "excluded_platforms": [],
-            "class_avg_follow_along_score": 0.0,
+            "class_avg_follow_along_score": 0,
             "muscle_group_score": []
         },
         "total_heart_rate_zone_durations": null,
@@ -167,7 +167,7 @@
                 "length": 956,
                 "start_time_offset": 170,
                 "icon_url": "https://s3.amazonaws.com/static-cdn.pelotoncycle.com/segment-icons/cycling.png",
-                "intensity_in_mets": 6.0,
+                "intensity_in_mets": 6,
                 "metrics_type": "cycling",
                 "icon_name": "cycling",
                 "icon_slug": "cycling",
@@ -1275,14 +1275,14 @@
                     18.4,
                     18.4,
                     18.8,
-                    19.0,
+                    19,
                     18.7,
                     18.8,
                     19.2,
                     18.8,
                     16.7,
-                    17.0,
-                    18.0,
+                    17,
+                    18,
                     19.7,
                     19.7,
                     19.7,
@@ -1308,7 +1308,7 @@
                     19.2,
                     17.4,
                     18.3,
-                    18.0,
+                    18,
                     18.9,
                     18.7,
                     19.3,
@@ -1317,7 +1317,7 @@
                     18.4,
                     18.2,
                     18.4,
-                    18.0,
+                    18,
                     18.4,
                     18.4,
                     18.8,
@@ -1350,7 +1350,7 @@
                     15.5,
                     15.7,
                     15.9,
-                    16.0,
+                    16,
                     15.9,
                     16.6,
                     17.7,
@@ -1375,7 +1375,7 @@
                     14.5,
                     14.7,
                     15.6,
-                    16.0,
+                    16,
                     15.6,
                     17.1,
                     18.4,
@@ -1399,7 +1399,7 @@
                     17.8,
                     17.6,
                     16.5,
-                    15.0,
+                    15,
                     18.2,
                     19.1,
                     19.1,
@@ -1461,7 +1461,7 @@
                     18.7,
                     17.5,
                     12.5,
-                    13.0,
+                    13,
                     15.8,
                     16.5,
                     14.7,
@@ -1779,41 +1779,41 @@
             "elevation_change_display_unit": "ft",
             "splits": [
                 {
-                    "distance_marker": 1.0,
+                    "distance_marker": 1,
                     "order": 1,
-                    "seconds": 241.0,
+                    "seconds": 241,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
                 },
                 {
-                    "distance_marker": 2.0,
+                    "distance_marker": 2,
                     "order": 2,
-                    "seconds": 188.0,
+                    "seconds": 188,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": true
                 },
                 {
-                    "distance_marker": 3.0,
+                    "distance_marker": 3,
                     "order": 3,
-                    "seconds": 217.0,
+                    "seconds": 217,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
                 },
                 {
-                    "distance_marker": 4.0,
+                    "distance_marker": 4,
                     "order": 4,
-                    "seconds": 215.0,
+                    "seconds": 215,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
                 },
                 {
-                    "distance_marker": 5.0,
+                    "distance_marker": 5,
                     "order": 5,
-                    "seconds": 209.0,
+                    "seconds": 209,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
@@ -1821,7 +1821,7 @@
                 {
                     "distance_marker": 0.58,
                     "order": 6,
-                    "seconds": 224.0,
+                    "seconds": 224,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
@@ -1854,7 +1854,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 1.0,
+                            "value": 1,
                             "unit": "mi"
                         },
                         {
@@ -1880,7 +1880,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 2.0,
+                            "value": 2,
                             "unit": "mi"
                         },
                         {
@@ -1906,7 +1906,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 3.0,
+                            "value": 3,
                             "unit": "mi"
                         },
                         {
@@ -1932,7 +1932,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 4.0,
+                            "value": 4,
                             "unit": "mi"
                         },
                         {
@@ -1958,7 +1958,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 5.0,
+                            "value": 5,
                             "unit": "mi"
                         },
                         {
@@ -1989,7 +1989,7 @@
                         },
                         {
                             "slug": "total_time",
-                            "value": 20.0,
+                            "value": 20,
                             "unit": "min"
                         },
                         {
@@ -2034,6 +2034,7 @@
         "leaderboard_rank": 19747,
         "total_leaderboard_users": 49446,
         "average_effort_score": null,
+        "achievements": [],
         "ride": {
             "title": "20 min Vinyl Vault Ride",
             "description": "Join Hannah as she digs through your favorite records from the 50s, 60s and 70s. You'll be sweating to the classics and dancing down memory lane. There\u2019s always something exciting to uncover inside the vinyl vault!",
@@ -2854,14 +2855,14 @@
                     18.4,
                     18.4,
                     18.8,
-                    19.0,
+                    19,
                     18.7,
                     18.8,
                     19.2,
                     18.8,
                     16.7,
-                    17.0,
-                    18.0,
+                    17,
+                    18,
                     19.7,
                     19.7,
                     19.7,
@@ -2887,7 +2888,7 @@
                     19.2,
                     17.4,
                     18.3,
-                    18.0,
+                    18,
                     18.9,
                     18.7,
                     19.3,
@@ -2896,7 +2897,7 @@
                     18.4,
                     18.2,
                     18.4,
-                    18.0,
+                    18,
                     18.4,
                     18.4,
                     18.8,
@@ -2929,7 +2930,7 @@
                     15.5,
                     15.7,
                     15.9,
-                    16.0,
+                    16,
                     15.9,
                     16.6,
                     17.7,
@@ -2954,7 +2955,7 @@
                     14.5,
                     14.7,
                     15.6,
-                    16.0,
+                    16,
                     15.6,
                     17.1,
                     18.4,
@@ -2978,7 +2979,7 @@
                     17.8,
                     17.6,
                     16.5,
-                    15.0,
+                    15,
                     18.2,
                     19.1,
                     19.1,
@@ -3040,7 +3041,7 @@
                     18.7,
                     17.5,
                     12.5,
-                    13.0,
+                    13,
                     15.8,
                     16.5,
                     14.7,

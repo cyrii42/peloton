@@ -38,7 +38,7 @@
         "is_paused": false,
         "has_paused": true,
         "is_pause_available": true,
-        "pause_time_limit": 60.0,
+        "pause_time_limit": 60,
         "ride": {
             "content_availability": "digital_and_above",
             "content_availability_level": "digital_and_above",
@@ -122,7 +122,7 @@
             "flags": [],
             "is_dynamic_video_eligible": false,
             "is_fixed_distance": false,
-            "dynamic_video_recorded_speed_in_mph": 0.0,
+            "dynamic_video_recorded_speed_in_mph": 0,
             "thumbnail_title": null,
             "thumbnail_location": null,
             "distance": null,
@@ -130,67 +130,67 @@
             "distance_display_value": null,
             "is_outdoor": false,
             "excluded_platforms": [],
-            "class_avg_follow_along_score": 0.0,
+            "class_avg_follow_along_score": 0,
             "muscle_group_score": [
                 {
                     "muscle_group": "biceps",
-                    "score": 1200.0,
+                    "score": 1200,
                     "percentage": 6,
                     "bucket": 1,
                     "display_name": "Biceps"
                 },
                 {
                     "muscle_group": "calves",
-                    "score": 3075.0,
+                    "score": 3075,
                     "percentage": 14,
                     "bucket": 3,
                     "display_name": "Calves"
                 },
                 {
                     "muscle_group": "core",
-                    "score": 2400.0,
+                    "score": 2400,
                     "percentage": 11,
                     "bucket": 2,
                     "display_name": "Core"
                 },
                 {
                     "muscle_group": "glutes",
-                    "score": 2925.0,
+                    "score": 2925,
                     "percentage": 13,
                     "bucket": 3,
                     "display_name": "Glutes"
                 },
                 {
                     "muscle_group": "hamstrings",
-                    "score": 3600.0,
+                    "score": 3600,
                     "percentage": 17,
                     "bucket": 3,
                     "display_name": "Hamstrings"
                 },
                 {
                     "muscle_group": "hips",
-                    "score": 2400.0,
+                    "score": 2400,
                     "percentage": 11,
                     "bucket": 2,
                     "display_name": "Hips"
                 },
                 {
                     "muscle_group": "quads",
-                    "score": 3600.0,
+                    "score": 3600,
                     "percentage": 17,
                     "bucket": 3,
                     "display_name": "Quads"
                 },
                 {
                     "muscle_group": "shoulders",
-                    "score": 1200.0,
+                    "score": 1200,
                     "percentage": 5,
                     "bucket": 1,
                     "display_name": "Shoulders"
                 },
                 {
                     "muscle_group": "triceps",
-                    "score": 1200.0,
+                    "score": 1200,
                     "percentage": 6,
                     "bucket": 1,
                     "display_name": "Triceps"
@@ -231,7 +231,7 @@
                 "length": 919,
                 "start_time_offset": 217,
                 "icon_url": "https://s3.amazonaws.com/static-cdn.pelotoncycle.com/segment-icons/cycling.png",
-                "intensity_in_mets": 6.0,
+                "intensity_in_mets": 6,
                 "metrics_type": "cycling",
                 "icon_name": "cycling",
                 "icon_slug": "cycling",
@@ -1294,7 +1294,7 @@
             {
                 "display_name": "Speed",
                 "display_unit": "mph",
-                "max_value": 29.0,
+                "max_value": 29,
                 "average_value": 16.7,
                 "values": [
                     12.4,
@@ -1349,7 +1349,7 @@
                     18.9,
                     19.1,
                     18.8,
-                    20.0,
+                    20,
                     19.7,
                     18.2,
                     18.2,
@@ -1386,7 +1386,7 @@
                     19.8,
                     20.2,
                     18.9,
-                    20.0,
+                    20,
                     19.3,
                     18.9,
                     19.1,
@@ -1450,12 +1450,12 @@
                     16.8,
                     16.6,
                     16.6,
-                    21.0,
+                    21,
                     23.1,
                     23.3,
-                    16.0,
+                    16,
                     15.1,
-                    16.0,
+                    16,
                     16.1,
                     16.9,
                     16.9,
@@ -1468,10 +1468,10 @@
                     24.3,
                     19.9,
                     17.4,
-                    17.0,
+                    17,
                     16.3,
                     15.6,
-                    16.0,
+                    16,
                     16.2,
                     16.2,
                     16.7,
@@ -1479,7 +1479,7 @@
                     27.9,
                     28.8,
                     28.3,
-                    29.0,
+                    29,
                     21.6,
                     11.1,
                     12.7,
@@ -1506,11 +1506,11 @@
                     19.8,
                     21.8,
                     21.6,
-                    21.0,
+                    21,
                     20.7,
                     20.2,
                     20.7,
-                    19.0,
+                    19,
                     22.1,
                     23.4,
                     21.9,
@@ -1843,41 +1843,41 @@
             "elevation_change_display_unit": "ft",
             "splits": [
                 {
-                    "distance_marker": 1.0,
+                    "distance_marker": 1,
                     "order": 1,
-                    "seconds": 235.0,
+                    "seconds": 235,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
                 },
                 {
-                    "distance_marker": 2.0,
+                    "distance_marker": 2,
                     "order": 2,
-                    "seconds": 196.0,
+                    "seconds": 196,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": true
                 },
                 {
-                    "distance_marker": 3.0,
+                    "distance_marker": 3,
                     "order": 3,
-                    "seconds": 226.0,
+                    "seconds": 226,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
                 },
                 {
-                    "distance_marker": 4.0,
+                    "distance_marker": 4,
                     "order": 4,
-                    "seconds": 202.0,
+                    "seconds": 202,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
                 },
                 {
-                    "distance_marker": 5.0,
+                    "distance_marker": 5,
                     "order": 5,
-                    "seconds": 214.0,
+                    "seconds": 214,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
@@ -1885,7 +1885,7 @@
                 {
                     "distance_marker": 0.56,
                     "order": 6,
-                    "seconds": 227.0,
+                    "seconds": 227,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
@@ -1918,7 +1918,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 1.0,
+                            "value": 1,
                             "unit": "mi"
                         },
                         {
@@ -1944,7 +1944,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 2.0,
+                            "value": 2,
                             "unit": "mi"
                         },
                         {
@@ -1970,7 +1970,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 3.0,
+                            "value": 3,
                             "unit": "mi"
                         },
                         {
@@ -1996,7 +1996,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 4.0,
+                            "value": 4,
                             "unit": "mi"
                         },
                         {
@@ -2022,7 +2022,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 5.0,
+                            "value": 5,
                             "unit": "mi"
                         },
                         {
@@ -2053,7 +2053,7 @@
                         },
                         {
                             "slug": "total_time",
-                            "value": 20.0,
+                            "value": 20,
                             "unit": "min"
                         },
                         {
@@ -2098,6 +2098,7 @@
         "leaderboard_rank": null,
         "total_leaderboard_users": 0,
         "average_effort_score": null,
+        "achievements": [],
         "ride": {
             "title": "20 min Hip Hop Ride",
             "description": "Old school, new school, East Coast and West Coast. Sweat to the beats of the hottest hip hop throughout history.",
@@ -2873,7 +2874,7 @@
                 "average_value": 16.7,
                 "display_name": "Speed",
                 "display_unit": "mph",
-                "max_value": 29.0,
+                "max_value": 29,
                 "slug": "speed",
                 "values": [
                     12.4,
@@ -2928,7 +2929,7 @@
                     18.9,
                     19.1,
                     18.8,
-                    20.0,
+                    20,
                     19.7,
                     18.2,
                     18.2,
@@ -2965,7 +2966,7 @@
                     19.8,
                     20.2,
                     18.9,
-                    20.0,
+                    20,
                     19.3,
                     18.9,
                     19.1,
@@ -3029,12 +3030,12 @@
                     16.8,
                     16.6,
                     16.6,
-                    21.0,
+                    21,
                     23.1,
                     23.3,
-                    16.0,
+                    16,
                     15.1,
-                    16.0,
+                    16,
                     16.1,
                     16.9,
                     16.9,
@@ -3047,10 +3048,10 @@
                     24.3,
                     19.9,
                     17.4,
-                    17.0,
+                    17,
                     16.3,
                     15.6,
-                    16.0,
+                    16,
                     16.2,
                     16.2,
                     16.7,
@@ -3058,7 +3059,7 @@
                     27.9,
                     28.8,
                     28.3,
-                    29.0,
+                    29,
                     21.6,
                     11.1,
                     12.7,
@@ -3085,11 +3086,11 @@
                     19.8,
                     21.8,
                     21.6,
-                    21.0,
+                    21,
                     20.7,
                     20.2,
                     20.7,
-                    19.0,
+                    19,
                     22.1,
                     23.4,
                     21.9,

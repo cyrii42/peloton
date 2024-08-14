@@ -38,7 +38,7 @@
         "is_paused": false,
         "has_paused": true,
         "is_pause_available": true,
-        "pause_time_limit": 60.0,
+        "pause_time_limit": 60,
         "ride": {
             "content_availability": "digital_and_above",
             "content_availability_level": "digital_and_above",
@@ -122,7 +122,7 @@
             "flags": [],
             "is_dynamic_video_eligible": false,
             "is_fixed_distance": false,
-            "dynamic_video_recorded_speed_in_mph": 0.0,
+            "dynamic_video_recorded_speed_in_mph": 0,
             "thumbnail_title": null,
             "thumbnail_location": null,
             "distance": null,
@@ -131,67 +131,67 @@
             "is_outdoor": false,
             "has_tread_pace_target": false,
             "excluded_platforms": [],
-            "class_avg_follow_along_score": 0.0,
+            "class_avg_follow_along_score": 0,
             "muscle_group_score": [
                 {
                     "muscle_group": "biceps",
-                    "score": 1200.0,
+                    "score": 1200,
                     "percentage": 6,
                     "bucket": 1,
                     "display_name": "Biceps"
                 },
                 {
                     "muscle_group": "calves",
-                    "score": 2609.0,
+                    "score": 2609,
                     "percentage": 12,
                     "bucket": 2,
                     "display_name": "Calves"
                 },
                 {
                     "muscle_group": "core",
-                    "score": 2400.0,
+                    "score": 2400,
                     "percentage": 11,
                     "bucket": 2,
                     "display_name": "Core"
                 },
                 {
                     "muscle_group": "glutes",
-                    "score": 3391.0,
+                    "score": 3391,
                     "percentage": 16,
                     "bucket": 3,
                     "display_name": "Glutes"
                 },
                 {
                     "muscle_group": "hamstrings",
-                    "score": 3600.0,
+                    "score": 3600,
                     "percentage": 17,
                     "bucket": 3,
                     "display_name": "Hamstrings"
                 },
                 {
                     "muscle_group": "hips",
-                    "score": 2400.0,
+                    "score": 2400,
                     "percentage": 11,
                     "bucket": 2,
                     "display_name": "Hips"
                 },
                 {
                     "muscle_group": "quads",
-                    "score": 3600.0,
+                    "score": 3600,
                     "percentage": 17,
                     "bucket": 3,
                     "display_name": "Quads"
                 },
                 {
                     "muscle_group": "shoulders",
-                    "score": 1200.0,
+                    "score": 1200,
                     "percentage": 5,
                     "bucket": 1,
                     "display_name": "Shoulders"
                 },
                 {
                     "muscle_group": "triceps",
-                    "score": 1200.0,
+                    "score": 1200,
                     "percentage": 5,
                     "bucket": 1,
                     "display_name": "Triceps"
@@ -247,7 +247,7 @@
                 "length": 920,
                 "start_time_offset": 220,
                 "icon_url": "https://s3.amazonaws.com/static-cdn.pelotoncycle.com/segment-icons/cycling_v2.png",
-                "intensity_in_mets": 6.0,
+                "intensity_in_mets": 6,
                 "metrics_type": "cycling",
                 "icon_name": "cycling",
                 "icon_slug": "cycling",
@@ -1313,12 +1313,12 @@
                 "max_value": 24.1,
                 "average_value": 17.1,
                 "values": [
-                    18.0,
-                    18.0,
+                    18,
+                    18,
                     18.3,
                     18.6,
                     17.9,
-                    18.0,
+                    18,
                     18.4,
                     21.6,
                     21.1,
@@ -1357,7 +1357,7 @@
                     17.7,
                     17.5,
                     16.4,
-                    16.0,
+                    16,
                     15.6,
                     15.5,
                     15.3,
@@ -1375,7 +1375,7 @@
                     21.7,
                     22.1,
                     22.1,
-                    14.0,
+                    14,
                     19.9,
                     19.9,
                     21.9,
@@ -1403,8 +1403,8 @@
                     16.8,
                     13.7,
                     13.6,
-                    14.0,
-                    14.0,
+                    14,
+                    14,
                     13.9,
                     14.1,
                     13.7,
@@ -1418,17 +1418,17 @@
                     15.6,
                     15.6,
                     18.2,
-                    22.0,
+                    22,
                     22.9,
-                    22.0,
+                    22,
                     21.8,
                     22.9,
                     22.5,
-                    19.0,
+                    19,
                     15.7,
                     15.9,
                     14.9,
-                    14.0,
+                    14,
                     13.8,
                     15.2,
                     14.5,
@@ -1484,7 +1484,7 @@
                     15.6,
                     18.6,
                     18.4,
-                    19.0,
+                    19,
                     17.9,
                     16.6,
                     16.5,
@@ -1501,17 +1501,17 @@
                     16.1,
                     17.9,
                     18.6,
-                    19.0,
+                    19,
                     18.6,
                     18.7,
-                    19.0,
+                    19,
                     16.8,
                     12.9,
                     15.2,
                     14.9,
                     15.3,
                     15.8,
-                    15.0,
+                    15,
                     15.3,
                     21.4,
                     22.8,
@@ -1523,7 +1523,7 @@
                     16.8,
                     15.8,
                     14.1,
-                    14.0,
+                    14,
                     14.1,
                     18.5,
                     17.1,
@@ -1532,7 +1532,7 @@
                     19.8,
                     20.2,
                     18.9,
-                    15.0,
+                    15,
                     14.5,
                     14.6,
                     21.5,
@@ -1859,41 +1859,41 @@
             "elevation_change_display_unit": "ft",
             "splits": [
                 {
-                    "distance_marker": 1.0,
+                    "distance_marker": 1,
                     "order": 1,
-                    "seconds": 205.0,
+                    "seconds": 205,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
                 },
                 {
-                    "distance_marker": 2.0,
+                    "distance_marker": 2,
                     "order": 2,
-                    "seconds": 198.0,
+                    "seconds": 198,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": true
                 },
                 {
-                    "distance_marker": 3.0,
+                    "distance_marker": 3,
                     "order": 3,
-                    "seconds": 221.0,
+                    "seconds": 221,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
                 },
                 {
-                    "distance_marker": 4.0,
+                    "distance_marker": 4,
                     "order": 4,
-                    "seconds": 206.0,
+                    "seconds": 206,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
                 },
                 {
-                    "distance_marker": 5.0,
+                    "distance_marker": 5,
                     "order": 5,
-                    "seconds": 227.0,
+                    "seconds": 227,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
@@ -1901,7 +1901,7 @@
                 {
                     "distance_marker": 0.67,
                     "order": 6,
-                    "seconds": 213.0,
+                    "seconds": 213,
                     "elevation_change": null,
                     "has_floor_segment": false,
                     "is_best": false
@@ -1934,7 +1934,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 1.0,
+                            "value": 1,
                             "unit": "mi"
                         },
                         {
@@ -1960,7 +1960,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 2.0,
+                            "value": 2,
                             "unit": "mi"
                         },
                         {
@@ -1986,7 +1986,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 3.0,
+                            "value": 3,
                             "unit": "mi"
                         },
                         {
@@ -2012,7 +2012,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 4.0,
+                            "value": 4,
                             "unit": "mi"
                         },
                         {
@@ -2038,7 +2038,7 @@
                     "data": [
                         {
                             "slug": "mi",
-                            "value": 5.0,
+                            "value": 5,
                             "unit": "mi"
                         },
                         {
@@ -2069,7 +2069,7 @@
                         },
                         {
                             "slug": "total_time",
-                            "value": 20.0,
+                            "value": 20,
                             "unit": "min"
                         },
                         {
@@ -4253,63 +4253,63 @@
         "muscle_group_score": [
             {
                 "muscle_group": "biceps",
-                "score": 1200.0,
+                "score": 1200,
                 "percentage": 6,
                 "bucket": 1,
                 "display_name": "Biceps"
             },
             {
                 "muscle_group": "calves",
-                "score": 2609.0,
+                "score": 2609,
                 "percentage": 12,
                 "bucket": 2,
                 "display_name": "Calves"
             },
             {
                 "muscle_group": "core",
-                "score": 2400.0,
+                "score": 2400,
                 "percentage": 11,
                 "bucket": 2,
                 "display_name": "Core"
             },
             {
                 "muscle_group": "glutes",
-                "score": 3391.0,
+                "score": 3391,
                 "percentage": 16,
                 "bucket": 3,
                 "display_name": "Glutes"
             },
             {
                 "muscle_group": "hamstrings",
-                "score": 3600.0,
+                "score": 3600,
                 "percentage": 17,
                 "bucket": 3,
                 "display_name": "Hamstrings"
             },
             {
                 "muscle_group": "hips",
-                "score": 2400.0,
+                "score": 2400,
                 "percentage": 11,
                 "bucket": 2,
                 "display_name": "Hips"
             },
             {
                 "muscle_group": "quads",
-                "score": 3600.0,
+                "score": 3600,
                 "percentage": 17,
                 "bucket": 3,
                 "display_name": "Quads"
             },
             {
                 "muscle_group": "shoulders",
-                "score": 1200.0,
+                "score": 1200,
                 "percentage": 5,
                 "bucket": 1,
                 "display_name": "Shoulders"
             },
             {
                 "muscle_group": "triceps",
-                "score": 1200.0,
+                "score": 1200,
                 "percentage": 5,
                 "bucket": 1,
                 "display_name": "Triceps"
@@ -4328,6 +4328,16 @@
         "leaderboard_rank": null,
         "total_leaderboard_users": 0,
         "average_effort_score": 44.8,
+        "achievements": [
+            {
+                "workout_id": "8cd0d1fbe21249c1af054da9f6821cff",
+                "name": "The Annual 2024",
+                "slug": "the_annual_2024_3k",
+                "image_url": "https://s3.amazonaws.com/challenges-and-tiers-image-prod/c57507c9b87f45dfbfbf9f31744e8197",
+                "description": "Awarded for achieving 3K in the The Annual 2024.",
+                "achievement_count": 1
+            }
+        ],
         "ride": {
             "title": "20 min Pick-Me-Up Ride",
             "description": "Elevate your mood in this collection of Hannah's Pick-Me-Up rides! Clip in and lift your spirits with Hannah Corbin. Happy riding!",
@@ -5106,12 +5116,12 @@
                 "max_value": 24.1,
                 "slug": "speed",
                 "values": [
-                    18.0,
-                    18.0,
+                    18,
+                    18,
                     18.3,
                     18.6,
                     17.9,
-                    18.0,
+                    18,
                     18.4,
                     21.6,
                     21.1,
@@ -5150,7 +5160,7 @@
                     17.7,
                     17.5,
                     16.4,
-                    16.0,
+                    16,
                     15.6,
                     15.5,
                     15.3,
@@ -5168,7 +5178,7 @@
                     21.7,
                     22.1,
                     22.1,
-                    14.0,
+                    14,
                     19.9,
                     19.9,
                     21.9,
@@ -5196,8 +5206,8 @@
                     16.8,
                     13.7,
                     13.6,
-                    14.0,
-                    14.0,
+                    14,
+                    14,
                     13.9,
                     14.1,
                     13.7,
@@ -5211,17 +5221,17 @@
                     15.6,
                     15.6,
                     18.2,
-                    22.0,
+                    22,
                     22.9,
-                    22.0,
+                    22,
                     21.8,
                     22.9,
                     22.5,
-                    19.0,
+                    19,
                     15.7,
                     15.9,
                     14.9,
-                    14.0,
+                    14,
                     13.8,
                     15.2,
                     14.5,
@@ -5277,7 +5287,7 @@
                     15.6,
                     18.6,
                     18.4,
-                    19.0,
+                    19,
                     17.9,
                     16.6,
                     16.5,
@@ -5294,17 +5304,17 @@
                     16.1,
                     17.9,
                     18.6,
-                    19.0,
+                    19,
                     18.6,
                     18.7,
-                    19.0,
+                    19,
                     16.8,
                     12.9,
                     15.2,
                     14.9,
                     15.3,
                     15.8,
-                    15.0,
+                    15,
                     15.3,
                     21.4,
                     22.8,
@@ -5316,7 +5326,7 @@
                     16.8,
                     15.8,
                     14.1,
-                    14.0,
+                    14,
                     14.1,
                     18.5,
                     17.1,
@@ -5325,7 +5335,7 @@
                     19.8,
                     20.2,
                     18.9,
-                    15.0,
+                    15,
                     14.5,
                     14.6,
                     21.5,

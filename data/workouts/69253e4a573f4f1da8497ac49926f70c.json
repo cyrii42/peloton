@@ -2023,6 +2023,16 @@
         "leaderboard_rank": 38240,
         "total_leaderboard_users": 143512,
         "average_effort_score": 42.0,
+        "achievements": [
+            {
+                "workout_id": "5298b832e2274ad59cf8857240440fb2",
+                "name": "3-Day Streak",
+                "slug": "3_day_streak",
+                "image_url": "https://s3.amazonaws.com/peloton-achievement-images-prod/b5a3058d09ad4470ba32343dad4ec245",
+                "description": "Awarded for working out 3 days in a row.",
+                "achievement_count": 42
+            }
+        ],
         "ride": {
             "title": "20 min London Victoria Park Ride",
             "description": "Take a ride around London's oldest public park, and the personal favourite of our very own Jermaine Johnson! Filmed by professionals on a closed course. Do not attempt to recreate.",
