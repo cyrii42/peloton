@@ -43,7 +43,7 @@ class PelotonChartMaker():
         output_dict = {}
 
         end_date = end_date.date()
-        start_date = end_date - timedelta(days=(DAYS - 1))
+        start_date = end_date - timedelta(days=(DAYS))  # was (DAYS - 1) (changed on 8/14/2024)
         workouts = [workout for workout in self.workouts 
                              if workout.summary.start_time.date() >= start_date
                              and workout.summary.start_time.date() <= end_date]
