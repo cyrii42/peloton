@@ -201,7 +201,7 @@ class PylotonZMV():
             resp = self.session.get(url, timeout=10)
             resp.raise_for_status()
             
-        output_dict = resp.json()
+        output_dict: dict = resp.json()
         output_dict.update({'workout_id': workout_id}) 
         return output_dict
 
@@ -225,7 +225,7 @@ class PylotonZMV():
             resp = self.session.get(url, timeout=10)
             resp.raise_for_status()
             
-        output_dict = resp.json()
+        output_dict: dict = resp.json()
         output_dict.update({'workout_id': workout_id}) 
         return output_dict
 
