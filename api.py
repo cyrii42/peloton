@@ -150,8 +150,9 @@ async def refresh_data() -> None:
     return None
 
 @app.get('/stats_summary')
-async def get_stats_summary(end_date: int) -> dict:
-    end_date_dt = datetime.fromtimestamp(end_date, tz=LOCAL_TZ)
+async def get_stats_summary(end_date_ts: int = None) -> dict:
+    end_date_dt = (datetime.fromtimestamp(end_date_ts, tz=LOCAL_TZ) 
+                   if end_date_ts else datetime.now(tz=LOCAL_TZ))
     return peloton.chart_maker.make_stats_summary(end_date_dt)
 
 @app.get('/data')
@@ -164,7 +165,8 @@ async def get_hr_zones_chart_df(workout_id: str) -> list[dict]:
     if isinstance(df, pd.DataFrame):
         return json.loads(df.to_json(orient='records'))
     else:
-        raise HTTPException(status_code=404, detail=f"No HR zone data for workout ID: {workout_id}")
+        raise HTTPException(status_code=404, 
+                            detail=f"No HR-zone data for workout ID: {workout_id}")
 
 @app.get('/line_chart/')
 async def get_line_chart_df(workout_id: str):
