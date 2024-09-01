@@ -5,7 +5,8 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
 
-from peloton.schema import PelotonWorkoutData, PelotonPivots
+from peloton.schema import PelotonWorkoutData
+from peloton.handlers import PelotonPivots
 from peloton.constants import EASTERN_TIME
 
 STRIVE_SCORE_COLOR_MAP = {

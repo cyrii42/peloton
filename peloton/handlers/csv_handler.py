@@ -1,5 +1,6 @@
 import pandas as pd 
-from peloton.schema import PelotonWorkoutData, PelotonPivots
+from peloton.schema import PelotonWorkoutData
+from peloton.handlers import PelotonPivots
 
 from peloton.constants import DATA_DIR
 

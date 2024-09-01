@@ -2,7 +2,7 @@ from datetime import datetime
 
 import pandas as pd
 
-from peloton.schema import PelotonPivots
+from peloton.handlers import PelotonPivots
 from peloton.constants import EASTERN_TIME
 
 

@@ -4,7 +4,7 @@ from peloton.constants import (DATA_DIR, EASTERN_TIME, IMAGES_DIR,
                                SESSION_JSON, SQLITE_FILENAME, WORKOUTS_DIR)
 from peloton.handlers import (PelotonChartMaker, PelotonCSVWriter,
                               PelotonImageDownloader, PelotonJSONWriter,
-                              PelotonMongoDB, PelotonSQL, PelotonStdoutPrinter)
+                              PelotonMongoDB, PelotonSQL, PelotonStdoutPrinter, PelotonPivots)
 from peloton.helpers import create_mariadb_engine
 from peloton.peloton_processor import PelotonProcessor
 from peloton.pyloton_zmv import PylotonZMV

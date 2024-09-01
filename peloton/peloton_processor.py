@@ -6,9 +6,9 @@ from peloton.constants import (DF_DTYPES_DICT, PELOTON_PASSWORD,
 from peloton.exceptions import WorkoutMismatchError
 from peloton.handlers import (PelotonChartMaker, PelotonCSVWriter,
                               PelotonImageDownloader, PelotonMongoDB, 
-                              PelotonSQL, PelotonStdoutPrinter)
+                              PelotonSQL, PelotonStdoutPrinter, PelotonPivots)
 from peloton.pyloton_zmv import PylotonZMV
-from peloton.schema import (PelotonMetrics, PelotonPivots, PelotonSummary,
+from peloton.schema import (PelotonMetrics, PelotonSummary,
                             PelotonWorkoutData)
 
 
