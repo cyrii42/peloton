@@ -1,21 +1,11 @@
-from typing import Annotated, Union, Optional
+from typing import Optional
 from zoneinfo import ZoneInfo
 from uuid import UUID, uuid4
-import math
 from datetime import datetime
 
-from pydantic import BaseModel, ConfigDict, Field, AliasChoices, field_validator, model_validator, computed_field, BeforeValidator
+from pydantic import BaseModel, ConfigDict, AliasChoices, Field, field_validator, computed_field
 
-LOCAL_TZ = ZoneInfo('America/New_York')
-
-def check_for_nans(v):
-    if isinstance(v, float):
-        if math.isnan(v):
-            return None
-        else:
-            return round(v, 2)
-    else:
-        return v   
+LOCAL_TZ = ZoneInfo('America/New_York') 
 
 class PelotonPivotTableRow(BaseModel):
     model_config = ConfigDict(frozen=True)
@@ -28,6 +18,12 @@ class PelotonPivotTableRow(BaseModel):
     total_miles: Optional[float] = Field(alias=AliasChoices('Miles'), default=None)
     avg_calories: Optional[float] = Field(alias=AliasChoices('Avg. Cals'), default=None)
     avg_output_min: Optional[float] = Field(alias=AliasChoices('OT/min'), default=None)
+    
+    @field_validator('total_hours', 'total_miles', 'avg_calories', 'avg_output_min')
+    @classmethod
+    def round_floats_to_two_decimal_places(cls, num: float | None) -> float | None:
+        return None if num is None else round(num, 2)
+        
     
 class PelotonDataFrameRow(BaseModel):
     model_config = ConfigDict(frozen=True)
@@ -44,24 +40,11 @@ class PelotonDataFrameRow(BaseModel):
     distance: Optional[float] = None
     calories: Optional[int] = None
     effort_score: Optional[float] = None
-    # instructor_name: Annotated[Union[str | None], BeforeValidator(check_for_nans)] = None
-    # image_url: Annotated[Union[str | None], BeforeValidator(check_for_nans)] = None
-    # leaderboard_rank: Annotated[Union[int | None], BeforeValidator(check_for_nans)] = None
-    # leaderboard_percentile: Annotated[Union[float | None], BeforeValidator(check_for_nans)] = None
-    # total_leaderboard_users: Annotated[Union[int | None], BeforeValidator(check_for_nans)] = None
-    # total_output: Annotated[Union[int | None], BeforeValidator(check_for_nans)] = None
-    # output_per_min: Annotated[Union[float | None], BeforeValidator(check_for_nans)] = None
-    # distance: Annotated[Union[float | None], BeforeValidator(check_for_nans)] = None
-    # calories: Annotated[Union[int | None], BeforeValidator(check_for_nans)] = None
-    # effort_score: Annotated[Union[float | None], BeforeValidator(check_for_nans)] = None
     
-    @field_validator('output_per_min')
+    @field_validator('leaderboard_rank', 'leaderboard_percentile', 'output_per_min', 'distance', 'effort_score')
     @classmethod
-    def round_output_per_min(cls, input: float | None) -> float | None:
-        if input is None:
-            return None
-        else:
-            return round(input, 2)
+    def round_floats_to_two_decimal_places(cls, num: float | None) -> float | None:
+        return None if num is None else round(num, 2)
     
     @field_validator('start_time')
     @classmethod
