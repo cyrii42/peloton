@@ -8,7 +8,7 @@ from peloton.handlers import (PelotonChartMaker, PelotonCSVWriter,
                               PelotonImageDownloader, PelotonMongoDB, 
                               PelotonSQL, PelotonStdoutPrinter, PelotonPivots)
 from peloton.pyloton_zmv import PylotonZMV
-from peloton.schema import (PelotonMetrics, PelotonSummary,
+from peloton.models import (PelotonMetrics, PelotonSummary,
                             PelotonWorkoutData)
 
 

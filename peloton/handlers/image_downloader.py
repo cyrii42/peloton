@@ -1,7 +1,7 @@
 import urllib3
 
 from peloton.constants import IMAGES_DIR
-from peloton.schema import PelotonWorkoutData
+from peloton.models import PelotonWorkoutData
 
 
 class PelotonImageDownloader():

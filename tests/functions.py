@@ -3,7 +3,7 @@ import ast
 import pandas as pd
 from pylotoncycle import PylotonCycle
 
-from peloton.schema.peloton_ride import PelotonRide, PelotonRideGroup
+from peloton.models.peloton_ride import PelotonRide, PelotonRideGroup
 
 
 def calculate_new_workouts_num(py_conn: PylotonCycle, df_raw_workouts_data_in_sql: pd.DataFrame) -> int:

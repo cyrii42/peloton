@@ -3,7 +3,7 @@ import json
 from peloton.constants import (MONGODB_COLLECTION, MONGODB_DATABASE,
                                WORKOUTS_DIR, MONGODB_INSTRUCTORS_COLLECTION)
 
-from peloton.schema import PelotonWorkoutData
+from peloton.models import PelotonWorkoutData
 from .mongodb_conn import MongoDBConnection
 
 class PelotonMongoDB():

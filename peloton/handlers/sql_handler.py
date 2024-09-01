@@ -4,7 +4,7 @@ import pandas as pd
 import sqlalchemy as db
 from sqlalchemy.dialects.sqlite import TEXT
 
-from peloton.schema import PelotonMetrics, PelotonSummary, PelotonWorkoutData
+from peloton.models import PelotonMetrics, PelotonSummary, PelotonWorkoutData
 
 metadata_obj = db.MetaData()
 

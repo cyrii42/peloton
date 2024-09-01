@@ -7,7 +7,7 @@ from pylotoncycle import PylotonCycle
 
 import peloton.constants as const
 from peloton.helpers import create_mariadb_engine
-from peloton.schema.peloton_ride import PelotonRide, PelotonRideGroup
+from peloton.models.peloton_ride import PelotonRide, PelotonRideGroup
 
 DATABASE = const.MARIADB_DATABASE
 TEST_ID = '7c32268e13784898aa617d4a610edfb6'

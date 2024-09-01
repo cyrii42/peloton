@@ -5,7 +5,7 @@ from gspread_pandas import Client, Spread
 import peloton.constants as const
 from trash.peloton_pivots import PelotonPivots
 from peloton.peloton_processor import PelotonProcessor
-from peloton.schema.peloton_ride import PelotonRide, PelotonRideGroup
+from peloton.models.peloton_ride import PelotonRide, PelotonRideGroup
 
 DATABASE = const.MARIADB_DATABASE
 SQLITE_FILENAME = "sqlite:///data/peloton.db"

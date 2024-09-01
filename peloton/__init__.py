@@ -9,6 +9,6 @@ from peloton.helpers import create_mariadb_engine
 from peloton.peloton_processor import PelotonProcessor
 from peloton.pyloton_zmv import PylotonZMV
 
-from .schema import (PelotonHumanInstructor, PelotonMetrics,
-                     PelotonNonHumanInstructor, PelotonPivots, PelotonSummary,
+from peloton.models import (PelotonHumanInstructor, PelotonMetrics,
+                     PelotonNonHumanInstructor, PelotonSummary,
                      PelotonWorkoutData, PelotonDataFrameRow, PelotonPivotTableRow)

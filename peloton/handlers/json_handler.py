@@ -1,6 +1,6 @@
 import json
 
-from peloton.schema import PelotonWorkoutData
+from peloton.models import PelotonWorkoutData
 from peloton.constants import WORKOUTS_DIR, INSTRUCTORS_JSON
 
 
