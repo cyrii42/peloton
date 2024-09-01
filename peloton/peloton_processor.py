@@ -172,6 +172,9 @@ class PelotonProcessor():
                      .reset_index(drop=True))
         output_df = output_df.astype({key: value for key, value in DF_DTYPES_DICT.items() if key in output_df.columns}, errors='ignore')               
         return output_df
+    
+    def make_list_of_dicts(self) -> list[dict]:
+        return [workout.create_dictionary() for workout in self.workouts]
 
     def get_workout_object_from_id(self, workout_id: str) -> PelotonWorkoutData:
         ''' Get a `PelotonWorkoutData` object from its corresponding workout ID. '''

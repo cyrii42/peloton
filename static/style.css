@@ -1,0 +1,59 @@
+li,
+section > form {
+  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  > * + * {
+    margin-left: 1rem;
+  }
+
+  > :first-child {
+    width: 100%;
+  }
+
+  /* Override simple.css on smaller screens */
+  > :last-child {
+    width: unset;
+  }
+}
+
+ul {
+  padding: 0;
+}
+
+h2 { text-align: center; }
+
+table {
+  border: 3px solid rgb(209, 209, 209);
+} 
+
+body { background-color: white; }
+
+header {
+  width: 85%;
+  margin: 0 auto;
+  /* text-align: center; */
+  padding: 0 20px 20px 20px;
+}
+
+.th-centered { text-align: center; }
+
+.td-centered { text-align: center; }
+
+main {
+  width: 85%;
+  margin: 0 auto;
+  background-color: white;
+  /* padding: 0 20px 20px 20px; */
+  /* border: 0px solid black; */
+}
+
+.navigation {
+  padding: 0px 0px 5px 0px;
+  border: 0px solid black;
+}
+
+.btn { 
+  display: inline; }

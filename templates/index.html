@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>FastAPI + HTMX</title>
+  <link 
+    rel="stylesheet" 
+    href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" 
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" 
+    crossorigin="anonymous">  
+  <link rel="stylesheet" type="text/css" href="/static/style.css">
+  <script 
+    src="https://unpkg.com/htmx.org@2.0.0" 
+    integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw" 
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <header>
+    <h1>FastAPI + HTMX</h1>
+    <p>Boop bop bam!</p>
+  </header>
+  
+  <main>
+    <section class="navigation btn-group" role="group">
+      <button type="button" class="btn btn-secondary" hx-get="/month_table" hx-target="#peloton-table">Month Table</button>
+      <button type="button" class="btn btn-secondary" hx-get="/year_table" hx-target="#peloton-table">Year Table</button>
+      <button type="button" class="btn btn-secondary" hx-get="/totals_table" hx-target="#peloton-table">Totals Table</button>
+      <button type="button" class="btn btn-secondary" hx-get="/dataframe" hx-target="#peloton-table">Processed Data</button>
+    </section>  
+    
+    <section class="table-responsive">
+      <table id="peloton-table" class="table table-sm table-hover" hx-get="month_table" hx-swap="innerHTML" hx-trigger="load"></table>
+    </section>
+  </main>
+</body>
+</html>

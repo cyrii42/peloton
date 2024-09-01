@@ -82,7 +82,7 @@ class PelotonWorkoutData(BaseModel):
         output_dict.update({'output_per_min': self.output_per_min, 'duration_hrs': self.duration_hrs})
 
         return output_dict
-
+    
     def create_dataframe(self) -> pd.DataFrame:
         combined_dict = self.create_dictionary()
         return pd.DataFrame([combined_dict]).dropna(axis='columns', how='all')

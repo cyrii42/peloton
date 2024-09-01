@@ -33,6 +33,20 @@
 
 from datetime import timedelta, date, datetime
 from peloton.constants import EASTERN_TIME
+import pandas as pd
+from uuid import UUID, uuid4
+from typing import Optional, Annotated, Union
+from pprint import pprint
+from zoneinfo import ZoneInfo
+from collections import OrderedDict
+import math
+
+from peloton import PelotonProcessor
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator, computed_field, model_validator,  BeforeValidator
+
+LOCAL_TZ = ZoneInfo('America/New_York')
+
 DAYS = 30
 curr_start_date = date.today() - timedelta(days=(DAYS - 1))
 curr_end_date = date.today()
@@ -58,3 +72,105 @@ asdf = int(round((datetime.now(tz=EASTERN_TIME).replace(hour=0, minute=0, second
                              - timedelta(days=30)).timestamp()))
 
 print(datetime.fromtimestamp(asdf, tz=EASTERN_TIME))
+
+# class PelotonMonthTableRow(BaseModel):
+#     model_config = ConfigDict(frozen=True)
+#     id: UUID = Field(default_factory=uuid4, repr=False)
+#     month: str
+#     rides: float
+#     days: float
+#     total_hours: float
+#     total_miles: float
+#     avg_calories: float
+#     avg_output_min: float
+
+class PelotonTableRow(BaseModel):
+    model_config = ConfigDict(frozen=True)
+    id: UUID = Field(default_factory=uuid4, repr=False)
+    month: Optional[str] = None
+    year: Optional[int] = None
+    rides: Optional[int] = None
+    days: Optional[int] = None
+    total_hours: float
+    total_miles: float
+    avg_calories: float
+    avg_output_min: float
+
+# df = pd.read_csv('./data/year_table.csv', index_col=0).rename(columns={'avg_output/min': 'avg_output_min'})
+
+# row_list = [PelotonTableRow.model_validate(row) for row in df.to_dict('records')]
+
+# for row in row_list:
+#     print(row)
+    
+# pprint(PelotonTableRow.model_json_schema()['properties'].keys())
+
+# test_row = row_list[0]
+# columns = [x[0] for x in test_row.__repr_args__() if x[1] is not None]
+# columns = row_list[0].model_fields
+# print(columns)
+
+def check_for_nans(v):
+    if isinstance(v, float):
+        if math.isnan(v):
+            return None
+        else:
+            return round(v, 2)
+    else:
+        return v    
+
+class PelotonDataFrameRow(BaseModel):
+    model_config = ConfigDict(frozen=True)
+    workout_id: str = Field(repr=False)
+    start_time: int | datetime | str = Field(repr=False)
+    title: str
+    instructor_name: str = None
+    image_url: str = None
+    leaderboard_rank: int = None
+    leaderboard_percentile: float = None
+    total_leaderboard_users: int = None
+    total_output: int = None
+    output_per_min: float = None
+    distance: float = None
+    calories: int = None
+    effort_score: float = None
+    
+    @field_validator('start_time')
+    @classmethod
+    def convert_timestamp(cls, dt: int | str | datetime) -> datetime:
+        if isinstance(dt, int):
+            return datetime.fromtimestamp(dt, tz=LOCAL_TZ)
+        elif isinstance(dt, str):
+            return datetime.fromisoformat(dt).astimezone(tz=LOCAL_TZ)
+        elif isinstance(dt, datetime):
+            return dt.astimezone(LOCAL_TZ)
+        
+    @computed_field
+    def date(self) -> str:
+        return self.start_time.strftime('%a, %h %-d, %Y') 
+    
+    @computed_field
+    def time(self) -> str:
+        return self.start_time.strftime('%-I:%M %p') 
+    
+# df = pd.read_csv('./data/processed_workouts_data.csv', index_col=0)
+# # print(df.to_dict('records'))
+# asdf = PelotonDataFrameRow.model_validate(df.to_dict('records')[149]).model_dump(exclude=['workout_id', 'start_time'])
+# print(asdf)
+# od = OrderedDict(asdf)
+# print(od.keys())
+# desired_order = ['date', 'time', 'title', 'instructor_name', 'leaderboard_rank',
+#                  'leaderboard_percentile', 'total_leaderboard_users', 'total_output', 'output_per_min', 
+#                  'distance', 'calories', 'effort_score']
+
+# for col in desired_order:
+#     od.move_to_end(col)
+# print(od)
+
+print()
+
+peloton = PelotonProcessor()
+
+dicts = peloton.make_list_of_dicts()
+asdf2 = PelotonDataFrameRow.model_validate(dicts[149]).model_dump(exclude=['workout_id', 'start_time'])
+print(asdf2)

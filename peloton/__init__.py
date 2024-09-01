@@ -11,4 +11,4 @@ from peloton.pyloton_zmv import PylotonZMV
 
 from .schema import (PelotonHumanInstructor, PelotonMetrics,
                      PelotonNonHumanInstructor, PelotonPivots, PelotonSummary,
-                     PelotonWorkoutData)
+                     PelotonWorkoutData, PelotonDataFrameRow, PelotonPivotTableRow)
