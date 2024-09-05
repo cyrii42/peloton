@@ -31,19 +31,19 @@
 # d1.update({'fart': 3, 'boop': 44})
 # print(list(**d1))
 
-from datetime import timedelta, date, datetime
-from peloton.constants import EASTERN_TIME
-import pandas as pd
-from uuid import UUID, uuid4
-from typing import Optional, Annotated, Union
-from pprint import pprint
-from zoneinfo import ZoneInfo
-from collections import OrderedDict
 import math
+from collections import OrderedDict
+from datetime import date, datetime, timedelta
+from pprint import pprint
+from typing import Annotated, Optional, Union
+from uuid import UUID, uuid4
 
-from peloton import PelotonProcessor
+import pandas as pd
+from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, computed_field, field_validator, model_validator
+from zoneinfo import ZoneInfo
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, computed_field, model_validator,  BeforeValidator
+from peloton import PelotonProcessor, PelotonWorkoutData, PelotonImageDownloader
+from peloton.constants import EASTERN_TIME
 
 LOCAL_TZ = ZoneInfo('America/New_York')
 
@@ -124,16 +124,21 @@ class PelotonDataFrameRow(BaseModel):
     workout_id: str = Field(repr=False)
     start_time: int | datetime | str = Field(repr=False)
     title: str
-    instructor_name: str = None
-    image_url: str = None
-    leaderboard_rank: int = None
-    leaderboard_percentile: float = None
-    total_leaderboard_users: int = None
-    total_output: int = None
-    output_per_min: float = None
-    distance: float = None
-    calories: int = None
-    effort_score: float = None
+    instructor_name: Optional[str] = None
+    image_url: Optional[str] = None
+    leaderboard_rank: Optional[float] = None
+    leaderboard_percentile: Optional[float] = None
+    total_leaderboard_users: Optional[int] = None
+    total_output: Optional[int] = None
+    output_per_min: Optional[float] = None
+    distance: Optional[float] = None
+    calories: Optional[int] = None
+    effort_score: Optional[float] = None
+    
+    @field_validator('leaderboard_rank', 'leaderboard_percentile', 'output_per_min', 'distance', 'effort_score')
+    @classmethod
+    def round_floats_to_two_decimal_places(cls, num: float | None) -> float | None:
+        return None if num is None else round(num, 2)
     
     @field_validator('start_time')
     @classmethod
@@ -171,6 +176,68 @@ print()
 
 peloton = PelotonProcessor()
 
-dicts = peloton.make_list_of_dicts()
-asdf2 = PelotonDataFrameRow.model_validate(dicts[149]).model_dump(exclude=['workout_id', 'start_time'])
-print(asdf2)
+desired_columns = ['date', 'time', 'title', 'instructor_name', 'total_output', 'output_per_min', 
+                        'distance', 'calories', 'effort_score', 'start_time']
+
+list_of_dicts = peloton.make_list_of_dicts()
+rows = [PelotonDataFrameRow.model_validate(row).model_dump(include=desired_columns)
+            for row in list_of_dicts]
+# print(rows)
+
+# for row in rows:
+#     print(datetime.strptime(date_string=f"{row.get('date')} {row.get('time')}", format='%a, %b %d, %Y %H:%M %p'))
+
+# reordered_rows = [{key: row.get(key) for key in desired_columns} for row in rows]
+# print(reordered_rows)
+    
+# sorted_rows = sorted(reordered_rows, key=lambda row: datetime.strptime(f"{row.get('date')} {row.get('time')}", format='%a, %b %d, %Y %H:%M %p'), reverse=True)
+# for row in sorted_rows:
+#     print(row.get('date'))
+    
+#row.get('start_time')
+
+from PIL import Image
+from pathlib import Path
+
+def create_thumbnail(img: Image) -> Image:
+    return img.thumbnail()
+
+img_path = Path.cwd().joinpath('data', 'workout_images', 'img_1721845105_e293119d5f384556ad710cc87756a034.jpg')
+
+# img = Image.open(img_path)
+
+# thumb = img.copy()
+
+# thumb.thumbnail(size=(120, 120))
+
+# thumb.save('test.jpg')
+
+# def create_thumbnail_filename(filename: Path) -> Path:
+#     filename.stem = f"{filename.stem}_thumb"
+#     return filename
+
+# thumb_filename = img_path.with_stem(f"{img_path.stem}_thumb")
+
+# print(thumb_filename)
+
+# with open('test.jpg', 'rb') as f:
+#     f.write(thumb)
+
+
+# test_workout = peloton.workouts[150]
+# peloton.image_downloader.download_workout_image(test_workout)
+
+img_path_str = str(img_path.name)
+
+def convert_str_filename(filename: str) -> str:
+    filepath = Path(filename)
+    print(f"{filepath.stem}_thumb{filepath.suffix}")
+    # file_ext = filename.split('.')[-1]
+    # print(file_ext)
+
+    # file_stem = (filename.split('/')[-1]).split('.')[0]
+    # thumb_filename = f"{file_stem}_thumb.{file_ext}"
+
+    # print(thumb_filename)
+print(img_path_str)
+convert_str_filename(img_path_str)

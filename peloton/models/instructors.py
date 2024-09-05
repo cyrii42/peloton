@@ -1,6 +1,6 @@
 from pydantic import (AliasChoices, BaseModel, ConfigDict, Field,
                       computed_field, field_validator)
-from typing import List, Optional
+from typing import Optional
 
 
 class PelotonHumanInstructor(BaseModel):
@@ -11,7 +11,7 @@ class PelotonHumanInstructor(BaseModel):
     about_image_url: str
     background: str
     bio: str
-    fitness_disciplines: List[str]
+    fitness_disciplines: list[str]
     image_url: str
     instagram_profile: str
     instructor_hero_image_url: str
@@ -19,7 +19,7 @@ class PelotonHumanInstructor(BaseModel):
     jumbotron_url_dark: str
     jumbotron_url_ios: str
     life_style_image_url: Optional[str] = None
-    ordered_q_and_as: List[List[str]]
+    ordered_q_and_as: list[list[str]]
     quote: str
     short_bio: str
     spotify_playlist_uri: str
