@@ -14,7 +14,10 @@ args = parser.parse_args()
 
 def main():   
     peloton_processor = PelotonProcessor()
-    peloton_processor.write_csv_files()
+    # test = peloton_processor.workouts[-1].summary.achievements
+    # print(test)
+
+    pprint([workout.summary.achievements for workout in peloton_processor.workouts if len(workout.summary.achievements) > 0])
     
     # if args.CHECK_FOR_NEW_WORKOUTS:
     #     peloton_processor.check_for_new_workouts()
