@@ -7,11 +7,7 @@
   {% for row in rows %}
     <tr>
       {% for column in columns %}
-        {% if column == "image_url_html_thumb" %}
-          <td scope="row">{{row[column] | safe}}</td>
-        {% else %}
-          <td scope="row">{{row[column]}}</td>
-        {% endif %}
+        <td scope="row">{{ row[column] }}</td>
       {% endfor %}
     </tr>
   {% endfor %}

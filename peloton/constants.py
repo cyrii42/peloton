@@ -1,8 +1,8 @@
 import os
+from zoneinfo import ZoneInfo
 from pathlib import Path
 
 from dotenv import load_dotenv
-from zoneinfo import ZoneInfo
 
 load_dotenv()
 

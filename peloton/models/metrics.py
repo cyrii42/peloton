@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, field_validator, Field, AliasChoices
-from typing_extensions import Optional
+from typing_extensions import List, Optional
 
 
 class PelotonMetricsMetricsHeartRateZone (BaseModel):
@@ -19,8 +19,8 @@ class PelotonMetricsMetrics(BaseModel):
     display_unit: str
     max_value: Optional[int | float] = Field(default=None)
     slug: str
-    values: Optional[list[int | float]] = None
-    zones: Optional[list[PelotonMetricsMetricsHeartRateZone]] = None
+    values: Optional[List[int | float]] = None
+    zones: Optional[List[PelotonMetricsMetricsHeartRateZone]] = None
 
 
 class PelotonMetricsSummaries(BaseModel):
@@ -69,8 +69,8 @@ class PelotonMetricsSplitsData(BaseModel):
 class PelotonMetrics(BaseModel):
     model_config = ConfigDict(frozen=True)
     workout_id: str
-    metrics: list[PelotonMetricsMetrics]
-    summaries: list[PelotonMetricsSummaries]
+    metrics: List[PelotonMetricsMetrics]
+    summaries: List[PelotonMetricsSummaries]
     effort_zones: Optional[PelotonMetricsEffortZones] = None
     splits_data: Optional[PelotonMetricsSplitsData] = None
     splits_metrics: Optional[PelotonMetricsSplitMetrics] = None
