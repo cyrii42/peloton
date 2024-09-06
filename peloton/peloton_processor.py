@@ -13,34 +13,23 @@ from peloton.models import (PelotonMetrics, PelotonSummary,
 
 
 class PelotonProcessor():
-    ''' 
-    Object for pulling new data from Peloton, processing it, and exporting to SQL. 
-
-    Parameters:
-    - `sql_engine` (`db.Engine`, optional): The SQL engine to use for exporting data. Defaults to `None`.
-    - `username` (`str`): The Peloton username. Defaults to `PELOTON_USERNAME`.
-    - `password` (`str`): The Peloton password. Defaults to `PELOTON_PASSWORD`.
-    '''
-
     def __init__(self, sql_engine: db.Engine = None, username: str = PELOTON_USERNAME, password: str = PELOTON_PASSWORD):
         self.py_conn = PylotonZMV(username, password)
+        self.sql_writer = PelotonSQL(sql_engine) if sql_engine is not None else None
         self.mongodb = PelotonMongoDB()
         self.workouts = self.mongodb.ingest_workouts_from_mongodb()
         self.new_workouts = False
-        if sql_engine is not None:
-            self.sql_writer = PelotonSQL(sql_engine)
         self.processed_df = self.make_dataframe() if len(self.workouts) > 0 else None
         self.pivots = PelotonPivots(self.processed_df) if self.processed_df is not None else None
         self.chart_maker = PelotonChartMaker(self.workouts, self.pivots)
         self.image_downloader = PelotonImageDownloader()
 
-    def check_for_new_workouts(self) -> None:
-        ''' Check for new workouts on Peloton and update the internal state accordingly. '''
-        
+    def check_for_new_workouts(self) -> None:       
         new_workout_ids = self._get_new_workout_ids()
         if len(new_workout_ids) == 0:
             self.new_workouts = False
-            return list()   # everything below will only happen if there are new workouts!
+            self.workouts = list()
+            return None   # everything below will only happen if there are new workouts!
 
         print(f"New Workout IDs:  {new_workout_ids}")
         new_workout_list: list[PelotonWorkoutData] = []
@@ -57,15 +46,12 @@ class PelotonProcessor():
             new_workout_list.append(workout_data)
 
         for workout in new_workout_list:
-            # self.json_writer.write_workout_to_json(workout)
             self.mongodb.export_workout_to_mongodb(workout)
             self.mongodb.write_workout_to_json(workout)
             self.image_downloader.download_workout_image(workout)
 
         self.new_workouts = True
         
-        # self.json_writer.refresh_data()
-        # self.workouts = self.get_workouts_from_json()
         self.workouts = self.mongodb.ingest_workouts_from_mongodb()
         
         self.processed_df = self.make_dataframe()
@@ -75,20 +61,13 @@ class PelotonProcessor():
         self.write_csv_files()
 
     def get_workouts_from_mongodb(self) -> list[PelotonWorkoutData]:
-        ''' Get the list of workouts from the MongoDB database. '''
-        
         return self.mongodb.ingest_workouts_from_mongodb()
 
     def get_workouts_from_sql(self) -> list[PelotonWorkoutData]:
-        ''' Get the list of workouts from the SQL database. '''
-        
         return self.sql_writer.ingest_workouts_from_sql()
 
     def get_workouts_from_json(self) -> list[PelotonWorkoutData]:
-        ''' Get the list of workouts from the JSON files. '''
-        
         self.json_writer.refresh_data()
-
         return self.json_writer.get_workouts_from_json()
 
     def reprocess_mongodb_data(self) -> None:
@@ -142,8 +121,6 @@ class PelotonProcessor():
             self.json_writer.write_workout_to_json(workout)
 
     def _get_new_workout_ids(self) -> list[str]:
-        ''' Get the IDs of new workouts on Peloton. '''
-
         workouts_on_peloton_num = self.py_conn.get_total_workouts_num()
         workouts_on_disk_num = len(self.mongodb.get_workout_id_list_from_mongodb())
         new_workouts_num = workouts_on_peloton_num - workouts_on_disk_num

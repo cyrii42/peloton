@@ -2,6 +2,7 @@ from typing import Optional
 from zoneinfo import ZoneInfo
 from uuid import UUID, uuid4
 from datetime import datetime
+from pathlib import Path
 
 from pydantic import BaseModel, ConfigDict, AliasChoices, Field, field_validator, computed_field
 
@@ -10,14 +11,14 @@ LOCAL_TZ = ZoneInfo('America/New_York')
 class PelotonPivotTableRow(BaseModel):
     model_config = ConfigDict(frozen=True)
     id: UUID = Field(default_factory=uuid4, repr=False)
-    month: Optional[str] = Field(alias=AliasChoices('Month'), default=None)
-    year: Optional[int] = Field(alias=AliasChoices('Year'), default=None)
-    rides: Optional[int] = Field(alias=AliasChoices('Rides'), default=None)
-    days: Optional[int] = Field(alias=AliasChoices('Days'), default=None)
-    total_hours: Optional[float] = Field(alias=AliasChoices('Hours'), default=None)
-    total_miles: Optional[float] = Field(alias=AliasChoices('Miles'), default=None)
-    avg_calories: Optional[float] = Field(alias=AliasChoices('Avg. Cals'), default=None)
-    avg_output_min: Optional[float] = Field(alias=AliasChoices('OT/min'), default=None)
+    month: Optional[str] = Field(alias=AliasChoices('Month', 'month'), default=None)
+    year: Optional[int] = Field(alias=AliasChoices('Year', 'year'), default=None)
+    rides: Optional[int] = Field(alias=AliasChoices('Rides', 'rides'), default=None)
+    days: Optional[int] = Field(alias=AliasChoices('Days', 'days'), default=None)
+    total_hours: Optional[float] = Field(alias=AliasChoices('Hours', 'total_hours'), default=None)
+    total_miles: Optional[float] = Field(alias=AliasChoices('Miles', 'total_miles'), default=None)
+    avg_calories: Optional[float] = Field(alias=AliasChoices('Avg. Cals', 'avg_calories'), default=None)
+    avg_output_min: Optional[float] = Field(alias=AliasChoices('OT/min', 'avg_output_min', 'avg_output/min'), default=None)
     
     @field_validator('total_hours', 'total_miles', 'avg_calories', 'avg_output_min')
     @classmethod
@@ -41,7 +42,8 @@ class PelotonDataFrameRow(BaseModel):
     calories: Optional[int] = None
     effort_score: Optional[float] = None
     
-    @field_validator('leaderboard_rank', 'leaderboard_percentile', 'output_per_min', 'distance', 'effort_score')
+    @field_validator('leaderboard_rank', 'leaderboard_percentile', 
+                     'output_per_min', 'distance', 'effort_score')
     @classmethod
     def round_floats_to_two_decimal_places(cls, num: float | None) -> float | None:
         return None if num is None else round(num, 2)
@@ -63,3 +65,31 @@ class PelotonDataFrameRow(BaseModel):
     @computed_field
     def time(self) -> str:
         return self.start_time.strftime('%-I:%M %p') 
+
+    @computed_field
+    def image_url_html(self) -> str | None:
+        if self.image_url is None:
+            return None
+
+        return f"<img class=\"table-pic\" src={self.image_url}></img>"
+
+    @computed_field
+    def image_url_html_local(self) -> str | None:
+        if self.image_url is None:
+            return None
+
+        filename = self.image_url.split(sep='/')[-1]
+        local_url = f"/workout_images/{filename}"
+        return f"<img class=\"table-pic\" src={local_url}></img>"
+
+    @computed_field
+    def image_url_html_local_thumb(self) -> str | None:
+        if self.image_url is None:
+            return None
+
+        filename = self.image_url.split(sep='/')[-1]
+        filepath = Path(filename)
+        thumb_filename = f"{filepath.stem}_thumb{filepath.suffix}"
+        
+        thumb_url = f"/workout_images/{thumb_filename}"
+        return f"<img class=\"table-pic\" src={thumb_url}></img>"
