@@ -191,6 +191,8 @@ def get_workouts_from_json() -> list[PelotonWorkoutData]:
             output_list.append(PelotonWorkoutData.model_validate_json(f.read()))
     return output_list
 
-print(WORKOUTS_DIR)
-print(get_workouts_from_json())
+# print(WORKOUTS_DIR)
+# print(get_workouts_from_json())
 # print([file for file in WORKOUTS_DIR.iterdir() if file.suffix == '.json'])
+# print('')
+# print(peloton.get_workout_object_from_id('0c1c95a693d34c96a5d62f965794472f'))

@@ -224,9 +224,10 @@ class PelotonProcessor():
     def make_list_of_dicts(self) -> list[dict]:
         return [workout.create_dictionary() for workout in self.workouts]
 
-    def get_workout_object_from_id(self, workout_id: str) -> PelotonWorkoutData:
+    def get_workout_object_from_id(self, workout_id: str) -> PelotonWorkoutData | None:
         ''' Get a `PelotonWorkoutData` object from its corresponding workout ID. '''
-        return next((workout for workout in self.workouts if workout.workout_id == workout_id), None)
+        workouts_by_id = {workout.summary.workout_id: workout for workout in self.workouts}
+        return workouts_by_id.get(workout_id, None)
 
     def print_processed_data_to_stdout(self) -> None:
         df = self.processed_df.copy()
