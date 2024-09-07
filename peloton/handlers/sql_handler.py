@@ -1,6 +1,5 @@
 import json
 
-import pandas as pd
 import sqlalchemy as db
 from sqlalchemy.dialects.sqlite import TEXT
 
@@ -25,7 +24,9 @@ class PelotonSQL():
         )
         return peloton_table
 
-    def ingest_workouts_from_sql(self) -> list[PelotonWorkoutData]:
+    def get_workout_id_list(self) -> list[str]: ...
+
+    def ingest_workouts(self) -> list[PelotonWorkoutData]:
         print("getting workouts from SQL")
         stmt = db.select(self.peloton_table)
         with self.sql_engine.connect() as conn:
@@ -39,42 +40,14 @@ class PelotonSQL():
             metrics=PelotonMetrics.model_validate_json(workout[4])
         ) for workout in workouts]
 
-    def export_workout_to_sql(self, workout: PelotonWorkoutData) -> None:
+    def export_workout(self, workout: PelotonWorkoutData) -> None:
         with self.sql_engine.connect() as conn:
             conn.execute(
                 db.insert(self.peloton_table).values(workout.model_dump_json())
             )
             conn.commit()
 
-    def export_df_to_sql(self, input_df: pd.DataFrame, table_name: str) -> None:
-        df = input_df.copy()
-        
-        for column in df.select_dtypes(exclude=['int64', 'float64', 'bool']).columns:
-            df[column] = df[column].astype("string")
-            
-        with self.sql_engine.connect() as conn:
-            df.to_sql(table_name, conn, if_exists="append", index=False)
-
-    def ingest_df_from_sql(self, table_name: str) -> pd.DataFrame:
-        with self.sql_engine.connect() as conn:
-            df = pd.read_sql(f"SELECT * from {table_name}", conn)
-            
-        return df
-
-    def make_workout_dict(self, workout: PelotonWorkoutData) -> dict:
-        return {
-            "workout_id": workout.workout_id,
-            "summary_raw": json.dumps(workout.summary_raw),
-            "metrics_raw": json.dumps(workout.metrics_raw),
-            "summary": workout.summary.model_dump_json(),
-            "metrics": workout.metrics.model_dump_json(),
-        }
-
-    def get_processed_df_from_sql(self) -> pd.DataFrame:
-        with self.sql_engine.connect() as conn:
-            df = pd.read_sql("SELECT * from processed_df", conn)
-        return df
-
-    def append_processed_df_to_sql(self, processed_df: pd.DataFrame) -> None:
-        with self.sql_engine.connect() as conn:
-            processed_df.to_sql("processed_df", conn, if_exists="append", index=False)
+    def update_workout(self, workout: PelotonWorkoutData) -> None: ...
+    def get_workout(self, workout_id: str) -> PelotonWorkoutData: ...
+    def get_instructor(self, instructor_id: str) -> dict: ...
+    def add_instructor(self, instructor: dict) -> None: ...  
