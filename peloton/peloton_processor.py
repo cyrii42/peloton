@@ -1,17 +1,19 @@
 import urllib3
 import io
+from datetime import datetime
 
 import pandas as pd
 import sqlalchemy as db
 from PIL import Image
 
 from peloton.constants import (DF_DTYPES_DICT, PELOTON_PASSWORD,
-                               PELOTON_USERNAME, IMAGES_DIR)
+                               PELOTON_USERNAME, IMAGES_DIR,
+                               DATA_DIR, EASTERN_TIME)
 from peloton.exceptions import WorkoutMismatchError
 from peloton.handlers import (PelotonChartMaker, PelotonCSVWriter,
                               PelotonPivots, PelotonMongoDB, 
-                              PelotonSQL, PelotonStdoutPrinter)
-from peloton.pyloton_zmv import PylotonZMV
+                              PelotonSQL, PelotonStdoutPrinter,
+                              PylotonZMV)
 from peloton.models import (PelotonMetrics, PelotonSummary,
                             PelotonWorkoutData)
 
@@ -188,20 +190,34 @@ class PelotonProcessor():
         ''' Get a `PelotonWorkoutData` object from its corresponding workout ID. '''
         return next((workout for workout in self.workouts if workout.workout_id == workout_id), None)
 
-    def create_new_pivot_tables(self, df_processed: pd.DataFrame) -> None:
-        self.pivots.regenerate_tables(df_processed)
-
     def print_processed_data_to_stdout(self) -> None:
-        peloton_printer = PelotonStdoutPrinter(self.processed_df)
-        peloton_printer.print_processed_data()
+        df = self.processed_df.copy()
+        if isinstance(df['start_time'].dtype, pd.DatetimeTZDtype):
+            df['start_time_strf'] = [x.tz_convert(EASTERN_TIME).strftime('%a %h %d %I:%M %p') 
+                                        for x in df['start_time'].tolist()]
+        else:
+            df['start_time_strf'] = [datetime.fromisoformat(x).strftime('%a %h %d %I:%M %p') 
+                                        for x in df['start_time'].tolist()]
+        print("")
+        print(df[['start_time_strf', 'title', 'instructor_name', 'total_output', 
+                    'distance', 'calories', 'avg_heart_rate', 'effort_score']].tail(15))
 
     def print_pivot_tables_to_stdout(self) -> None:
-        peloton_printer = PelotonStdoutPrinter(self.processed_df)
-        peloton_printer.print_pivot_tables()
+        print("")
+        print("                             GRAND TOTALS")
+        print(self.pivots.totals_table)
+        print("")
+        print(self.pivots.year_table)
+        print("")
+        print(self.pivots.month_table)
 
     def write_csv_files(self) -> None:
-        csv_writer = PelotonCSVWriter(self.processed_df)
-        csv_writer.write_csv_files()
+        self.processed_df.to_csv(DATA_DIR.joinpath('processed_workouts_data.csv'))
+
+        self.pivots.regenerate_tables(self.processed_df)
+        self.pivots.year_table.to_csv(DATA_DIR.joinpath('year_table.csv'))
+        self.pivots.month_table.to_csv(DATA_DIR.joinpath('month_table.csv'))
+        self.pivots.totals_table.to_csv(DATA_DIR.joinpath('totals_table.csv'))
 
 def main():
     print("This is a module, not a script.")

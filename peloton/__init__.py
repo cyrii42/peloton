@@ -3,12 +3,13 @@ from peloton.constants import (DATA_DIR, EASTERN_TIME, IMAGES_DIR,
                                PELOTON_BASE_URL, PELOTON_SPREADSHEET,
                                SESSION_JSON, SQLITE_FILENAME, WORKOUTS_DIR)
 from peloton.handlers import (PelotonChartMaker, PelotonCSVWriter,
-                              PelotonImageDownloader, PelotonJSONWriter,
-                              PelotonMongoDB, PelotonSQL, PelotonStdoutPrinter, PelotonPivots)
+                              PelotonPivots, PelotonJSONWriter,
+                              PelotonMongoDB, PelotonSQL, PelotonStdoutPrinter, 
+                              PylotonZMV)
 from peloton.helpers import create_mariadb_engine
 from peloton.peloton_processor import PelotonProcessor
-from peloton.pyloton_zmv import PylotonZMV
 
 from peloton.models import (PelotonHumanInstructor, PelotonMetrics,
-                     PelotonNonHumanInstructor, PelotonSummary,
-                     PelotonWorkoutData, PelotonDataFrameRow, PelotonPivotTableRow)
+                            PelotonNonHumanInstructor, PelotonSummary,
+                            PelotonWorkoutData, PelotonDataFrameRow,
+                            PelotonPivotTableRow)
