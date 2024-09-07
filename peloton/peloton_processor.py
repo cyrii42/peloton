@@ -1,28 +1,42 @@
 import urllib3
 import io
+import json
+from pathlib import Path
 from datetime import datetime
+from typing import Protocol
 
 import pandas as pd
 import sqlalchemy as db
 from PIL import Image
 
 from peloton.constants import (DF_DTYPES_DICT, PELOTON_PASSWORD,
-                               PELOTON_USERNAME, IMAGES_DIR,
-                               DATA_DIR, EASTERN_TIME)
+                               PELOTON_USERNAME, IMAGES_DIR, INSTRUCTORS_JSON,
+                               DATA_DIR, WORKOUTS_DIR, EASTERN_TIME)
 from peloton.exceptions import WorkoutMismatchError
 from peloton.handlers import (PelotonChartMaker, PylotonZMV,
-                              PelotonPivots, PelotonMongoDB, 
-                              PelotonSQL)
+                              PelotonPivots, PelotonMongoDB)
 from peloton.models import (PelotonMetrics, PelotonSummary,
                             PelotonWorkoutData)
 
+class PelotonDatabase(Protocol):
+    def get_workout_id_list(self) -> list[str]: ...
+    def ingest_workouts(self) -> list[PelotonWorkoutData]: ...
+    def export_workout(self, workout: PelotonWorkoutData) -> None: ...
+    def update_workout(self, workout: PelotonWorkoutData) -> None: ...
+    def get_workout(self, workout_id: str) -> PelotonWorkoutData: ...
+    def get_instructor(self, instructor_id: str) -> dict: ...
+    def add_instructor(self, instructor: dict) -> None: ...   
+
 
 class PelotonProcessor():
-    def __init__(self, sql_engine: db.Engine = None, username: str = PELOTON_USERNAME, password: str = PELOTON_PASSWORD):
+    def __init__(self, 
+                 username: str = PELOTON_USERNAME, 
+                 password: str = PELOTON_PASSWORD,
+                 db: PelotonDatabase = None
+                 ) -> None:
         self.py_conn = PylotonZMV(username, password)
-        self.sql_writer = PelotonSQL(sql_engine) if sql_engine is not None else None
-        self.mongodb = PelotonMongoDB()
-        self.workouts = self.mongodb.ingest_workouts_from_mongodb()
+        self.db = db if db is not None else PelotonMongoDB()
+        self.workouts = self.db.ingest_workouts()
         self.new_workouts = False
         self.processed_df = self.make_dataframe() if len(self.workouts) > 0 else None
         self.pivots = PelotonPivots(self.processed_df) if self.processed_df is not None else None
@@ -50,13 +64,13 @@ class PelotonProcessor():
             new_workout_list.append(workout_data)
 
         for workout in new_workout_list:
-            self.mongodb.export_workout_to_mongodb(workout)
-            self.mongodb.write_workout_to_json(workout)
+            self.db.export_workout(workout)
+            self.write_workout_to_json(workout)
             self.download_workout_image(workout)
 
         self.new_workouts = True
         
-        self.workouts = self.mongodb.ingest_workouts_from_mongodb()
+        self.workouts = self.db.ingest_workouts()
         
         self.processed_df = self.make_dataframe()
         if self.pivots is not None:
@@ -64,21 +78,13 @@ class PelotonProcessor():
         self.chart_maker = PelotonChartMaker(self.workouts, self.pivots)
         self.write_csv_files()
 
-    def get_workouts_from_mongodb(self) -> list[PelotonWorkoutData]:
-        return self.mongodb.ingest_workouts_from_mongodb()
-
-    def get_workouts_from_sql(self) -> list[PelotonWorkoutData]:
-        return self.sql_writer.ingest_workouts_from_sql()
-
-    def get_workouts_from_json(self) -> list[PelotonWorkoutData]:
-        self.json_writer.refresh_data()
-        return self.json_writer.get_workouts_from_json()
-
-    def reprocess_mongodb_data(self) -> None:
-        ''' Reprocesses the raw workout data in MongoDB, replaces the data in MongoDB, and writes new JSON files. '''
+    def _reprocess_workout_data(self,
+                              workout_list: list[PelotonWorkoutData] = None
+                              ) -> list[PelotonWorkoutData]:
+        workout_list = self.workouts if workout_list is None else workout_list
         
-        workout_list = []
-        for workout in self.workouts:
+        output_list = []
+        for workout in workout_list:
             workout_id = workout.workout_id
             summary_raw = workout.summary_raw
             metrics_raw = workout.metrics_raw
@@ -89,48 +95,81 @@ class PelotonProcessor():
                 summary=PelotonSummary(**summary_raw),
                 metrics=PelotonMetrics(**metrics_raw)
                 )
-            workout_list.append(workout_data)
+            output_list.append(workout_data)
 
-        self.workouts = workout_list
+        return output_list
+
+    def get_workouts(self) -> list[PelotonWorkoutData]:
+        return self.db.ingest_workouts()
+
+    def get_workouts_from_json() -> list[PelotonWorkoutData]:
+        try:
+            json_files = [file for file in WORKOUTS_DIR.iterdir() if file.suffix == '.json']
+        except FileNotFoundError as e:
+            print(e)
+            return list()
+        
+        if len(json_files) == 0:
+            print(f"No JSON files found in {WORKOUTS_DIR}")
+            return list()
+
+        output_list = []
+        for file in json_files:
+            with open(file, 'r') as f:
+                workout = PelotonWorkoutData.model_validate_json(f.read())
+                output_list.append(workout)
+                
+        return output_list
+    
+    def write_workout_to_json(self, workout: PelotonWorkoutData) -> None:
+        print(f"Writing JSON file for workout {workout.workout_id} to disk...")
+        with open(WORKOUTS_DIR.joinpath(f"{workout.workout_id}.json"), 'w') as f:
+            f.write(workout.model_dump_json(indent=4))
+
+    def backup_all_workouts_to_json(self) -> None:
+        for workout in self.workouts:
+            print(f"Writing workout {workout.workout_id} to JSON...")
+            self.write_workout_to_json(workout)
+
+    def get_instructors_dict_from_json(self) -> dict:
+        try:
+            with open(INSTRUCTORS_JSON, 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return dict()
+
+    def add_instructor_to_json(self, instructor: dict) -> None:
+        instructors_dict = self.get_instructors_dict_from_json()
+        instructors_dict.update({instructor['instructor_id']: instructor})
+        with open(INSTRUCTORS_JSON, 'w') as f:
+            json.dump(instructors_dict, f, indent=4)
+
+    def reprocess_db_data(self) -> None:
+        ''' Reprocesses the raw workout data in the database, 
+        replaces the data in the database, and writes new JSON files. '''
+        
+        new_workout_list = self._reprocess_workout_data()
+        self.workouts = new_workout_list
         self.processed_df = self.make_dataframe()
 
         for workout in self.workouts:
-            self.mongodb.update_workout_in_mongodb(workout)
-            self.mongodb.write_workout_to_json(workout)
+            self.db.update_workout(workout)
+            self.write_workout_to_json(workout)
     
     def reprocess_json_data(self) -> None:
-        ''' Reprocess the JSON data and update the internal state accordingly. '''
-        
-        self.json_writer.refresh_data()
-        self.workouts = self.get_workouts_from_json()
+        json_workout_list = self.get_workouts_from_json()
+        new_workout_list = self._reprocess_workout_data(json_workout_list)
 
-        workout_list = []
-        for workout in self.workouts:
-            workout_id = workout.workout_id
-            summary_raw = workout.summary_raw
-            metrics_raw = workout.metrics_raw
-            workout_data = PelotonWorkoutData(
-                workout_id=workout_id,
-                summary_raw=summary_raw,
-                metrics_raw=metrics_raw,
-                summary=PelotonSummary(**summary_raw),
-                metrics=PelotonMetrics(**metrics_raw)
-                )
-            workout_list.append(workout_data)
-
-        self.workouts = workout_list
-        self.processed_df = self.make_dataframe()
-
-        for workout in self.workouts:
-            self.json_writer.write_workout_to_json(workout)
+        for workout in new_workout_list:
+            self.write_workout_to_json(workout)
 
     def _get_new_workout_ids(self) -> list[str]:
         workouts_on_peloton_num = self.py_conn.get_total_workouts_num()
-        workouts_on_disk_num = len(self.mongodb.get_workout_id_list_from_mongodb())
+        workouts_on_disk_num = len(self.db.get_workout_id_list())
         new_workouts_num = workouts_on_peloton_num - workouts_on_disk_num
 
         workout_ids_on_peloton = self.py_conn.get_workout_ids()
-        workout_ids_on_disk = self.mongodb.get_workout_id_list_from_mongodb()
+        workout_ids_on_disk = self.db.get_workout_id_list()
         new_workout_ids = [workout_id for workout_id in workout_ids_on_peloton
                             if workout_id not in workout_ids_on_disk]
 
