@@ -3,9 +3,8 @@ from peloton.constants import (DATA_DIR, EASTERN_TIME, IMAGES_DIR,
                                PELOTON_BASE_URL, PELOTON_SPREADSHEET,
                                SESSION_JSON, SQLITE_FILENAME, WORKOUTS_DIR)
 from peloton.handlers import (PelotonChartMaker, PylotonZMV,
-                              PelotonPivots, PelotonJSONWriter,
-                              PelotonMongoDB, PelotonSQL)
-from peloton.helpers import create_mariadb_engine
+                              PelotonPivots, PelotonMongoDB,
+                              PelotonSQL)
 from peloton.peloton_processor import PelotonProcessor
 
 from peloton.models import (PelotonHumanInstructor, PelotonMetrics,
