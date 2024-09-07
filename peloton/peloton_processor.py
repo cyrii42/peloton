@@ -10,10 +10,9 @@ from peloton.constants import (DF_DTYPES_DICT, PELOTON_PASSWORD,
                                PELOTON_USERNAME, IMAGES_DIR,
                                DATA_DIR, EASTERN_TIME)
 from peloton.exceptions import WorkoutMismatchError
-from peloton.handlers import (PelotonChartMaker, PelotonCSVWriter,
+from peloton.handlers import (PelotonChartMaker, PylotonZMV,
                               PelotonPivots, PelotonMongoDB, 
-                              PelotonSQL, PelotonStdoutPrinter,
-                              PylotonZMV)
+                              PelotonSQL)
 from peloton.models import (PelotonMetrics, PelotonSummary,
                             PelotonWorkoutData)
 
