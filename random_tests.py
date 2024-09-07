@@ -41,7 +41,7 @@ from zoneinfo import ZoneInfo
 from collections import OrderedDict
 import math
 
-from peloton import PelotonProcessor
+from peloton import PelotonProcessor, PelotonWorkoutData, WORKOUTS_DIR
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, computed_field, model_validator,  BeforeValidator
 
@@ -174,3 +174,23 @@ peloton = PelotonProcessor()
 dicts = peloton.make_list_of_dicts()
 asdf2 = PelotonDataFrameRow.model_validate(dicts[149]).model_dump(exclude=['workout_id', 'start_time'])
 print(asdf2)
+
+def get_workouts_from_json() -> list[PelotonWorkoutData]:
+    try:
+        json_files = [file for file in WORKOUTS_DIR.iterdir() if file.suffix == '.json']
+    except FileNotFoundError:
+        return list()
+    
+    if len(json_files) == 0:
+        print('noooope')
+        return list()
+
+    output_list = []
+    for file in json_files:
+        with open(file, 'r') as f:
+            output_list.append(PelotonWorkoutData.model_validate_json(f.read()))
+    return output_list
+
+print(WORKOUTS_DIR)
+print(get_workouts_from_json())
+# print([file for file in WORKOUTS_DIR.iterdir() if file.suffix == '.json'])
