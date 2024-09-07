@@ -1,12 +1,16 @@
+import urllib3
+import io
+
 import pandas as pd
 import sqlalchemy as db
+from PIL import Image
 
 from peloton.constants import (DF_DTYPES_DICT, PELOTON_PASSWORD,
-                               PELOTON_USERNAME)
+                               PELOTON_USERNAME, IMAGES_DIR)
 from peloton.exceptions import WorkoutMismatchError
 from peloton.handlers import (PelotonChartMaker, PelotonCSVWriter,
-                              PelotonImageDownloader, PelotonMongoDB, 
-                              PelotonSQL, PelotonStdoutPrinter, PelotonPivots)
+                              PelotonPivots, PelotonMongoDB, 
+                              PelotonSQL, PelotonStdoutPrinter)
 from peloton.pyloton_zmv import PylotonZMV
 from peloton.models import (PelotonMetrics, PelotonSummary,
                             PelotonWorkoutData)
@@ -22,7 +26,6 @@ class PelotonProcessor():
         self.processed_df = self.make_dataframe() if len(self.workouts) > 0 else None
         self.pivots = PelotonPivots(self.processed_df) if self.processed_df is not None else None
         self.chart_maker = PelotonChartMaker(self.workouts, self.pivots)
-        self.image_downloader = PelotonImageDownloader()
 
     def check_for_new_workouts(self) -> None:       
         new_workout_ids = self._get_new_workout_ids()
@@ -48,7 +51,7 @@ class PelotonProcessor():
         for workout in new_workout_list:
             self.mongodb.export_workout_to_mongodb(workout)
             self.mongodb.write_workout_to_json(workout)
-            self.image_downloader.download_workout_image(workout)
+            self.download_workout_image(workout)
 
         self.new_workouts = True
         
@@ -149,6 +152,34 @@ class PelotonProcessor():
                      .reset_index(drop=True))
         output_df = output_df.astype({key: value for key, value in DF_DTYPES_DICT.items() if key in output_df.columns}, errors='ignore')               
         return output_df
+
+    def download_workout_image(self, workout: PelotonWorkoutData) -> None:
+        if workout.summary.ride.image_url is None:
+            return None
+        
+        print(f"Downloading image for workout {workout.workout_id}...")
+
+        image_url = workout.summary.ride.image_url
+        local_filename = IMAGES_DIR.joinpath(image_url.split(sep='/')[-1])
+        thumb_filename = local_filename.with_stem(f"{local_filename.stem}_thumb")
+
+        http = urllib3.PoolManager()
+        try:
+            response: urllib3.response.BaseHTTPResponse = http.request('GET', image_url)           
+        except urllib3.exceptions.LocationValueError as e:
+            print(e)
+        else:
+            if response.status == 200:
+                img_data = io.BytesIO(response.data)
+                img = Image.open(img_data)
+                
+                thumb = img.copy()
+                thumb.thumbnail(size=(250, 250))
+
+                img.save(local_filename)
+                thumb.save(thumb_filename)
+            else:
+                print(f"ERROR - HTTP Status Code: {response.status}")
     
     def make_list_of_dicts(self) -> list[dict]:
         return [workout.create_dictionary() for workout in self.workouts]
