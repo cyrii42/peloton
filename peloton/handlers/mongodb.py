@@ -1,10 +1,24 @@
-import json
+from pymongo import MongoClient
 
-from peloton.constants import (MONGODB_COLLECTION, MONGODB_DATABASE,
-                               WORKOUTS_DIR, MONGODB_INSTRUCTORS_COLLECTION)
-
+from peloton.constants import (MONGODB_HOSTNAME, MONGODB_DATABASE,
+                               MONGODB_COLLECTION, MONGODB_INSTRUCTORS_COLLECTION)
 from peloton.models import PelotonWorkoutData
-from .mongodb_conn import MongoDBConnection
+
+
+class MongoDBConnection():
+    """ MongoDB Connection """    
+    def __init__(self, host: str = MONGODB_HOSTNAME, port: int = 27017):
+        self.host = host
+        self.port = port
+        self.connection = None    
+
+    def __enter__(self) -> 'MongoDBConnection':
+        self.connection = MongoClient(self.host, self.port)
+        return self    
+
+    def __exit__(self, exc_type, exc_value, exc_traceback) -> None:
+        self.connection.close()
+
 
 class PelotonMongoDB():
     def __init__(self):
@@ -65,7 +79,6 @@ class PelotonMongoDB():
             collection = db[MONGODB_INSTRUCTORS_COLLECTION]
             collection.insert_one(instructor)
 
-    
 
 def main():
     ...
