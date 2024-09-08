@@ -32,7 +32,7 @@
 # print(list(**d1))
 
 from datetime import timedelta, date, datetime
-from peloton.constants import EASTERN_TIME
+from peloton import EASTERN_TIME
 import pandas as pd
 from uuid import UUID, uuid4
 from typing import Optional, Annotated, Union
