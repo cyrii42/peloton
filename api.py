@@ -11,7 +11,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from zoneinfo import ZoneInfo
 
-from peloton import PelotonDataFrameRow, PelotonPivotTableRow, PelotonProcessor, PelotonWorkoutData
+from peloton.models import PelotonWorkoutData, PelotonDataFrameRow, PelotonPivotTableRow
+from peloton import PelotonProcessor
 
 LOCAL_TZ = ZoneInfo('America/New_York')
 
@@ -166,3 +167,10 @@ async def get_line_chart_df(workout_id: str):
     df_json = df.to_json(orient='records')
 
     return json.loads(df_json)
+
+
+def main():
+    pass
+
+if __name__ == '__main__':
+    main()
