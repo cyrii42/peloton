@@ -32,7 +32,7 @@
 # print(list(**d1))
 
 from datetime import timedelta, date, datetime
-from peloton import EASTERN_TIME
+
 import pandas as pd
 from uuid import UUID, uuid4
 from typing import Optional, Annotated, Union
@@ -41,7 +41,9 @@ from zoneinfo import ZoneInfo
 from collections import OrderedDict
 import math
 
-from peloton import PelotonProcessor, PelotonWorkoutData, WORKOUTS_DIR
+from peloton.helpers.constants import EASTERN_TIME, WORKOUTS_DIR
+from peloton.models import PelotonWorkoutData
+from peloton import PelotonProcessor
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, computed_field, model_validator,  BeforeValidator
 
