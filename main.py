@@ -5,7 +5,6 @@ from pathlib import Path
 from typing import Annotated, Union
 
 import pandas as pd
-import sqlalchemy as db
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
@@ -13,19 +12,10 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from zoneinfo import ZoneInfo
 
-from peloton.helpers import create_mariadb_engine
 from peloton.models import PelotonWorkoutData, PelotonDataFrameRow, PelotonPivotTableRow
 from peloton import PelotonProcessor
 
 LOCAL_TZ = ZoneInfo('America/New_York')
-SQLITE_FILENAME = "sqlite:///data/peloton.db"
-MARIADB_DATABASE = "peloton"
-
-parser = argparse.ArgumentParser()
-parser.add_argument('-c', '--check-new-workouts', dest='CHECK_FOR_NEW_WORKOUTS',
-                    action='store_const', const=True, default=False,
-                    help='check for new workouts on remote Peloton database')
-args = parser.parse_args()
 
 origins = ["*"]
 
@@ -181,6 +171,12 @@ async def get_line_chart_df(workout_id: str):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--check-new-workouts', dest='CHECK_FOR_NEW_WORKOUTS',
+                        action='store_const', const=True, default=False,
+                        help='check for new workouts on remote Peloton database')
+    args = parser.parse_args()
+    
     if args.CHECK_FOR_NEW_WORKOUTS:
         peloton.check_for_new_workouts()
 
