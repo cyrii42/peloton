@@ -3,7 +3,7 @@ import argparse
 import sqlalchemy as db
 
 from peloton.helpers import create_mariadb_engine
-from ..peloton import PelotonProcessor
+from peloton import PelotonProcessor
 
 SQLITE_FILENAME = "sqlite:///data/peloton.db"
 MARIADB_DATABASE = "peloton"
