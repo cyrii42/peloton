@@ -1,13 +1,13 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel, ConfigDict, field_serializer, field_validator, computed_field, Field, AliasChoices
 from typing import Optional
 
 from .ride import PelotonRideColumn
 from .achievement import PelotonAchievement
-from peloton.constants import EASTERN_TIME
 
-     
+EASTERN_TIME = ZoneInfo('America/New_York')
 
 class PelotonSummary(BaseModel):
     model_config = ConfigDict(frozen=True)

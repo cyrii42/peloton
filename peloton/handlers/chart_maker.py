@@ -7,7 +7,7 @@ import plotly.graph_objs as go
 
 from peloton.models import PelotonWorkoutData
 from peloton.handlers import PelotonPivots
-from peloton.constants import EASTERN_TIME
+from peloton.helpers.constants import EASTERN_TIME
 
 STRIVE_SCORE_COLOR_MAP = {
     'Zone 1': '#88cfa5',

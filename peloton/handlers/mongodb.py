@@ -1,6 +1,6 @@
 from pymongo import MongoClient
 
-from peloton.constants import (MONGODB_HOSTNAME, MONGODB_DATABASE,
+from peloton.helpers.constants import (MONGODB_HOSTNAME, MONGODB_DATABASE,
                                MONGODB_COLLECTION, MONGODB_INSTRUCTORS_COLLECTION)
 from peloton.models import PelotonWorkoutData
 
@@ -25,6 +25,12 @@ class PelotonMongoDB():
         self.mongodb_client = MongoDBConnection()
 
     def get_workout_id_list(self) -> list[str]:
+        """
+        _summary_
+
+        Returns:
+            _description_
+        """
         with self.mongodb_client as client:
             db = client.connection[MONGODB_DATABASE]
             collection = db[MONGODB_COLLECTION]

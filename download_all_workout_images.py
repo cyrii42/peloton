@@ -1,5 +1,5 @@
 from peloton.helpers import create_mariadb_engine
-from peloton.peloton_processor import PelotonProcessor
+from peloton import PelotonProcessor
 from urllib.request import urlretrieve
 
 

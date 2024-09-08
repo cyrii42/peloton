@@ -17,7 +17,7 @@ from pydantic import (AliasChoices, BaseModel, ConfigDict, Field,
 from sqlalchemy.orm import declarative_base
 from typing_extensions import List, Optional
 # from peloton_sql import PelotonSQL
-from ..peloton.exceptions import PelotonInstructorNotFoundError, WorkoutMismatchError
+from ..peloton.helpers.exceptions import PelotonInstructorNotFoundError, WorkoutMismatchError
 
 BASE_URL = "https://api.onepeloton.com"
 EASTERN_TIME = ZoneInfo('America/New_York')

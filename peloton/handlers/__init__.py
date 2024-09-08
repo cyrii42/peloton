@@ -3,3 +3,4 @@ from .pivot_table_maker import PelotonPivots
 from .chart_maker import PelotonChartMaker
 from .mongodb import PelotonMongoDB
 from .pyloton_zmv import PylotonZMV
+from .peloton_processor import PelotonProcessor

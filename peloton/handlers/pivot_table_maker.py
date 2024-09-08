@@ -1,5 +1,5 @@
 import pandas as pd
-from peloton.constants import EASTERN_TIME
+from peloton.helpers.constants import EASTERN_TIME
 
 
 class PelotonPivots():

@@ -9,17 +9,24 @@ import pandas as pd
 import sqlalchemy as db
 from PIL import Image
 
-from peloton.constants import (DF_DTYPES_DICT, PELOTON_PASSWORD,
+from peloton.helpers.constants import (DF_DTYPES_DICT, PELOTON_PASSWORD,
                                PELOTON_USERNAME, IMAGES_DIR, INSTRUCTORS_JSON,
                                DATA_DIR, WORKOUTS_DIR, EASTERN_TIME)
-from peloton.exceptions import WorkoutMismatchError
+from peloton.helpers.exceptions import WorkoutMismatchError
 from peloton.handlers import (PelotonChartMaker, PylotonZMV,
                               PelotonPivots, PelotonMongoDB)
 from peloton.models import (PelotonMetrics, PelotonSummary,
                             PelotonWorkoutData)
 
 class PelotonDatabase(Protocol):
-    def get_workout_id_list(self) -> list[str]: ...
+    def get_workout_id_list(self) -> list[str]: 
+        """
+        _summary_
+
+        Returns:
+            _description_
+        """
+        ...
     def ingest_workouts(self) -> list[PelotonWorkoutData]: ...
     def export_workout(self, workout: PelotonWorkoutData) -> None: ...
     def update_workout(self, workout: PelotonWorkoutData) -> None: ...
@@ -28,14 +35,33 @@ class PelotonDatabase(Protocol):
     def add_instructor(self, instructor: dict) -> None: ...   
 
 
-class PelotonProcessor():
+class PelotonProcessor():   
+    """Primary class for doing Peloton stuff!
+    
+    Attributes
+    ----------
+    py_conn : PylotonZMV
+        Connection objeczt w/ methods for pulling data from Peloton
+    db : PelotonDatabase
+        Protocol class for internal database connector (defaults to PelotonMongoDB)
+    workouts : list[PelotonWorkoutData]
+        List of Pydantic models w/ workout data
+    processed_df : pd.DataFrame
+        Custom Pandas dataframe constructed from workout data
+    pivots : PelotonPivots
+        Object w/ methods for creating & printing pivot tables from workout data
+    chart_maker : PelotonChartMaker
+        Object w/ methods for creating chart tables & graphs from workout data
+
+    """
+    
     def __init__(self, 
                  username: str = PELOTON_USERNAME, 
                  password: str = PELOTON_PASSWORD,
-                 db: PelotonDatabase = None
+                 db: PelotonDatabase = PelotonMongoDB()
                  ) -> None:
         self.py_conn = PylotonZMV(username, password)
-        self.db = db if db is not None else PelotonMongoDB()
+        self.db = db #if db is not None else PelotonMongoDB()
         self.workouts = self.db.ingest_workouts()
         self.new_workouts = False
         self.processed_df = self.make_dataframe() if len(self.workouts) > 0 else None
@@ -78,90 +104,8 @@ class PelotonProcessor():
         self.chart_maker = PelotonChartMaker(self.workouts, self.pivots)
         self.write_csv_files()
 
-    def _reprocess_workout_data(self,
-                              workout_list: list[PelotonWorkoutData] = None
-                              ) -> list[PelotonWorkoutData]:
-        workout_list = self.workouts if workout_list is None else workout_list
-        
-        output_list = []
-        for workout in workout_list:
-            workout_id = workout.workout_id
-            summary_raw = workout.summary_raw
-            metrics_raw = workout.metrics_raw
-            workout_data = PelotonWorkoutData(
-                workout_id=workout_id,
-                summary_raw=summary_raw,
-                metrics_raw=metrics_raw,
-                summary=PelotonSummary(**summary_raw),
-                metrics=PelotonMetrics(**metrics_raw)
-                )
-            output_list.append(workout_data)
-
-        return output_list
-
     def get_workouts(self) -> list[PelotonWorkoutData]:
         return self.db.ingest_workouts()
-
-    def get_workouts_from_json() -> list[PelotonWorkoutData]:
-        try:
-            json_files = [file for file in WORKOUTS_DIR.iterdir() if file.suffix == '.json']
-        except FileNotFoundError as e:
-            print(e)
-            return list()
-        
-        if len(json_files) == 0:
-            print(f"No JSON files found in {WORKOUTS_DIR}")
-            return list()
-
-        output_list = []
-        for file in json_files:
-            with open(file, 'r') as f:
-                workout = PelotonWorkoutData.model_validate_json(f.read())
-                output_list.append(workout)
-                
-        return output_list
-    
-    def write_workout_to_json(self, workout: PelotonWorkoutData) -> None:
-        print(f"Writing JSON file for workout {workout.workout_id} to disk...")
-        with open(WORKOUTS_DIR.joinpath(f"{workout.workout_id}.json"), 'w') as f:
-            f.write(workout.model_dump_json(indent=4))
-
-    def backup_all_workouts_to_json(self) -> None:
-        for workout in self.workouts:
-            print(f"Writing workout {workout.workout_id} to JSON...")
-            self.write_workout_to_json(workout)
-
-    def get_instructors_dict_from_json(self) -> dict:
-        try:
-            with open(INSTRUCTORS_JSON, 'r') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            return dict()
-
-    def add_instructor_to_json(self, instructor: dict) -> None:
-        instructors_dict = self.get_instructors_dict_from_json()
-        instructors_dict.update({instructor['instructor_id']: instructor})
-        with open(INSTRUCTORS_JSON, 'w') as f:
-            json.dump(instructors_dict, f, indent=4)
-
-    def reprocess_db_data(self) -> None:
-        ''' Reprocesses the raw workout data in the database, 
-        replaces the data in the database, and writes new JSON files. '''
-        
-        new_workout_list = self._reprocess_workout_data()
-        self.workouts = new_workout_list
-        self.processed_df = self.make_dataframe()
-
-        for workout in self.workouts:
-            self.db.update_workout(workout)
-            self.write_workout_to_json(workout)
-    
-    def reprocess_json_data(self) -> None:
-        json_workout_list = self.get_workouts_from_json()
-        new_workout_list = self._reprocess_workout_data(json_workout_list)
-
-        for workout in new_workout_list:
-            self.write_workout_to_json(workout)
 
     def _get_new_workout_ids(self) -> list[str]:
         workouts_on_peloton_num = self.py_conn.get_total_workouts_num()
@@ -257,6 +201,98 @@ class PelotonProcessor():
         self.pivots.year_table.to_csv(DATA_DIR.joinpath('year_table.csv'))
         self.pivots.month_table.to_csv(DATA_DIR.joinpath('month_table.csv'))
         self.pivots.totals_table.to_csv(DATA_DIR.joinpath('totals_table.csv'))
+
+    def get_workouts_from_json() -> list[PelotonWorkoutData]:
+        try:
+            json_files = [file for file in WORKOUTS_DIR.iterdir() if file.suffix == '.json']
+        except FileNotFoundError as e:
+            print(e)
+            return list()
+        
+        if len(json_files) == 0:
+            print(f"No JSON files found in {WORKOUTS_DIR}")
+            return list()
+
+        output_list = []
+        for file in json_files:
+            with open(file, 'r') as f:
+                workout = PelotonWorkoutData.model_validate_json(f.read())
+                output_list.append(workout)
+                
+        return output_list
+    
+    def write_workout_to_json(self, workout: PelotonWorkoutData) -> None:
+        print(f"Writing JSON file for workout {workout.workout_id} to disk...")
+        with open(WORKOUTS_DIR.joinpath(f"{workout.workout_id}.json"), 'w') as f:
+            f.write(workout.model_dump_json(indent=4))
+
+    def backup_all_workouts_to_json(self) -> None:
+        for workout in self.workouts:
+            print(f"Writing workout {workout.workout_id} to JSON...")
+            self.write_workout_to_json(workout)
+
+    def get_instructors_dict_from_json(self) -> dict:
+        try:
+            with open(INSTRUCTORS_JSON, 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return dict()
+
+    def add_instructor_to_json(self, instructor: dict) -> None:
+        """
+        Takes a dictionary with Peloton instructor data and adds it to the
+        master JSON file with all instructor data.
+
+        Args:
+            instructor (dict): asfdasdf
+        """
+        instructors_dict = self.get_instructors_dict_from_json()
+        instructors_dict.update({instructor['instructor_id']: instructor})
+        with open(INSTRUCTORS_JSON, 'w') as f:
+            json.dump(instructors_dict, f, indent=4)
+
+    def _reprocess_workout_data(self,
+                              workout_list: list[PelotonWorkoutData] = None
+                              ) -> list[PelotonWorkoutData]:        
+        workout_list = self.workouts if workout_list is None else workout_list
+        
+        output_list = []
+        for workout in workout_list:
+            workout_id = workout.workout_id
+            summary_raw = workout.summary_raw
+            metrics_raw = workout.metrics_raw
+            workout_data = PelotonWorkoutData(
+                workout_id=workout_id,
+                summary_raw=summary_raw,
+                metrics_raw=metrics_raw,
+                summary=PelotonSummary(**summary_raw),
+                metrics=PelotonMetrics(**metrics_raw)
+                )
+            output_list.append(workout_data)
+
+        return output_list
+
+    def reprocess_json_data(self) -> None:
+        ''' Re-ingests all workout data from the JSON files, reprocesses
+        the data, and writes new JSON files. '''
+        
+        json_workout_list = self.get_workouts_from_json()
+        new_workout_list = self._reprocess_workout_data(json_workout_list)
+
+        for workout in new_workout_list:
+            self.write_workout_to_json(workout)
+
+    def reprocess_db_data(self) -> None:
+        ''' Reprocesses the raw workout data in the database, 
+        replaces the data in the database, and writes new JSON files. '''
+        
+        new_workout_list = self._reprocess_workout_data()
+        self.workouts = new_workout_list
+        self.processed_df = self.make_dataframe()
+
+        for workout in self.workouts:
+            self.db.update_workout(workout)
+            self.write_workout_to_json(workout)
 
 def main():
     print("This is a module, not a script.")

@@ -1,4 +1,4 @@
-from peloton.peloton_processor import PelotonProcessor
+from peloton import PelotonProcessor
 import pandas as pd
 from pprint import pprint
 

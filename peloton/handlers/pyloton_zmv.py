@@ -5,10 +5,10 @@ import requests
 from pydantic import BaseModel, Field, field_serializer
 from typing_extensions import Optional, Self
 
-from peloton.constants import (PELOTON_BASE_URL, EASTERN_TIME,
+from peloton.helpers.constants import (PELOTON_BASE_URL, EASTERN_TIME,
                         PELOTON_USER_ID, SESSION_JSON)
                         
-from peloton.exceptions import PelotonInstructorNotFoundError
+from peloton.helpers.exceptions import PelotonInstructorNotFoundError
 
 
 class PelotonSessionIDToken(BaseModel):

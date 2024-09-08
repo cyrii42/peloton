@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import (AliasChoices, BaseModel, ConfigDict, Field,
                       ValidationInfo, computed_field, field_validator)
 
-from peloton.constants import INSTRUCTOR_NAMES_DICT
+from peloton.helpers.constants import INSTRUCTOR_NAMES_DICT
 
 from .instructors import PelotonNonHumanInstructor
 

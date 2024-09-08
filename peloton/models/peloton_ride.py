@@ -7,7 +7,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 from typing_extensions import Self
 
-from peloton.constants import EASTERN_TIME
+EASTERN_TIME = ZoneInfo('America/New_York')
 
 
 @dataclass

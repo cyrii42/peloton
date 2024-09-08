@@ -9,7 +9,7 @@ import pandas as pd
 from trash.pyloton_models import PelotonMetrics, PelotonSummary, PelotonWorkoutID
 import sqlalchemy as db
 from constants import PELOTON_PASSWORD, PELOTON_USERNAME
-from peloton.exceptions import WorkoutMismatchError
+from peloton.helpers.exceptions import WorkoutMismatchError
 from pyloton_zmv import PylotonZMV
 
 # from pylotoncycle import PylotonCycle

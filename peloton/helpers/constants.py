@@ -7,27 +7,27 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Time zone setup
-EASTERN_TIME = ZoneInfo("America/New_York")
+EASTERN_TIME = ZoneInfo('America/New_York')
 
 # MongoDB setup
 MONGODB_DATABASE = 'peloton'
 MONGODB_COLLECTION = 'peloton'
 MONGODB_INSTRUCTORS_COLLECTION = 'peloton_instructors'
-MONGODB_HOSTNAME = os.getenv("MONGODB_HOSTNAME")
+MONGODB_HOSTNAME = os.getenv('MONGODB_HOSTNAME')
 
 # Home Assistant MariaDB setup
-MARIADB_SERVER = os.getenv("MARIADB_HASS_IP")
-MARIADB_USER = os.getenv("MARIADB_USERNAME_PYTHON")
-MARIADB_PASS = os.getenv("MARIADB_PASSWORD_PYTHON")
-MARIADB_DATABASE = "peloton"
-PELOTON_EXCEL_FILE = os.getenv("PELOTON_EXCEL_FILE")
+MARIADB_SERVER = os.getenv('MARIADB_HASS_IP')
+MARIADB_USER = os.getenv('MARIADB_USERNAME_PYTHON')
+MARIADB_PASS = os.getenv('MARIADB_PASSWORD_PYTHON')
+MARIADB_DATABASE = 'peloton'
+PELOTON_EXCEL_FILE = os.getenv('PELOTON_EXCEL_FILE')
 
 # PylotonCycle setup
-PELOTON_USERNAME = os.getenv("PELOTON_USERNAME")
-PELOTON_PASSWORD = os.getenv("PELOTON_PASSWORD")
-PELOTON_USER_ID = os.getenv("PELOTON_USER_ID")
-PELOTON_SPREADSHEET = os.getenv("PELOTON_SPREADSHEET")
-PELOTON_BASE_URL = "https://api.onepeloton.com"
+PELOTON_USERNAME = os.getenv('PELOTON_USERNAME')
+PELOTON_PASSWORD = os.getenv('PELOTON_PASSWORD')
+PELOTON_USER_ID = os.getenv('PELOTON_USER_ID')
+PELOTON_SPREADSHEET = os.getenv('PELOTON_SPREADSHEET')
+PELOTON_BASE_URL = 'https://api.onepeloton.com'
 
 # Path objects
 # ROOT_DIR = Path.home().joinpath('python', 'peloton')
@@ -38,7 +38,7 @@ IMAGES_DIR = ROOT_DIR.joinpath('data', 'workout_images')
 SESSION_JSON = ROOT_DIR.joinpath('session_id.json')
 INSTRUCTORS_JSON = ROOT_DIR.joinpath('peloton_instructors.json')
 
-SQLITE_FILENAME = f"sqlite:///{DATA_DIR.joinpath('peloton.db').resolve()}"
+SQLITE_FILENAME = f'sqlite:///{DATA_DIR.joinpath('peloton.db').resolve()}'
 
 DF_DTYPES_DICT = {
     'workout_id': 'string', 
