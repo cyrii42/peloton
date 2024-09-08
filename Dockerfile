@@ -30,4 +30,4 @@ RUN pip install --no-cache-dir --upgrade -r /tmp/requirements.txt && rm /tmp/req
 USER $USERNAME
 
 # start the server
-CMD ["fastapi", "run", "api.py", "--reload"]
+CMD ["fastapi", "run", "main.py", "--reload"]
