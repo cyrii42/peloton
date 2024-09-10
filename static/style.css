@@ -61,3 +61,47 @@ main {
 .table-pic {
     width: 55px;
   }
+  
+:root {
+  --pico-font-size: 100%;
+  }
+  
+.height-limited {
+  max-height: fit-content;
+}
+
+@media (min-width: 576px) {
+  .container {
+    width: 100vw;
+  }
+}
+@media (min-width: 768px) {
+  .container {
+    width: 95vw;
+  }
+}
+@media (min-width: 1024px) {
+  .container {
+    width: 90vw;
+  }
+}
+@media (min-width: 1280px) {
+  .container {
+    width: 85vw;
+  }
+}
+@media (min-width: 1536px) {
+  .container {
+    width: 75vw;
+  }
+}
+@media (min-width: 1700px) {
+  .container {
+    width: 70vw;
+  }
+}
+@media (min-width: 1900px) {
+  .container {
+    width: 65vw;
+  }
+}
