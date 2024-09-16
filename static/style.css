@@ -63,7 +63,7 @@ main {
   }
   
 :root {
-  font-size: clamp(0.7rem, 1vw, 1.1rem); 
+  font-size: clamp(0.5rem, 0.8vw, 1rem); 
   }
   
 .height-limited {
@@ -71,5 +71,5 @@ main {
 }
 
 .table {
-  width: clamp(40rem, 70%, 100rem)
+  width: clamp(40em, 65%, 100em)
 }
