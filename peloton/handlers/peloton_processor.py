@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from datetime import datetime
 from typing import Protocol
+from enum import Enum
 
 import pandas as pd
 import sqlalchemy as db
@@ -17,6 +18,7 @@ from peloton.handlers import (PelotonChartMaker, PylotonZMV,
                               PelotonPivots, PelotonMongoDB)
 from peloton.models import (PelotonMetrics, PelotonSummary,
                             PelotonWorkoutData)
+
 
 class PelotonDatabase(Protocol):
     def get_workout_id_list(self) -> list[str]: 
@@ -33,6 +35,19 @@ class PelotonDatabase(Protocol):
     def get_workout(self, workout_id: str) -> PelotonWorkoutData: ...
     def get_instructor(self, instructor_id: str) -> dict: ...
     def add_instructor(self, instructor: dict) -> None: ...   
+
+
+class PelotonDBType(Enum):
+    MONGODB = 'MongoDB'
+    SQLITE = 'SQLite'
+    MARIADB = 'MariaDB'
+    POSTGRES = 'PostgreSQL'
+    MYSQL = 'MySQL'
+
+
+def get_peloton_db(db_type: PelotonDBType) -> PelotonDatabase:
+    if db_type == PelotonDBType.MONGODB:
+        return PelotonMongoDB()
 
 
 class PelotonProcessor():   
@@ -58,16 +73,16 @@ class PelotonProcessor():
     def __init__(self, 
                  username: str = PELOTON_USERNAME, 
                  password: str = PELOTON_PASSWORD,
-                 db: PelotonDatabase = PelotonMongoDB()
+                 db_type: PelotonDBType = PelotonDBType.MONGODB
                  ) -> None:
         self.py_conn = PylotonZMV(username, password)
-        self.db = db #if db is not None else PelotonMongoDB()
+        self.db = get_peloton_db(db_type)
         self.workouts = self.db.ingest_workouts()
         self.new_workouts = False
         self.processed_df = self.make_dataframe() if len(self.workouts) > 0 else None
         self.pivots = PelotonPivots(self.processed_df) if self.processed_df is not None else None
         self.chart_maker = PelotonChartMaker(self.workouts, self.pivots)
-
+    
     def check_for_new_workouts(self) -> None:       
         new_workout_ids = self._get_new_workout_ids()
         if len(new_workout_ids) == 0:
