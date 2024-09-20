@@ -1,8 +1,23 @@
 **/session_id*.json
 !requirements.txt
-# data/
-# notebooks/
-
+**/*.csv
+**/*.txt
+**/*.jpg
+**/*.jpeg
+**/*.png
+**/*.db
+**/*.json
+**/*.ipynb
+!data/all_instructors.json
+!data/peloton_instructors.json
+data/raw_csv
+data/raw_txt
+!data/workout_images
+!data/workouts
+notebooks/
+scripts/
+trash/
+**/*.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

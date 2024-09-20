@@ -1,1 +1,0 @@
-from peloton import EASTERN_TIME
