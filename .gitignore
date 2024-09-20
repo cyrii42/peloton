@@ -1,3 +1,19 @@
+**/session_id*.json
+!requirements.txt
+**/*.csv
+**/*.txt
+**/*.jpg
+**/*.png
+**/*.db
+**/*.json
+!data/all_instructors.json
+!data/peloton_instructors.json
+data/raw_csv
+data/raw_txt
+notebooks/
+scripts/
+trash/
+
 # **/data/raw_csv
 # **/data/raw_txt
 **/session_id*.json
