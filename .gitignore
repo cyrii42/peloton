@@ -13,7 +13,7 @@
 data/raw_csv
 data/raw_txt
 !data/workout_images
-!/data/workouts
+!data/workouts
 notebooks/
 scripts/
 trash/
