@@ -3,9 +3,11 @@
 **/*.csv
 **/*.txt
 **/*.jpg
+**/*.jpeg
 **/*.png
 **/*.db
 **/*.json
+**/*.ipynb
 !data/all_instructors.json
 !data/peloton_instructors.json
 data/raw_csv
@@ -13,14 +15,6 @@ data/raw_txt
 notebooks/
 scripts/
 trash/
-
-# **/data/raw_csv
-# **/data/raw_txt
-**/session_id*.json
-# **/*.txt
-!requirements.txt
-# **/*.csv
-# **/workouts_backup_feb23
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
