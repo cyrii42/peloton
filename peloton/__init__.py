@@ -17,6 +17,6 @@
 import peloton.helpers.exceptions
 import peloton.helpers.constants
 import peloton.handlers
-import peloton.models
+import peloton.schema
 
 from peloton.handlers import PelotonProcessor

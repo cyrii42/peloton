@@ -4,7 +4,7 @@ from fastapi.responses import HTMLResponse
 from zoneinfo import ZoneInfo
 
 from peloton.api.templates import templates
-from peloton.models import PelotonDataFrameRow, PelotonPivotTableRow
+from peloton.schema import PelotonDataFrameRow, PelotonPivotTableRow
 
 LOCAL_TZ = ZoneInfo('America/New_York')
     

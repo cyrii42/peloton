@@ -12,7 +12,7 @@ from peloton.api.templates import templates
 from peloton.api.functions import (rename_columns, 
                                    construct_template_response_dataframe, 
                                    construct_template_response_pivot)
-from peloton.models import PelotonWorkoutData
+from peloton.schema import PelotonWorkoutData
 from peloton import PelotonProcessor
 
 LOCAL_TZ = ZoneInfo('America/New_York')

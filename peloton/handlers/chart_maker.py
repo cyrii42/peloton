@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objs as go
 
-from peloton.models import PelotonWorkoutData
+from peloton.schema import PelotonWorkoutData
 from peloton.handlers import PelotonPivots
 from peloton.helpers.constants import EASTERN_TIME
 

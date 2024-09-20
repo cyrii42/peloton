@@ -16,7 +16,7 @@ from peloton.helpers.constants import (DF_DTYPES_DICT, PELOTON_PASSWORD,
 from peloton.helpers.exceptions import WorkoutMismatchError
 from peloton.handlers import (PelotonChartMaker, PylotonZMV,
                               PelotonPivots, PelotonMongoDB)
-from peloton.models import (PelotonMetrics, PelotonSummary,
+from peloton.schema import (PelotonMetrics, PelotonSummary,
                             PelotonWorkoutData)
 
 

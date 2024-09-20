@@ -2,7 +2,7 @@ from pymongo import MongoClient
 
 from peloton.helpers.constants import (MONGODB_HOSTNAME, MONGODB_DATABASE,
                                MONGODB_COLLECTION, MONGODB_INSTRUCTORS_COLLECTION)
-from peloton.models import PelotonWorkoutData
+from peloton.schema import PelotonWorkoutData
 
 
 class MongoDBConnection():
