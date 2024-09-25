@@ -3,6 +3,7 @@ from zoneinfo import ZoneInfo
 from uuid import UUID, uuid4
 from datetime import datetime
 from pathlib import Path
+from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, AliasChoices, Field, field_validator, computed_field
 
@@ -15,15 +16,19 @@ class PelotonPivotTableRow(BaseModel):
     year: Optional[int] = Field(alias=AliasChoices('Year', 'year'), default=None)
     rides: Optional[int] = Field(alias=AliasChoices('Rides', 'rides'), default=None)
     days: Optional[int] = Field(alias=AliasChoices('Days', 'days'), default=None)
-    total_hours: Optional[float] = Field(alias=AliasChoices('Hours', 'total_hours'), default=None)
-    total_miles: Optional[float] = Field(alias=AliasChoices('Miles', 'total_miles'), default=None)
-    avg_calories: Optional[float] = Field(alias=AliasChoices('Avg. Cals', 'avg_calories'), default=None)
-    avg_output_min: Optional[float] = Field(alias=AliasChoices('OT/min', 'avg_output_min', 'avg_output/min'), default=None)
-    
+    total_hours: Decimal = Field(alias=AliasChoices('Hours', 'total_hours'))
+    total_miles: Decimal = Field(alias=AliasChoices('Miles', 'total_miles'))
+    avg_calories: Decimal = Field(alias=AliasChoices('Avg. Cals', 'avg_calories'))
+    avg_output_min: Decimal = Field(alias=AliasChoices('OT/min', 'avg_output_min', 'avg_output/min'))
+
     @field_validator('total_hours', 'total_miles', 'avg_calories', 'avg_output_min')
     @classmethod
-    def round_floats_to_two_decimal_places(cls, num: float | None) -> float | None:
-        return None if num is None else round(num, 2)
+    def quantize_decimal_fields(cls, num: Decimal | int | float) -> Decimal:
+        if isinstance(num, Decimal):
+            return num.quantize(Decimal('1.00'))
+        else:
+            num = Decimal(num)
+            return num.quantize(Decimal('1.00'))
         
     
 class PelotonDataFrameRow(BaseModel):
@@ -33,20 +38,36 @@ class PelotonDataFrameRow(BaseModel):
     title: str
     instructor_name: Optional[str] = None
     image_url: Optional[str] = None
-    leaderboard_rank: Optional[float] = None
-    leaderboard_percentile: Optional[float] = None
+    leaderboard_rank: Optional[int] = None
+    leaderboard_percentile: Optional[Decimal] = None
     total_leaderboard_users: Optional[int] = None
     total_output: Optional[int] = None
-    output_per_min: Optional[float] = None
-    distance: Optional[float] = None
+    output_per_min: Optional[Decimal] = None
+    distance: Optional[Decimal] = None
     calories: Optional[int] = None
-    effort_score: Optional[float] = None
+    effort_score: Optional[Decimal] = None
     
-    @field_validator('leaderboard_rank', 'leaderboard_percentile', 
-                     'output_per_min', 'distance', 'effort_score')
+    @field_validator('leaderboard_percentile', 'output_per_min', 'distance')
     @classmethod
-    def round_floats_to_two_decimal_places(cls, num: float | None) -> float | None:
-        return None if num is None else round(num, 2)
+    def quantize_decimal_fields(cls, num: Decimal | int | float | None) -> Decimal:
+        if num is None:
+            return None
+        if isinstance(num, Decimal):
+            return num.quantize(Decimal('1.00'))
+        else:
+            num = Decimal(num)
+            return num.quantize(Decimal('1.00'))
+
+    @field_validator('effort_score')
+    @classmethod
+    def quantize_effort_score(cls, num: Decimal | int | float | None) -> Decimal:
+        if num is None:
+            return None
+        if isinstance(num, Decimal):
+            return num.quantize(Decimal('1.0'))
+        else:
+            num = Decimal(num)
+            return num.quantize(Decimal('1.0'))
     
     @field_validator('start_time')
     @classmethod
