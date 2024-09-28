@@ -28,6 +28,18 @@ class PelotonSummary(BaseModel):
             return None
         else:
             return ((self.total_leaderboard_users - self.leaderboard_rank) / self.total_leaderboard_users)*100
+
+    @computed_field
+    def achievements_str(self) -> str | None:
+        if self.achievements is None or len(self.achievements) == 0:
+            return None
+        else:
+            output_str = ''
+            for i, achievement in enumerate(self.achievements, start=1):
+                output_str += achievement.name
+                if i < len(self.achievements):
+                    output_str += ' | '
+            return output_str
     
     @field_validator('workout_id')
     @classmethod
