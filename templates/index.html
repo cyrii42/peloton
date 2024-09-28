@@ -15,6 +15,13 @@
 </head>
 
 <body>
+  <!-- <div class="sidenav">
+    <button type="button" hx-get="/dataframe" hx-target="#peloton-table">Processed Data</button>
+    <button type="button" hx-get="/month_table" hx-target="#peloton-table">Month Table</button>
+    <button type="button" hx-get="/year_table" hx-target="#peloton-table">Year Table</button>
+    <button type="button" hx-get="/totals_table" hx-target="#peloton-table">Totals Table</button>
+  </div> -->
+  
   <header>
     <h1>FastAPI + HTMX</h1>
     <p>Boop bop bam!</p>
@@ -22,14 +29,14 @@
   
   <main class="container">
     <section role="group">
+      <button type="button" hx-get="/dataframe" hx-target="#peloton-table">Processed Data</button>
       <button type="button" hx-get="/month_table" hx-target="#peloton-table">Month Table</button>
       <button type="button" hx-get="/year_table" hx-target="#peloton-table">Year Table</button>
       <button type="button" hx-get="/totals_table" hx-target="#peloton-table">Totals Table</button>
-      <button type="button" hx-get="/dataframe" hx-target="#peloton-table">Processed Data</button>
     </section>  
     
     <section class="overflow-auto height-limited">
-      <table id="peloton-table" class="striped overflow-auto" hx-get="month_table" hx-swap="innerHTML" hx-trigger="load"></table>
+      <table id="peloton-table" class="striped overflow-auto" hx-get="dataframe" hx-swap="innerHTML" hx-trigger="load"></table>
     </section>
   </main>
 </body>
