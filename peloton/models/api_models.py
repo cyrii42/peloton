@@ -113,4 +113,4 @@ class PelotonDataFrameRow(BaseModel):
         thumb_filename = f"{filepath.stem}_thumb{filepath.suffix}"
         
         thumb_url = f"/workout_images/{thumb_filename}"
-        return f"<a href=\"/workout_images/{filename}\"><img class=\"table-pic\" src={thumb_url}></img></a>"
+        return f"<a href=\"/workout_images/{filename}\" target=\"_blank\"><img class=\"table-pic\" src={thumb_url}></img></a>"
