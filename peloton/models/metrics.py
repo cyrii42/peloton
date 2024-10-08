@@ -31,8 +31,8 @@ class PelotonMetricsSummaries(BaseModel):
     value: Optional[int | float] = Field(default=None)
 
 class PelotonMetricsEffortZones(BaseModel):
-    model_config = ConfigDict(frozen=True)
-    effort_score: float = Field(alias=AliasChoices('total_effort_points', 'effort_score'))
+    model_config = ConfigDict(frozen=True, populate_by_name=True)
+    effort_score: float = Field(alias='total_effort_points')
     # heart_rate_zone_durations: dict
 
 class PelotonMetricsSplitMetricsMetricsData(BaseModel):

@@ -10,16 +10,16 @@ from pydantic import BaseModel, ConfigDict, AliasChoices, Field, field_validator
 LOCAL_TZ = ZoneInfo('America/New_York') 
 
 class PelotonPivotTableRow(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, populate_by_name=True)
     id: UUID = Field(default_factory=uuid4, repr=False)
-    month: Optional[str] = Field(alias=AliasChoices('Month', 'month'), default=None)
-    year: Optional[int] = Field(alias=AliasChoices('Year', 'year'), default=None)
-    rides: Optional[int] = Field(alias=AliasChoices('Rides', 'rides'), default=None)
-    days: Optional[int] = Field(alias=AliasChoices('Days', 'days'), default=None)
-    total_hours: Decimal = Field(alias=AliasChoices('Hours', 'total_hours'))
-    total_miles: Decimal = Field(alias=AliasChoices('Miles', 'total_miles'))
-    avg_calories: Decimal = Field(alias=AliasChoices('Avg. Cals', 'avg_calories'))
-    avg_output_min: Decimal = Field(alias=AliasChoices('OT/min', 'avg_output_min', 'avg_output/min'))
+    month: Optional[str] = Field(alias='Month', default=None)
+    year: Optional[int] = Field(alias='Year', default=None)
+    rides: Optional[int] = Field(alias='Rides', default=None)
+    days: Optional[int] = Field(alias='Days', default=None)
+    total_hours: Decimal = Field(alias='Hours')
+    total_miles: Decimal = Field(alias='Miles')
+    avg_calories: Decimal = Field(alias='Avg. Cals')
+    avg_output_min: Decimal = Field(alias=AliasChoices('OT/min', 'avg_output/min'))
 
     @field_validator('total_hours', 'total_miles', 'avg_calories', 'avg_output_min')
     @classmethod
