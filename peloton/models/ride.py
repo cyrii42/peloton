@@ -9,17 +9,17 @@ from .instructors import PelotonNonHumanInstructor
 
 
 class PelotonRideColumn(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, populate_by_name=True)
     title: Optional[str] = None
     description: Optional[str] = None
-    ride_length: Optional[int] = Field(alias=AliasChoices('length', 'ride_length'), default=None)
-    ride_duration: Optional[int] = Field(alias=AliasChoices('duration', 'ride_duration'), default=None)
+    ride_length: Optional[int] = Field(alias='length', default=None)
+    ride_duration: Optional[int] = Field(alias='duration', default=None)
     image_url: Optional[str] = None
     difficulty_estimate: Optional[float] = None
     fitness_discipline: Optional[str] = None
-    ride_id: Optional[str] = Field(alias=AliasChoices('id', 'ride_id'), default=None)
-    instructor_json: Optional[PelotonNonHumanInstructor] = Field(alias=AliasChoices('instructor', 'instructor_json'), default=None)
-    instructor_id: Optional[str] = Field(alias=AliasChoices('instructor_id'), default=None)
+    ride_id: Optional[str] = Field(alias='id', default=None)
+    instructor_json: Optional[PelotonNonHumanInstructor] = Field(alias='instructor', default=None)
+    instructor_id: Optional[str] = None
         
     @field_validator('instructor_id')
     @classmethod

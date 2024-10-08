@@ -10,7 +10,7 @@ from .achievement import PelotonAchievement
 EASTERN_TIME = ZoneInfo('America/New_York')
 
 class PelotonSummary(BaseModel):
-    model_config = ConfigDict(frozen=True)
+    model_config = ConfigDict(frozen=True, populate_by_name=True)
     workout_id: str
     start_time: int | datetime | str
     end_time: int | datetime | str
@@ -19,7 +19,7 @@ class PelotonSummary(BaseModel):
     leaderboard_rank: Optional[int] = None
     total_leaderboard_users: Optional[int] = None
     average_effort_score: Optional[float] = None
-    achievements: Optional[list[PelotonAchievement]] = Field(alias=AliasChoices('achievement_templates', 'achievements'), default=None)
+    achievements: Optional[list[PelotonAchievement]] = Field(alias='achievement_templates', default=None)
     ride: PelotonRideColumn
 
     @computed_field

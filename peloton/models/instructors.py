@@ -4,8 +4,8 @@ from typing import List, Optional
 
 
 class PelotonHumanInstructor(BaseModel):
-    model_config = ConfigDict(frozen=True)
-    instructor_id: str = Field(alias=AliasChoices('ride_instructor_id', 'instructor_id', 'id'))
+    model_config = ConfigDict(frozen=True, populate_by_name=True)
+    instructor_id: str = Field(alias=AliasChoices('ride_instructor_id', 'id'))
     first_name: str
     last_name: str
     about_image_url: str
