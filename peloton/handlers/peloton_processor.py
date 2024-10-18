@@ -7,13 +7,18 @@ from typing import Protocol
 from enum import Enum
 
 import pandas as pd
-import sqlalchemy as db
-from PIL import Image
 
-from peloton.helpers.constants import (DF_DTYPES_DICT, PELOTON_PASSWORD,
-                               PELOTON_USERNAME, IMAGES_DIR, INSTRUCTORS_JSON,
-                               DATA_DIR, WORKOUTS_DIR, EASTERN_TIME)
+from peloton.helpers.constants import (DF_DTYPES_DICT, 
+                                       PELOTON_PASSWORD,
+                                       PELOTON_USERNAME, 
+                                       WORKOUT_IMAGES_DIR, 
+                                       ACHIEVEMENT_IMAGES_DIR,
+                                       INSTRUCTORS_JSON,
+                                       DATA_DIR,
+                                       WORKOUTS_DIR,
+                                       EASTERN_TIME)
 from peloton.helpers.exceptions import WorkoutMismatchError
+from peloton.helpers.functions import download_image, save_image, create_thumbnail
 from peloton.handlers import (PelotonChartMaker, PylotonZMV,
                               PelotonPivots, PelotonMongoDB)
 from peloton.models import (PelotonMetrics, PelotonSummary,
@@ -108,6 +113,7 @@ class PelotonProcessor():
             self.db.export_workout(workout)
             self.write_workout_to_json(workout)
             self.download_workout_image(workout)
+            self.download_achievement_images(workout)
 
         self.new_workouts = True
         
@@ -154,32 +160,31 @@ class PelotonProcessor():
 
     def download_workout_image(self, workout: PelotonWorkoutData) -> None:
         if workout.summary.ride.image_url is None:
+            print(f"No image available for workout {workout.workout_id}.")
             return None
         
         print(f"Downloading image for workout {workout.workout_id}...")
+        image_data = download_image(workout.summary.ride.image_url)
+        image_filename = workout.summary.ride.image_local_filename
+        if image_data is not None:
+            print(f"Downloaded!  Saving to disk and creating thumbnail...")
+            save_image(image_data, image_filename, WORKOUT_IMAGES_DIR)
+            create_thumbnail(image_data, image_filename, WORKOUT_IMAGES_DIR)
 
-        image_url = workout.summary.ride.image_url
-        local_filename = IMAGES_DIR.joinpath(image_url.split(sep='/')[-1])
-        thumb_filename = local_filename.with_stem(f"{local_filename.stem}_thumb")
+    def download_achievement_images(self, workout: PelotonWorkoutData) -> None:
+        num_achievements = len(workout.summary.achievements)
+        if num_achievements == 0:
+            return None
+        
+        print(f"Downloading {num_achievements} achievement images for workout {workout.workout_id}...")
+        for achievement in workout.summary.achievements:
+            if achievement.image_url is not None:
+                image_data = download_image(achievement.image_url)
+                image_filename = achievement.image_local_filename
+                if image_data is not None:
+                    print(f"Downloaded!  Saving to disk...")
+                    save_image(image_data, image_filename, ACHIEVEMENT_IMAGES_DIR)
 
-        http = urllib3.PoolManager()
-        try:
-            response: urllib3.response.BaseHTTPResponse = http.request('GET', image_url)           
-        except urllib3.exceptions.LocationValueError as e:
-            print(e)
-        else:
-            if response.status == 200:
-                img_data = io.BytesIO(response.data)
-                img = Image.open(img_data)
-                
-                thumb = img.copy()
-                thumb.thumbnail(size=(250, 250))
-
-                img.save(local_filename)
-                thumb.save(thumb_filename)
-            else:
-                print(f"ERROR - HTTP Status Code: {response.status}")
-    
     def make_list_of_dicts(self) -> list[dict]:
         return [workout.create_dictionary() for workout in self.workouts]
 
