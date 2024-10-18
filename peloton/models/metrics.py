@@ -1,6 +1,5 @@
-from pydantic import BaseModel, ConfigDict, field_validator, Field, AliasChoices
-from typing_extensions import List, Optional
-
+from pydantic import BaseModel, ConfigDict, field_validator, Field
+from typing_extensions import Optional
 
 class PelotonMetricsMetricsHeartRateZone (BaseModel):
     model_config = ConfigDict(frozen=True)
@@ -11,7 +10,6 @@ class PelotonMetricsMetricsHeartRateZone (BaseModel):
     range: str
     slug: str
 
-
 class PelotonMetricsMetrics(BaseModel):
     model_config = ConfigDict(frozen=True)
     average_value: Optional[int | float] = Field(default=None)
@@ -19,9 +17,8 @@ class PelotonMetricsMetrics(BaseModel):
     display_unit: str
     max_value: Optional[int | float] = Field(default=None)
     slug: str
-    values: Optional[List[int | float]] = None
-    zones: Optional[List[PelotonMetricsMetricsHeartRateZone]] = None
-
+    values: Optional[list[int | float]] = None
+    zones: Optional[list[PelotonMetricsMetricsHeartRateZone]] = None
 
 class PelotonMetricsSummaries(BaseModel):
     model_config = ConfigDict(frozen=True)
@@ -31,8 +28,8 @@ class PelotonMetricsSummaries(BaseModel):
     value: Optional[int | float] = Field(default=None)
 
 class PelotonMetricsEffortZones(BaseModel):
-    model_config = ConfigDict(frozen=True)
-    effort_score: float = Field(alias=AliasChoices('total_effort_points', 'effort_score'))
+    model_config = ConfigDict(frozen=True, populate_by_name=True)
+    effort_score: float = Field(alias='total_effort_points')
     # heart_rate_zone_durations: dict
 
 class PelotonMetricsSplitMetricsMetricsData(BaseModel):
@@ -69,8 +66,8 @@ class PelotonMetricsSplitsData(BaseModel):
 class PelotonMetrics(BaseModel):
     model_config = ConfigDict(frozen=True)
     workout_id: str
-    metrics: List[PelotonMetricsMetrics]
-    summaries: List[PelotonMetricsSummaries]
+    metrics: list[PelotonMetricsMetrics]
+    summaries: list[PelotonMetricsSummaries]
     effort_zones: Optional[PelotonMetricsEffortZones] = None
     splits_data: Optional[PelotonMetricsSplitsData] = None
     splits_metrics: Optional[PelotonMetricsSplitMetrics] = None
