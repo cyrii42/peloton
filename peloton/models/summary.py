@@ -23,6 +23,7 @@ class PelotonSummary(BaseModel):
     ride: PelotonRideColumn
 
     @computed_field
+    @property
     def leaderboard_percentile(self) -> float:
         if self.total_leaderboard_users is None or self.leaderboard_rank is None:
             return None
@@ -30,6 +31,7 @@ class PelotonSummary(BaseModel):
             return ((self.total_leaderboard_users - self.leaderboard_rank) / self.total_leaderboard_users)*100
 
     @computed_field
+    @property
     def achievements_str(self) -> str | None:
         if self.achievements is None or len(self.achievements) == 0:
             return None

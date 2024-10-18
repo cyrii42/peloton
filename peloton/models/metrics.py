@@ -72,7 +72,6 @@ class PelotonMetrics(BaseModel):
     splits_data: Optional[PelotonMetricsSplitsData] = None
     splits_metrics: Optional[PelotonMetricsSplitMetrics] = None
 
-
     @field_validator('workout_id')
     @classmethod
     def workout_id_is_UUID_not_all_zeroes(cls, workout_id: str) -> str:

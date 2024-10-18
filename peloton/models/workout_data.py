@@ -23,6 +23,7 @@ class PelotonWorkoutData(BaseModel):
             return workout_id
 
     @computed_field
+    @property
     def output_per_min(self) -> float | None:
         if (self.metrics.summaries is None 
                 or self.summary.ride.ride_duration is None
@@ -41,6 +42,7 @@ class PelotonWorkoutData(BaseModel):
         return (total_output / ride_minutes)
 
     @computed_field
+    @property
     def duration_hrs(self) -> float | None:
         if self.summary.ride.ride_duration is None or self.summary.ride.ride_duration == 0:
             return None

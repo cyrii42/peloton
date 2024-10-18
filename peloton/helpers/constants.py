@@ -15,13 +15,6 @@ MONGODB_COLLECTION = 'peloton'
 MONGODB_INSTRUCTORS_COLLECTION = 'peloton_instructors'
 MONGODB_HOSTNAME = os.getenv('MONGODB_HOSTNAME')
 
-# Home Assistant MariaDB setup
-MARIADB_SERVER = os.getenv('MARIADB_HASS_IP')
-MARIADB_USER = os.getenv('MARIADB_USERNAME_PYTHON')
-MARIADB_PASS = os.getenv('MARIADB_PASSWORD_PYTHON')
-MARIADB_DATABASE = 'peloton'
-PELOTON_EXCEL_FILE = os.getenv('PELOTON_EXCEL_FILE')
-
 # PylotonCycle setup
 PELOTON_USERNAME = os.getenv('PELOTON_USERNAME')
 PELOTON_PASSWORD = os.getenv('PELOTON_PASSWORD')
@@ -30,11 +23,13 @@ PELOTON_SPREADSHEET = os.getenv('PELOTON_SPREADSHEET')
 PELOTON_BASE_URL = 'https://api.onepeloton.com'
 
 # Path objects
-# ROOT_DIR = Path.home().joinpath('python', 'peloton')
-ROOT_DIR = Path.cwd()
+ROOT_DIR = Path.home().joinpath('python', 'peloton')
+# ROOT_DIR = Path.cwd()
 DATA_DIR = ROOT_DIR.joinpath('data')
 WORKOUTS_DIR = ROOT_DIR.joinpath('data', 'workouts')
-IMAGES_DIR = ROOT_DIR.joinpath('data', 'workout_images')
+WORKOUT_IMAGES_DIR = ROOT_DIR.joinpath('data', 'workout_images')
+ACHIEVEMENT_IMAGES_DIR = ROOT_DIR.joinpath('data', 'achievement_images')
+STATIC_DIR = ROOT_DIR.joinpath('static')
 SESSION_JSON = ROOT_DIR.joinpath('data', 'session_id.json')
 INSTRUCTORS_JSON = ROOT_DIR.joinpath('data', 'peloton_instructors.json')
 

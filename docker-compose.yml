@@ -11,7 +11,7 @@ services:
     environment:
       MONGODB_HOSTNAME: mongodb
     volumes:
-      - .:/workspaces/peloton
+      - .:/home/peloton/python/peloton
     restart: unless-stopped
   
   mongodb:

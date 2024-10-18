@@ -6,6 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from zoneinfo import ZoneInfo
 
 from peloton.api import router, peloton
+from peloton.helpers.constants import STATIC_DIR, WORKOUT_IMAGES_DIR, ACHIEVEMENT_IMAGES_DIR
 
 LOCAL_TZ = ZoneInfo('America/New_York')
 
@@ -21,8 +22,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount('/static', StaticFiles(directory='static', follow_symlink=True), name='static')
-app.mount('/workout_images', StaticFiles(directory='data/workout_images', follow_symlink=True), name='workout_images')
+app.mount('/static', StaticFiles(directory=STATIC_DIR, follow_symlink=True), name='static')
+app.mount('/workout_images', StaticFiles(directory=WORKOUT_IMAGES_DIR, follow_symlink=True), name='workout_images')
+app.mount('/achievement_images', StaticFiles(directory=ACHIEVEMENT_IMAGES_DIR, follow_symlink=True), name='achievement_images')
 
 app.include_router(router)
 

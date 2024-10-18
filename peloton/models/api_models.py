@@ -80,14 +80,17 @@ class PelotonDataFrameRow(BaseModel):
             return dt.astimezone(LOCAL_TZ)
         
     @computed_field
+    @property
     def date(self) -> str:
         return self.start_time.strftime('%a, %h %-d, %Y') 
     
     @computed_field
+    @property
     def time(self) -> str:
         return self.start_time.strftime('%-I:%M %p') 
 
     @computed_field
+    @property
     def image_url_html(self) -> str | None:
         if self.image_url is None:
             return None
@@ -95,6 +98,7 @@ class PelotonDataFrameRow(BaseModel):
         return f"<img class=\"table-pic\" src={self.image_url}></img>"
 
     @computed_field
+    @property
     def image_url_html_local(self) -> str | None:
         if self.image_url is None:
             return None
@@ -104,6 +108,7 @@ class PelotonDataFrameRow(BaseModel):
         return f"<img class=\"table-pic\" src={local_url}></img>"
 
     @computed_field
+    @property
     def image_url_html_local_thumb(self) -> str | None:
         if self.image_url is None:
             return None

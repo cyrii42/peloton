@@ -1,8 +1,5 @@
 FROM python:latest
 
-# set the working directory
-WORKDIR /workspaces/peloton
-
 # install some useful stuff
 RUN apt-get -y update && apt-get -y install nano
 
@@ -17,6 +14,9 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && apt-get install -y sudo \
     && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
+    
+# set the working directory
+WORKDIR /home/peloton/python/peloton
 
 # install dependencies
 RUN pip install --upgrade pip
