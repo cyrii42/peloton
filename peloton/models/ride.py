@@ -40,6 +40,7 @@ class PelotonRideColumn(BaseModel):
             return ride_duration
 
     @computed_field
+    @property
     def instructor_name(self) -> str | None:
         if self.instructor_id is not None:
             return INSTRUCTOR_NAMES_DICT.get(self.instructor_id, None)
@@ -47,6 +48,14 @@ class PelotonRideColumn(BaseModel):
             return self.instructor_json.name
         else:
             return None
+
+    @computed_field
+    @property
+    def image_local_filename(self) -> str:
+        if self.image_url is None:
+            return None
+        else:
+            return self.image_url.split(sep='/')[-1]
 
 
 def main():
