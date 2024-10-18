@@ -23,11 +23,13 @@ PELOTON_SPREADSHEET = os.getenv('PELOTON_SPREADSHEET')
 PELOTON_BASE_URL = 'https://api.onepeloton.com'
 
 # Path objects
-# ROOT_DIR = Path.home().joinpath('python', 'peloton')
-ROOT_DIR = Path.cwd()
+ROOT_DIR = Path.home().joinpath('python', 'peloton')
+# ROOT_DIR = Path.cwd()
 DATA_DIR = ROOT_DIR.joinpath('data')
 WORKOUTS_DIR = ROOT_DIR.joinpath('data', 'workouts')
-IMAGES_DIR = ROOT_DIR.joinpath('data', 'workout_images')
+WORKOUT_IMAGES_DIR = ROOT_DIR.joinpath('data', 'workout_images')
+ACHIEVEMENT_IMAGES_DIR = ROOT_DIR.joinpath('data', 'achievement_images')
+STATIC_DIR = ROOT_DIR.joinpath('static')
 SESSION_JSON = ROOT_DIR.joinpath('data', 'session_id.json')
 INSTRUCTORS_JSON = ROOT_DIR.joinpath('data', 'peloton_instructors.json')
 
