@@ -28,11 +28,9 @@ async def index(request: Request):
 @router.get('/dataframe')
 async def get_dataframe(request: Request, 
                         hx_request: Annotated[Union[str | None], Header()] = None):
-    
     if hx_request:
         list_of_dicts = peloton.make_list_of_dicts()
         return construct_template_response_dataframe(request, list_of_dicts)
-
     else:
         df = peloton.processed_df
         df_json = json.loads(df.to_json(orient='records'))
@@ -42,43 +40,34 @@ async def get_dataframe(request: Request,
 async def month_table(request: Request, 
                       hx_request: Annotated[Union[str | None], Header()] = None):
     df = peloton.pivots.month_table.copy()
-            
     if hx_request:
         df = rename_columns(df)
         return construct_template_response_pivot(request, df)
-
     else:
         df_json = json.loads(df.to_json(orient='records'))
         return JSONResponse(df_json)
-    
     
 @router.get('/year_table', response_class=HTMLResponse)
 async def year_table(request: Request, 
                      hx_request: Annotated[Union[str | None], Header()] = None):
     df = peloton.pivots.year_table.copy()
-        
     if hx_request:
         df = rename_columns(df).drop(columns='Rides')
         return construct_template_response_pivot(request, df)
-
     else:
         df_json = json.loads(df.to_json(orient='records'))
         return JSONResponse(df_json)
-
 
 @router.get('/totals_table')
 async def totals_table(request: Request, 
                        hx_request: Annotated[Union[str | None], Header()] = None):
     df = peloton.pivots.totals_table.copy()
-        
     if hx_request:
         df = rename_columns(df)
         return construct_template_response_pivot(request, df)
-
     else:
         df_json = json.loads(df.to_json(orient='records'))
         return JSONResponse(df_json)
-
 
 @router.get('/favicon.ico', include_in_schema=False)
 async def favicon():
@@ -115,7 +104,6 @@ async def get_line_chart_df(workout_id: str):
           .make_line_chart_df_new(workout_id)
           .reset_index(names='datetime'))
     df_json = df.to_json(orient='records')
-
     return json.loads(df_json)
 
 
