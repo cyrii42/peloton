@@ -2,7 +2,6 @@ import urllib3
 import io
 from pathlib import Path
 from PIL import Image
-from peloton.helpers.constants import WORKOUT_IMAGES_DIR
 
 def download_image(image_url: str) -> io.BytesIO | None:
     http = urllib3.PoolManager()
