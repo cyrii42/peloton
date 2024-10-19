@@ -6,9 +6,9 @@ from typing import Annotated, Union
 import pandas as pd
 from fastapi import APIRouter, Header, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+from fastapi.templating import Jinja2Templates
 from zoneinfo import ZoneInfo
 
-from peloton.api.templates import templates
 from peloton.api.functions import (rename_columns, 
                                    construct_template_response_dataframe, 
                                    construct_template_response_pivot)
@@ -18,6 +18,7 @@ from peloton import PelotonProcessor
 LOCAL_TZ = ZoneInfo('America/New_York')
 
 router = APIRouter()
+templates = Jinja2Templates(directory='templates')
 
 peloton = PelotonProcessor()
 

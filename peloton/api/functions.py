@@ -1,12 +1,14 @@
+from zoneinfo import ZoneInfo
+
 import pandas as pd
 from fastapi import Request
 from fastapi.responses import HTMLResponse
-from zoneinfo import ZoneInfo
+from fastapi.templating import Jinja2Templates
 
-from peloton.api.templates import templates
 from peloton.models import PelotonDataFrameRow, PelotonPivotTableRow
 
 LOCAL_TZ = ZoneInfo('America/New_York')
+templates = Jinja2Templates(directory='templates')
     
 def rename_columns(df: pd.DataFrame) -> pd.DataFrame:
     return (df.rename(columns={
