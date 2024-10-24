@@ -26,6 +26,10 @@ peloton = PelotonProcessor()
 async def index(request: Request):
   return templates.TemplateResponse(request=request, name='index.html')
 
+@router.get("/plotlytest", response_class=HTMLResponse)
+async def index(request: Request):
+  return templates.TemplateResponse(request=request, name='plotlytest.html')
+
 @router.get('/dataframe')
 async def get_dataframe(request: Request, 
                         hx_request: Annotated[Union[str | None], Header()] = None):
@@ -106,6 +110,12 @@ async def get_line_chart_df(workout_id: str):
           .reset_index(names='datetime'))
     df_json = df.to_json(orient='records')
     return json.loads(df_json)
+
+@router.get('/line_chart_test')
+async def get_hr_zones_chart_plotly_json() -> HTMLResponse:
+    plt = peloton.chart_maker.make_hr_zones_bar_chart('64f280f4a5df4e21bedac33cfae88a30')
+    html_response = HTMLResponse(plt.to_html(include_plotlyjs=False, full_html=False))
+    return html_response
 
 
 def main():

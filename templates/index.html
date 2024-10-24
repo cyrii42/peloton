@@ -12,6 +12,8 @@
     src="https://unpkg.com/htmx.org@2.0.0" 
     integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw" 
     crossorigin="anonymous"></script>
+    
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
 </head>
 
 <body>
@@ -33,7 +35,12 @@
       <button type="button" hx-get="/month_table" hx-target="#peloton-table">Month Table</button>
       <button type="button" hx-get="/year_table" hx-target="#peloton-table">Year Table</button>
       <button type="button" hx-get="/totals_table" hx-target="#peloton-table">Totals Table</button>
+      <button type="button" hx-get="/line_chart_test" hx-target="#plotly">Plotly Chart</button>
     </section>  
+    
+    <section>
+      <div id="plotly" hx-get="/line_chart_test" hx-swap="innerHTML"></div>
+    </section>
     
     <section class="overflow-auto height-limited">
       <table id="peloton-table" class="striped overflow-auto" hx-get="dataframe" hx-swap="innerHTML" hx-trigger="load"></table>
