@@ -7,6 +7,8 @@ from decimal import Decimal
 
 from pydantic import BaseModel, ConfigDict, AliasChoices, Field, field_validator, computed_field
 
+from peloton.helpers.constants import WORKOUT_IMAGES_DIR
+
 LOCAL_TZ = ZoneInfo('America/New_York') 
 
 class PelotonPivotTableRow(BaseModel):
@@ -113,9 +115,11 @@ class PelotonDataFrameRow(BaseModel):
         if self.image_url is None:
             return None
 
-        filename = self.image_url.split(sep='/')[-1]
-        filepath = Path(filename)
-        thumb_filename = f"{filepath.stem}_thumb{filepath.suffix}"
-        
-        thumb_url = f"/workout_images/{thumb_filename}"
-        return f"<a href=\"/workout_images/{filename}\"><img class=\"table-pic\" src={thumb_url}></img></a>"
+        image_local_filename = self.image_url.split(sep='/')[-1]
+        image_local_url = f"/workout_images/{image_local_filename}"
+
+        image_local_path = Path(image_local_filename)
+        thumb_local_filename = f"{image_local_path.stem}_thumb{image_local_path.suffix}"
+        thumb_local_url = f"/workout_images/{thumb_local_filename}"
+
+        return f"<a href=\"{image_local_url}\" target=\"_blank\"><img class=\"table-pic\" src={thumb_local_url}></img></a>"
