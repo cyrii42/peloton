@@ -92,7 +92,7 @@ class PelotonProcessor():
         new_workout_ids = self._get_new_workout_ids()
         if len(new_workout_ids) == 0:
             self.new_workouts = False
-            self.workouts = list()
+            self.workouts = self.db.ingest_workouts()
             return None   # everything below will only happen if there are new workouts!
 
         print(f"New Workout IDs:  {new_workout_ids}")
