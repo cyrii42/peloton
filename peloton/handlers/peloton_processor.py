@@ -129,17 +129,10 @@ class PelotonProcessor():
         return self.db.ingest_workouts()
 
     def _get_new_workout_ids(self) -> list[str]:
-        workouts_on_peloton_num = self.py_conn.get_total_workouts_num()
-        workouts_on_disk_num = len(self.db.get_workout_id_list())
-        new_workouts_num = workouts_on_peloton_num - workouts_on_disk_num
-
         workout_ids_on_peloton = self.py_conn.get_workout_ids()
         workout_ids_on_disk = self.db.get_workout_id_list()
         new_workout_ids = [workout_id for workout_id in workout_ids_on_peloton
                             if workout_id not in workout_ids_on_disk]
-
-        if len(new_workout_ids) != new_workouts_num:
-            raise WorkoutMismatchError()
 
         print(f"Total Workouts: {len(workout_ids_on_peloton)}")
         print(f"Workouts in Database: {len(workout_ids_on_disk)}")
