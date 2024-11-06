@@ -67,3 +67,8 @@ class PelotonSummary(BaseModel):
             return dt.isoformat(sep='T', timespec='seconds')
         elif isinstance(dt, str):
             return dt
+
+    @computed_field
+    @property
+    def start_time_str(self) -> str:
+        return self.start_time.strftime('%a, %b %-d, %Y @ %-I:%M %p')
