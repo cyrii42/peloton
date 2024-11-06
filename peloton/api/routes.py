@@ -26,9 +26,9 @@ peloton = PelotonProcessor()
 async def index(request: Request):
   return templates.TemplateResponse(request=request, name='index.html')
 
-@router.get("/plotlytest", response_class=HTMLResponse)
-async def index(request: Request):
-  return templates.TemplateResponse(request=request, name='plotlytest.html')
+@router.get("/plotly", response_class=HTMLResponse)
+async def get_plotly_html(request: Request):
+  return templates.TemplateResponse(request=request, name='plotly.html')
 
 @router.get('/dataframe')
 async def get_dataframe(request: Request, 
@@ -94,7 +94,15 @@ async def get_stats_summary(end_date_ts: int = None) -> dict:
 async def get_data(workout_id: str) -> PelotonWorkoutData:
     return peloton.get_workout_object_from_id(workout_id)
 
-@router.get('/hr_zones/')
+@router.get('/workout_id_list', response_class=HTMLResponse)
+async def get_data_for_plotly_workout_select_dropdown(request: Request) -> HTMLResponse:
+    workout_list = [workout for workout in peloton.workouts]
+    workout_list = sorted(workout_list, key=lambda x: x.summary.start_time, reverse=True)
+    return templates.TemplateResponse(request=request, 
+                                      name='workout_select.html',
+                                      context={'workout_list': workout_list})
+
+@router.get('/hr_zones')
 async def get_hr_zones_chart_df(workout_id: str) -> list[dict]:
     df = peloton.chart_maker.make_hr_zones_chart_df(workout_id)
     if isinstance(df, pd.DataFrame):
@@ -103,7 +111,7 @@ async def get_hr_zones_chart_df(workout_id: str) -> list[dict]:
         raise HTTPException(status_code=404, 
                             detail=f"No HR-zone data for workout ID: {workout_id}")
 
-@router.get('/line_chart/')
+@router.get('/line_chart')
 async def get_line_chart_df(workout_id: str):
     df = (peloton.chart_maker
           .make_line_chart_df_new(workout_id)
@@ -111,11 +119,11 @@ async def get_line_chart_df(workout_id: str):
     df_json = df.to_json(orient='records')
     return json.loads(df_json)
 
-@router.get('/line_chart_test')
-async def get_hr_zones_chart_plotly_json() -> HTMLResponse:
-    plt = peloton.chart_maker.make_hr_zones_bar_chart('64f280f4a5df4e21bedac33cfae88a30')
-    html_response = HTMLResponse(plt.to_html(include_plotlyjs=False, full_html=False))
-    return html_response
+@router.get('/line_chart_test', response_class=HTMLResponse)
+async def get_hr_zones_chart_plotly_json(workout_id: str) -> HTMLResponse:
+    plt = peloton.chart_maker.make_hr_zones_bar_chart(workout_id)
+    plt_html = plt.to_html(include_plotlyjs=False, full_html=False)
+    return plt_html
 
 
 def main():
