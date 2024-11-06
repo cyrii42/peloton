@@ -1,0 +1,6 @@
+<select name="workout_id" id="plotly-workout-select" hx-get="/line_chart_test" hx-target="#bar_chart" hx-swap="innerHTML">
+    <option value="">Choose a Workout:</option>
+    {% for workout in workout_list %}
+        <option value="{{workout.workout_id}}">{{ workout.summary.start_time_str}} - {{ workout.summary.ride.title }}</option>
+    {% endfor %}
+</select>

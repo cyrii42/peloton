@@ -1,50 +1,25 @@
-<!DOCTYPE html>
-<html lang="en" data-theme="light">
-<head>
-  <meta charset="UTF-8">
-  <title>FastAPI + HTMX</title>
-  <link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.yellow.min.css"
->
-  <link rel="stylesheet" type="text/css" href="/static/style.css">
-  <script 
-    src="https://unpkg.com/htmx.org@2.0.0" 
-    integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw" 
-    crossorigin="anonymous"></script>
-    
-  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
-</head>
+{% extends "base.html" %}
+{% block title %} FastAPI + HTMX {% endblock %}
 
-<body>
-  <!-- <div class="sidenav">
+{% block header %}
+  <h1>FastAPI + HTMX</h1>
+  <p>Boop bop bam!</p>
+{% endblock %}
+
+{% block content %}
+
+  <section role="group">
     <button type="button" hx-get="/dataframe" hx-target="#peloton-table">Processed Data</button>
     <button type="button" hx-get="/month_table" hx-target="#peloton-table">Month Table</button>
     <button type="button" hx-get="/year_table" hx-target="#peloton-table">Year Table</button>
     <button type="button" hx-get="/totals_table" hx-target="#peloton-table">Totals Table</button>
-  </div> -->
+    <button type="button" hx-get="/plotly" hx-target="#peloton-table">Plotly</button>
+  </section>  
   
-  <header>
-    <h1>FastAPI + HTMX</h1>
-    <p>Boop bop bam!</p>
-  </header>
+  <section>
+    <div id="plotly" hx-get="/plotly" hx-swap="innerHTML"></div>
+  </section>
   
-  <main class="container">
-    <section role="group">
-      <button type="button" hx-get="/dataframe" hx-target="#peloton-table">Processed Data</button>
-      <button type="button" hx-get="/month_table" hx-target="#peloton-table">Month Table</button>
-      <button type="button" hx-get="/year_table" hx-target="#peloton-table">Year Table</button>
-      <button type="button" hx-get="/totals_table" hx-target="#peloton-table">Totals Table</button>
-      <button type="button" hx-get="/line_chart_test" hx-target="#plotly">Plotly Chart</button>
-    </section>  
-    
-    <section>
-      <div id="plotly" hx-get="/line_chart_test" hx-swap="innerHTML"></div>
-    </section>
-    
-    <section class="overflow-auto height-limited">
-      <table id="peloton-table" class="striped overflow-auto" hx-get="dataframe" hx-swap="innerHTML" hx-trigger="load"></table>
-    </section>
-  </main>
-</body>
-</html>
+  <section class="overflow-auto height-limited" id="peloton-table" hx-get="dataframe" hx-swap="innerHTML" hx-trigger="load">
+  </section>
+{% endblock %}
